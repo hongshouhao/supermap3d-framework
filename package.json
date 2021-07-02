@@ -6,12 +6,13 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "copy": "xcopy .\\node_modules\\@supermap\\vue-iclient3d-webgl\\static\\Cesium .\\public\\Cesium /s /e /y"
+    "copy": "xcopy .\\node_modules\\@supermap\\vue-iclient3d-webgl\\static\\Cesium .\\public\\Cesium /s /e /y && xcopy .\\node_modules\\jquery\\dist\\jquery.min.js .\\public\\jquery.min.js /s /e /y"
   },
   "dependencies": {
     "@supermap/vue-iclient3d-webgl": "^1.0.9",
     "core-js": "^3.6.5",
     "element-ui": "^2.15.3",
+    "jquery": "^3.6.0",
     "vue": "^2.6.11"
   },
   "devDependencies": {
@@ -21,6 +22,8 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^7.3.1",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
@@ -35,7 +38,10 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "no-undef": "off",
+      "no-debugger": "off"
+    }
   },
   "browserslist": [
     "> 1%",

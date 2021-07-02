@@ -1,50 +1,71 @@
 <template>
   <div id="app">
-    <sm-viewer scene-url="http://106.14.242.98:8090/iserver/services/3D-QYQBM/rest/realspace">
-      <!-- <sm3d-clip-box></sm3d-clip-box>
+    <div class="top-left-bar-container">
+      <TopLeftBar />
+    </div>
+    <div class="top-right-bar-container">
+      <TopRightBar />
+    </div>
+
+    <div class="cesium-container"
+         ref="cesiumContainer"></div>
+
+    <div ref="test">test</div>
+    <!-- <sm-viewer>
+      <sm3d-clip-box></sm3d-clip-box>
       <sm3d-clip-plane></sm3d-clip-plane>
       <sm3d-clip-cross></sm3d-clip-cross>
-      <sm3d-clip-polygon></sm3d-clip-polygon> -->
-      <!-- <sm3d-measure></sm3d-measure>
-      <sm3d-terrain-flood></sm3d-terrain-flood> -->
-    </sm-viewer>
+      <sm3d-clip-polygon></sm3d-clip-polygon>
+      <sm3d-measure></sm3d-measure>
+      <sm3d-terrain-flood></sm3d-terrain-flood>
+    </sm-viewer> -->
   </div>
 </template>
 
 <script>
+import TopLeftBar from './TopLeftBar.vue'
+import TopRightBar from './TopRightBar.vue'
 
 export default {
   name: 'App',
   components: {
+    TopLeftBar,
+    TopRightBar,
+  },
+  data () {
+    return {
+      sceneContainer: null
+    }
+  },
+  beforeMount () {
+    this.sceneContainer = document.createElement("div")
+    var viewer = new Cesium.Viewer(this.sceneContainer, {
+      navigation: false,
+      baseLayerPicker: false,
+      shouldAnimate: true,
+    })
+
+    viewer.terrainProvider = new Cesium.CesiumTerrainProvider({
+      url: URL_CONFIG.SiChuan_TERRAIN,
+      isSct: true
+    });
+
+    viewer.scene.debugShowFramesPerSecond = false;
+    window.viewer = viewer
+    window.scene = viewer.scene
+
+    console.log("viewer", viewer)
+    console.log("scene", viewer.scene)
+
+    // viewer.customInfobox = this.$refs.test.$el;
   },
   mounted () {
-    // viewer.imageryLayers.addImageryProvider(
-    //   new Cesium.BingMapsImageryProvider({
-    //     url: "https://dev.virtualearth.net",
-    //     mapStyle: Cesium.BingMapsStyle.AERIAL,
-    //     key: URL_CONFIG.BING_MAP_KEY
-    //   })
-    // );
-    // //加载地形
-    // viewer.terrainProvider = new Cesium.CesiumTerrainProvider({
-    //   url: URL_CONFIG.SiChuan_TERRAIN,
-    //   isSct: true//地形服务源自SuperMap iServer发布时需设置isSct为true
-    // });
-    // // 相机位置
-    // viewer.scene.camera.setView({
-    //   destination: new Cesium.Cartesian3(-1206939.1925299785, 5337998.241228442, 3286279.2424502545),
-    //   orientation: {
-    //     heading: 1.4059101895600987,
-    //     pitch: -0.20917672793046682,
-    //     roll: 2.708944180085382e-13
-    //   }
-    // });
-
+    this.$refs.cesiumContainer.appendChild(this.sceneContainer)
   }
 }
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -52,5 +73,28 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.cesium-container {
+  height: 100%;
+  width: 100%;
+  div:first-child {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.top-right-bar-container {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  z-index: 10000;
+}
+
+.top-left-bar-container {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  z-index: 10000;
 }
 </style>
