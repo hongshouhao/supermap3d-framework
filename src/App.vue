@@ -40,11 +40,19 @@ export default {
   beforeMount () {
     this.sceneContainer = document.createElement("div")
     var viewer = new Cesium.Viewer(this.sceneContainer, {
+      shadows: true,
       navigation: false,
       baseLayerPicker: false,
       shouldAnimate: true,
     })
 
+    let currentTime = new Date()
+    currentTime.setHours(12)
+    viewer.clock.currentTime = Cesium.JulianDate.fromDate(currentTime)
+    viewer.clock.multiplier = 1
+    viewer.clock.shouldAnimate = true
+
+    console.log("URL_CONFIG", URL_CONFIG)
     viewer.terrainProvider = new Cesium.CesiumTerrainProvider({
       url: URL_CONFIG.SiChuan_TERRAIN,
       isSct: true

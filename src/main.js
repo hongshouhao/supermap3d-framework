@@ -5,6 +5,7 @@ import VueiClient from '@supermap/vue-iclient3d-webgl'
 
 import 'element-ui/lib/theme-chalk/index.css'
 import '@supermap/vue-iclient3d-webgl/dist/styles/vue-iclient3d-webgl.min.css'
+import './assets/themes/light/main.css'
 import './css/app.scss'
 
 Vue.config.productionTip = false

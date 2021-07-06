@@ -1,203 +1,131 @@
 <template>
   <div class="top-left-bar">
-    <div class="my-component my-widget">
-      <div class="my-widget-button my-widget my-interactive"
+    <div class="esri-component esri-widget">
+      <div class="esri-widget--button esri-widget esri-interactive"
            style="border-top:none"
            title="收起"
            @click="globeView">
         <span aria-hidden="true"
-              class="esri-icon my-icon-collapse"></span>
+              class="esri-icon esri-icon-collapse"></span>
       </div>
     </div>
 
-    <div class="my-component my-widget">
-      <div class="my-widget-button my-widget my-interactive"
+    <div class="esri-component esri-widget">
+      <div class="esri-widget--button esri-widget esri-interactive"
            title="2D"
            @click="toggleView">
         <span> {{ to3dView ? '3D' : '2D' }}</span>
       </div>
 
-      <div class="my-widget-button my-widget my-interactive"
+      <div class="esri-widget--button esri-widget esri-interactive"
            title="全图"
            @click="globeView">
         <span aria-hidden="true"
-              class="my-icon my-icon-fullview"></span>
+              class="esri-icon esri-icon-globe"></span>
       </div>
 
-      <div class="my-widget-button my-widget my-interactive"
+      <div class="esri-widget--button esri-widget esri-interactive"
            title="放大"
            @click="zoomIn">
         <span aria-hidden="true"
-              class="my-icon my-icon-plus"></span>
+              class="esri-icon esri-icon-plus"></span>
       </div>
 
-      <div class="my-widget-button my-widget my-interactive"
+      <div class="esri-widget--button esri-widget esri-interactive"
            title="缩小"
            @click="zoomOut">
         <span aria-hidden="true"
-              class="my-icon my-icon-minus"></span>
+              class="esri-icon esri-icon-minus"></span>
       </div>
     </div>
 
-    <div class="my-component my-widget">
-      <div class="my-widget-button my-widget"
+    <div class="esri-component esri-widget">
+      <div class="esri-widget--button esri-widget"
            title="长度测量"
            @click="startDistanceMeasure">
         <span aria-hidden="true"
-              class="my-icon my-icon-measure"></span>
+              class="esri-icon esri-icon-measure"></span>
       </div>
-      <div class="my-widget-button my-widget"
+      <div class="esri-widget--button esri-widget"
            title="面积测量"
            @click="startAreaMeasure">
         <span aria-hidden="true"
-              class="my-icon my-icon-measure-area"></span>
+              class="esri-icon esri-icon-measure-area"></span>
       </div>
-      <div class="my-widget-button my-widget"
+      <div class="esri-widget--button esri-widget"
            title="点标注"
+           style="cursor:not-allowed"
            @click="annotatePoint">
         <span aria-hidden="true"
-              class="my-icon my-icon-mea-point"></span>
+              class="esri-icon my-icon-mea-point"></span>
       </div>
     </div>
 
-    <div class="my-component my-widget">
+    <div class="esri-component esri-widget">
       <el-popover placement="right"
                   trigger="click"
                   popper-class="small-pop">
         <template #reference>
-          <div class="my-widget-button my-widget "
+          <div class="esri-widget--button esri-widget "
                title="分析">
             <span aria-hidden="true"
-                  class="my-icon icon-analysis"></span>
+                  class="esri-icon icon-analysis"></span>
           </div>
         </template>
         <div class="top-left-popover-toolbar">
-          <div class="my-component my-widget"
+          <div class="esri-component esri-widget"
                style="margin:0;">
-            <div class="my-widget-button my-widget"
+            <div class="esri-widget--button esri-widget"
                  title="剖面分析"
                  @click="startSlice">
               <span aria-hidden="true"
-                    class="my-icon my-icon-slice"></span>
+                    class="esri-icon esri-icon-slice"></span>
             </div>
-            <div class="my-widget-button my-widget"
-                 title="高程分析">
+            <div class="esri-widget--button esri-widget"
+                 title="日照分析"
+                 @click="startSunlight">
               <span aria-hidden="true"
-                    class="my-icon my-icon-elevation-profile"></span>
+                    class="esri-icon esri-icon-environment-settings"></span>
             </div>
-            <div class="my-widget-button my-widget"
-                 title="日照分析">
-              <span aria-hidden="true"
-                    class="my-icon my-icon-environment-settings"></span>
-            </div>
-            <div class="my-widget-button my-widget"
+            <div class="esri-widget--button esri-widget"
                  title="天际线分析"
-                 style="cursor:not-allowed">
+                 @click="startSkyline">
               <span aria-hidden="true"
-                    class="my-icon my-icon-urban-model"></span>
+                    class="esri-icon esri-icon-urban-model"></span>
             </div>
-            <div class="my-widget-button my-widget "
+            <div class="esri-widget--button esri-widget "
                  title="视域分析"
                  @click="startViewshed">
               <span aria-hidden="true"
-                    class="my-icon my-icon-line-of-sight"></span>
+                    class="esri-icon esri-icon-line-of-sight"></span>
             </div>
           </div>
         </div>
       </el-popover>
     </div>
 
-    <div class="my-component my-widget">
-      <div class="my-widget-button my-widget"
+    <div class="esri-component esri-widget">
+      <div class="esri-widget--button esri-widget"
            title="清理"
            @click="clearEverything">
         <span aria-hidden="true"
-              class="my-icon my-icon-trash"></span>
+              class="esri-icon esri-icon-trash"></span>
       </div>
     </div>
 
-    <WidgetInfoPanel v-show="showViewshedInfoPanel"
+    <WidgetInfoPanel v-show="currentTool=='ViewshedTool'"
                      title="视域分析参数"
-                     ref="viewshedInfoPanel">
+                     ref="viewshedSettingPanel">
       <template>
-        <div>
-          <label>方向(度)</label>
-          <input type="range"
-                 id="direction"
-                 min="0"
-                 max="360"
-                 step="1.0"
-                 title="方向"
-                 data-bind="value: direction, valueUpdate: 'input'">
-          <input type="text"
-                 readonly
-                 size="5"
-                 data-bind="value: direction">
-        </div>
+        <ViewshedSetting />
+      </template>
+    </WidgetInfoPanel>
 
-        <div>
-          <label>翻转(度)</label>
-          <input type="range"
-                 id="pitch"
-                 min="-90"
-                 max="90"
-                 step="1.0"
-                 value="1"
-                 title="翻转"
-                 data-bind="value: pitch, valueUpdate: 'input'">
-          <input type="text"
-                 readonly
-                 size="5"
-                 data-bind="value: pitch">
-        </div>
-
-        <div>
-          <label>距离(米)</label>
-          <input type="range"
-                 id="distance"
-                 min="1"
-                 max="500"
-                 step="1.0"
-                 value="1"
-                 title="距离"
-                 data-bind="value: distance, valueUpdate: 'input'">
-          <input type="text"
-                 readonly
-                 size="5"
-                 data-bind="value: distance">
-        </div>
-
-        <div>
-          <label>水平视场角(度)</label>
-          <input type="range"
-                 id="horizonalFov"
-                 min="1"
-                 max="120"
-                 step="1"
-                 value="1"
-                 title="水平视场角"
-                 data-bind="value: horizontalFov, valueUpdate: 'input'">
-          <input type="text"
-                 readonly
-                 size="5"
-                 data-bind="value: horizontalFov">
-        </div>
-
-        <div>
-          <label>垂直视场角(度)</label>
-          <input type="range"
-                 id="verticalFov"
-                 min="1"
-                 max="90"
-                 step="1.0"
-                 value="1"
-                 title="垂直视场角"
-                 data-bind="value: verticalFov, valueUpdate: 'input'">
-          <input type="text"
-                 readonly
-                 size="5"
-                 data-bind="value: verticalFov">
-        </div>
+    <WidgetInfoPanel v-show="currentTool=='SunlightTool'"
+                     title="阴影分析参数"
+                     ref="sunlightSettingPanel">
+      <template>
+        <SunlightSetting ref="sunlightSetting" />
       </template>
     </WidgetInfoPanel>
   </div>
@@ -205,19 +133,28 @@
 
 <script>
 import MeasureTool from './MeasureTool'
-import Viewshed3dTool from './Viewshed3dTool'
+import ViewshedTool from './analysis/Viewshed/ViewshedTool'
+import ViewshedSetting from './analysis/Viewshed/ViewshedSetting.vue'
+import SunlightSetting from './analysis/Sunlight/SunlightSetting.vue'
+import SliceTool from './analysis/Slice/SliceTool'
+import SkylineTool from './analysis/Skyline/SkylineTool'
 import WidgetInfoPanel from './WidgetInfoPanel'
 
 export default {
   components: {
-    WidgetInfoPanel
+    WidgetInfoPanel,
+    ViewshedSetting,
+    SunlightSetting
   },
   data () {
     return {
+      to3dView: false,
+      currentTool: "",
       measureTool: null,
-      viewshed3dTool: null,
-      showViewshedInfoPanel: false,
-      to3dView: false
+      viewshedTool: null,
+      skylineTool: null,
+      shadowQueryTool: null,
+      sliceTool: null,
     }
   },
   props: [],
@@ -226,7 +163,8 @@ export default {
   beforeMount () {
   },
   mounted () {
-    document.body.appendChild(this.$refs.viewshedInfoPanel.$el)
+    document.body.appendChild(this.$refs.viewshedSettingPanel.$el)
+    document.body.appendChild(this.$refs.sunlightSettingPanel.$el)
   },
   methods: {
     globeView () { },
@@ -238,40 +176,74 @@ export default {
     zoomOut () {
       window.viewer.camera.zoomOut(100)
     },
+
     startDistanceMeasure () {
       if (!this.measureTool) {
         this.measureTool = new MeasureTool(window.viewer)
       }
+      this.currentTool = "MeasureTool"
       this.measureTool.measureDistance()
     },
+
     startAreaMeasure () {
       if (!this.measureTool) {
         this.measureTool = new MeasureTool(window.viewer)
       }
+      this.currentTool = "MeasureTool"
       this.measureTool.measureArea()
     },
-    annotatePoint () { },
-    startSlice () { },
-    startViewshed () {
-      if (!this.viewshed3dTool) {
-        this.viewshed3dTool = new Viewshed3dTool(window.viewer)
-        this.viewshed3dTool.bindUI(this.$refs.viewshedInfoPanel.$el)
-      }
-      this.viewshed3dTool.reset()
-      this.showViewshedInfoPanel = true
 
+    annotatePoint () { },
+
+    startSlice () {
+      if (!this.sliceTool) {
+        this.sliceTool = new SliceTool(window.viewer)
+      }
+      this.sliceTool.reset()
     },
+
+    startViewshed () {
+      if (!this.viewshedTool) {
+        this.viewshedTool = new ViewshedTool(window.viewer)
+        this.viewshedTool.bindUI(this.$refs.viewshedSettingPanel.$el)
+      }
+      this.viewshedTool.reset()
+      this.currentTool = "ViewshedTool"
+    },
+
+    startSunlight () {
+      this.$refs.sunlightSetting.init()
+      this.currentTool = "SunlightTool"
+    },
+
+    startSkyline () {
+      if (!this.skylineTool) {
+        this.skylineTool = new SkylineTool(window.viewer)
+      }
+      this.currentTool = "SkylineTool"
+      this.skylineTool.draw()
+    },
+
     clearEverything () {
       if (this.measureTool) {
         this.measureTool.clear()
       }
 
-      if (this.viewshed3dTool) {
-        this.viewshed3dTool.clear()
+      if (this.viewshedTool) {
+        this.viewshedTool.clear()
       }
-      this.showViewshedInfoPanel = false
 
-    }
+      if (this.skylineTool) {
+        this.skylineTool.clear()
+      }
+
+      if (this.shadowQueryTool) {
+        this.shadowQueryTool.clear()
+      }
+
+      this.$refs.sunlightSetting.reset()
+      this.currentTool = ""
+    },
   },
 }
 </script>

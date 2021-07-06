@@ -1,11 +1,4 @@
-.my-icon-gotolayer {
-  background: url('../images/zoom-in.svg') no-repeat;
-  background-size: 16px;
-  width: 16px;
-  height: 16px;
-}
-
-.my-component {
+.esri-component {
   margin-bottom: 10px;
 
   box-sizing: border-box;
@@ -16,7 +9,7 @@
   background-color: #fff;
 }
 
-.my-widget {
+.esri-widget {
   box-sizing: border-box;
   color: #323232;
   font-size: 14px;
@@ -25,11 +18,11 @@
   background-color: #fff;
 }
 
-.my-component > div:first-child {
+.esri-component > div:first-child {
   border-top: none;
 }
 
-.my-widget-button {
+.esri-widget--button {
   width: 38px;
   height: 38px;
   position: relative;
@@ -41,6 +34,13 @@
   }
 }
 
-.my-component > div:nth-of-type(2) .esri-widget--button {
+.esri-component > div:nth-of-type(2) .esri-widget--button {
   border: none !important;
+}
+
+.my-icon-mea-point {
+  background: url('../images/mea-point.svg') no-repeat;
+  background-size: 16px;
+  width: 16px;
+  height: 16px;
 }

@@ -1,6 +1,0 @@
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg id="plus" data-name="plus" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
-  <title>plus</title>
-  <path d="M448 960h64v-960h-64v960zM0 448v64h960v-64h-960z" />
-</svg>
