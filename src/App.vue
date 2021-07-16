@@ -40,11 +40,21 @@ export default {
   beforeMount () {
     this.sceneContainer = document.createElement("div")
     var viewer = new Cesium.Viewer(this.sceneContainer, {
+      infoBox: false,
       shadows: true,
       navigation: false,
       baseLayerPicker: false,
       shouldAnimate: true,
     })
+
+    viewer.scene.screenSpaceCameraController.tiltEventTypes = [
+      Cesium.CameraEventType.RIGHT_DRAG,
+      Cesium.CameraEventType.PINCH,
+      { eventType: Cesium.CameraEventType.LEFT_DRAG, modifier: Cesium.KeyboardEventModifier.CTRL },
+      { eventType: Cesium.CameraEventType.RIGHT_DRAG, modifier: Cesium.KeyboardEventModifier.CTRL }
+    ];
+
+    viewer.scene.screenSpaceCameraController.zoomEventTypes = [Cesium.CameraEventType.MIDDLE_DRAG, Cesium.CameraEventType.WHEEL, Cesium.CameraEventType.PINCH];
 
     let currentTime = new Date()
     currentTime.setHours(12)
@@ -75,12 +85,8 @@ export default {
 
 <style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  height: 100%;
+  width: 100%;
 }
 
 .cesium-container {

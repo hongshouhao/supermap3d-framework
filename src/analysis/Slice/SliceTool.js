@@ -24,10 +24,23 @@ export default class SliceTool {
       if (!_this.primitive) {
         _this.primitive = _this.createPlane(
           planeXModelMatrix,
-          new Cesium.Color(1.0, 0.0, 0.0, 0.1)
+          Cesium.Color.fromAlpha(
+            Cesium.Color.fromCssColorString('rgb(254, 128, 1)'),
+            0.5
+          )
         )
+        console.log(_this.primitive)
       } else {
-        _this.primitive.modelMatrix = planeXModelMatrix
+        console.log(_this.primitive)
+        // _this.primitive.geometryInstances.geometry._positions = new Cesium.CallbackProperty(
+        //   function() {
+        //     return Cesium.Cartesian3.fromDegrees(
+        //       cartographic.longitude,
+        //       cartographic.latitude
+        //     )
+        //   },
+        //   false
+        // ) //防止在移动过程中闪烁
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
@@ -214,7 +227,7 @@ export default class SliceTool {
     //   })
   }
 
-  reset() {
+  start() {
     this.pickPointHandler.deactivate()
     this.pickPointHandler.activate()
   }

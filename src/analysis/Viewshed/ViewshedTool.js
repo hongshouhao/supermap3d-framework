@@ -86,7 +86,7 @@ export default class ViewshedTool {
     })
   }
 
-  reset() {
+  start() {
     this.viewModel.direction = this.viewshed3D.direction
     this.viewModel.pitch = this.viewshed3D.pitch
     this.viewModel.distance = this.viewshed3D.distance

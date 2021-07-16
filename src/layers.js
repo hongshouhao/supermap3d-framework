@@ -3,19 +3,19 @@
 //S3M        三维图层
 //MVT        矢量瓦片图层
 export const layers = [
-  {
-    id: '0',
-    label: '分层分户',
-    display: false,
-    expand: true,
-    layer: {
-      type: 'S3M',
-      visible: false,
-      enableFillAndWireFrame: true,
-      url:
-        'http://106.14.242.98:8090/iserver/services/3D-XCFCFH/rest/realspace',
-    },
-  },
+  // {
+  //   id: '0',
+  //   label: '分层分户',
+  //   display: false,
+  //   expand: true,
+  //   layer: {
+  //     type: 'S3M',
+  //     visible: false,
+  //     enableFillAndWireFrame: true,
+  //     url:
+  //       'http://106.14.242.98:8090/iserver/services/3D-XCFCFH/rest/realspace',
+  //   },
+  // },
   {
     id: '2',
     label: '分层分户',
@@ -27,7 +27,10 @@ export const layers = [
         layer: {
           type: 'S3M',
           visible: true,
-          layerName: 'FC',
+          enableFillAndWireFrame: true,
+          url:
+            'http://106.14.242.98:8090/iserver/services/3D-XCFCFH/rest/realspace/datas/FC/config',
+          // layerName: 'FC',
         },
       },
       {
@@ -36,7 +39,10 @@ export const layers = [
         layer: {
           type: 'S3M',
           visible: false,
-          layerName: 'FH',
+          enableFillAndWireFrame: true,
+          url:
+            'http://106.14.242.98:8090/iserver/services/3D-XCFCFH/rest/realspace/datas/FH/config',
+          //  layerName: 'FH',
         },
       },
     ],
@@ -47,7 +53,8 @@ export const layers = [
     layer: {
       type: 'S3M',
       visible: false,
-      url: 'http://106.14.242.98:8090/iserver/services/3D-XCGX/rest/realspace',
+      url:
+        'http://106.14.242.98:8090/iserver/services/3D-XCGX/rest/realspace/datas/GX/config',
     },
   },
   {
@@ -57,7 +64,7 @@ export const layers = [
       type: 'S3M',
       visible: true,
       url:
-        'http://106.14.242.98:8090/iserver/services/3D-XCJZDT/rest/realspace',
+        'http://106.14.242.98:8090/iserver/services/3D-XCJZDT/rest/realspace/datas/Config/config',
     },
   },
 

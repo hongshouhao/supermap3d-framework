@@ -29,8 +29,18 @@ export default {
     init () {
       if (window.viewer) {
         this.addLayers(layers)
-        const targ = layers.filter(x => x.display !== false)
-        this.layersData = targ
+        this.layersData = layers
+        // const targ = layers.filter(x => x.display !== false)
+        // this.layersData = targ
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(120.603, 31.175, 400.0),
+          orientation: {
+            heading: 0.027587479922354774,
+            pitch: -0.5169824822585825,
+            roll: 6.283185307179586
+          }
+        });
+
       }
     },
     addLayers (layersData) {
@@ -57,32 +67,49 @@ export default {
             }
 
             if (lyD.layer.url) {
-              window.viewer.scene.open(lyD.layer.url).then((lylist) => {
-                lyD.cesiumLayer = lylist
-                for (let clayer of lylist) {
+              window.viewer.scene.addS3MTilesLayerByScp(lyD.layer.url, { name: lyD.label }).then((ly) => {
+                lyD.cesiumLayer = ly
+                ly.visible = lyD.layer.visible
 
-                  clayer.visible = lyD.layer.visible
-                  if (lyD.layer.queryParameter) {
-                    clayer.setQueryParameter(queryParameter);
-                  }
-
-                  if (lyD.layer.enableFillAndWireFrame) {
-                    clayer.style3D.fillStyle = Cesium.FillStyle.Fill_And_WireFrame;
-                    clayer.style3D.lineColor = Cesium.Color.fromCssColorString('rgb(0,0,0)');
-                    clayer.style3D.lineWidth = 1;
-                    clayer.wireFrameMode = 2
-                  }
+                if (lyD.layer.queryParameter) {
+                  ly.setQueryParameter(queryParameter);
                 }
-                console.log(lyD)
+
+                if (lyD.layer.enableFillAndWireFrame) {
+                  ly.style3D.fillStyle = Cesium.FillStyle.Fill_And_WireFrame;
+                  ly.style3D.lineColor = Cesium.Color.fromCssColorString('rgb(0,0,0)');
+                  ly.style3D.lineWidth = 1;
+                  ly.wireFrameMode = 2
+                }
               });
+
+              // window.viewer.scene.open(lyD.layer.url).then((lylist) => {
+
+              //   lyD.cesiumLayer = lylist
+              //   for (let clayer of lylist) {
+
+              //     clayer.visible = lyD.layer.visible
+              //     // clayer._name = lyD.label
+
+              //     if (lyD.layer.queryParameter) {
+              //       clayer.setQueryParameter(queryParameter);
+              //     }
+
+              //     if (lyD.layer.enableFillAndWireFrame) {
+              //       clayer.style3D.fillStyle = Cesium.FillStyle.Fill_And_WireFrame;
+              //       clayer.style3D.lineColor = Cesium.Color.fromCssColorString('rgb(0,0,0)');
+              //       clayer.style3D.lineWidth = 1;
+              //       clayer.wireFrameMode = 2
+              //     }
+              //   }
+              // });
             }
             else if (lyD.layer.layerName) {
-              var slayer = scene.layers.find(lyD.layer.layerName);
-              lyD.cesiumLayer = slayer
-              if (slayer) {
-                slayer.visible = lyD.layer.visible
-              }
-              console.log(slayer)
+              // var slayer = scene.layers.find(lyD.layer.layerName);
+              // lyD.cesiumLayer = slayer
+              // if (slayer) {
+              //   slayer.visible = lyD.layer.visible
+              // }
             }
           }
           else if (lyD.layer.type === "MVT") {
@@ -110,21 +137,20 @@ export default {
       if (data.children && data.children.length > 0) {
         return
       }
-      if (data.cesiumLayer instanceof Array) {
-        for (let clayer of data.cesiumLayer) {
-          clayer.visible = checked
-        }
-      } else if (data.cesiumLayer) {
-        data.cesiumLayer.visible = checked
-      } else if (data.layer.layerName) {
-        var slayer = scene.layers.find(data.layer.layerName);
-        if (slayer) {
-          data.cesiumLayer = slayer
-          data.cesiumLayer.visible = checked
-        }
-      } else {
-        data.cesiumLayer.visible = checked
-      }
+      data.cesiumLayer.visible = checked
+      // if (data.cesiumLayer instanceof Array) {
+      //   for (let clayer of data.cesiumLayer) {
+      //     clayer.visible = checked
+      //   }
+      // } else if (data.layer.layerName) {
+      //   var slayer = scene.layers.find(data.layer.layerName);
+      //   if (slayer) {
+      //     data.cesiumLayer = slayer
+      //     data.cesiumLayer.visible = checked
+      //   }
+      // } else {
+      //   data.cesiumLayer.visible = checked
+      // }
     },
     renderExtButton (h, { node, data }) {
       let checkedLayer = !(
@@ -133,23 +159,25 @@ export default {
       )
 
       const gotoLayer = function (node, data) {
-        if (data.cesiumLayer instanceof Array) {
-          viewer.flyTo(data.cesiumLayer[0])
-        } else if (data.cesiumLayer) {
-          viewer.flyTo(data.cesiumLayer)
-        } else if (data.layer.layerName) {
-          var slayer = scene.layers.find(data.layer.layerName);
-          if (slayer) {
-            data.cesiumLayer = slayer
-            viewer.flyTo(slayer)
-          }
-        }
+        viewer.flyTo(data.cesiumLayer)
+        // if (data.cesiumLayer instanceof Array) {
+        //   viewer.flyTo(data.cesiumLayer[0])
+        // } else if (data.cesiumLayer) {
+        //   viewer.flyTo(data.cesiumLayer)
+        // } else if (data.layer.layerName) {
+        //   var slayer = scene.layers.find(data.layer.layerName);
+        //   if (slayer) {
+        //     data.cesiumLayer = slayer
+        //     viewer.flyTo(slayer)
+        //   }
+        // }
       }
 
       return (
         <span class="custom-tree-node">
-          <span class="toggle-ext-button">{node.label}</span>
-          <i v-show={checkedLayer} class="my-icon-gotolayer extbtn" on-click={() => gotoLayer(node, data)} />
+          <span class="toggle-ext-button">{node.label}
+            <i v-show={checkedLayer} class="esri-icon-directions2 my-ext-button" on-click={() => gotoLayer(node, data)} />
+          </span>
         </span>
       )
     },
@@ -165,12 +193,6 @@ export default {
 .custom-tree-node {
   display: flex;
 }
-.extbtn {
-  background: red !important;
-  margin-left: 4px;
-  margin-top: 2px;
-  float: right;
-}
 .toggle-ext-button {
   i {
     opacity: 0;
@@ -178,5 +200,10 @@ export default {
   &:hover i {
     opacity: 1;
   }
+}
+.my-ext-button {
+  margin-left: 4px;
+  margin-top: 2px;
+  float: right;
 }
 </style>

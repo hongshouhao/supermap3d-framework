@@ -7,7 +7,7 @@ export default class SkylineTool {
     this.skyline.radius = 10000
   }
 
-  draw() {
+  start() {
     const cartographic = this.scene.camera.positionCartographic
     const longitude = Cesium.Math.toDegrees(cartographic.longitude)
     const latitude = Cesium.Math.toDegrees(cartographic.latitude)

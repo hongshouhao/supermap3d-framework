@@ -78,7 +78,7 @@ export default {
 
     runSunlight () {
       let _this = this
-      _this.sunlightTool.run((h) => {
+      _this.sunlightTool.start((h) => {
         _this.currentHour = h
       })
     },
@@ -94,8 +94,10 @@ export default {
     },
 
     reset () {
-      this.sunlightTool.clear()
-      this.shadowQueryTool.clear()
+      if (this.sunlightTool)
+        this.sunlightTool.clear()
+      if (this.shadowQueryTool)
+        this.shadowQueryTool.clear()
     }
   }
 }

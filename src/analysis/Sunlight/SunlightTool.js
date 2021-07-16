@@ -24,7 +24,7 @@ export default class SunlightTool {
     this.endTime.setHours(parseInt(endHour))
   }
 
-  run(intercepor) {
+  start(intercepor) {
     if (this.startTime > this.endTime) {
       return
     }
