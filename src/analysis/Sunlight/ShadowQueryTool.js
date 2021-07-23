@@ -1,5 +1,4 @@
-// import $ from 'jquery'
-
+import { setCursor, resetCursor } from '../../utils/CursorUtility'
 export default class ShadowQueryTool {
   constructor(viewer) {
     this.viewer = viewer
@@ -17,14 +16,9 @@ export default class ShadowQueryTool {
 
     this.polygonDrawHandler.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
-        viewer.enableCursorStyle = false
-        viewer._element.style.cursor = ''
-        $('body')
-          .removeClass('drawCur')
-          .addClass('drawCur')
+        setCursor('cursor-crosshair')
       } else {
-        viewer.enableCursorStyle = true
-        $('body').removeClass('drawCur')
+        resetCursor('cursor-crosshair')
       }
     })
 

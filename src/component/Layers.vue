@@ -1,25 +1,47 @@
 <template>
   <div class="layer-tree">
+    <div ref="viewportSpliter"
+         v-show="multiViewport"
+         class="viewport-spliter" />
+    <!-- <div class="tree-div"> -->
     <el-tree :data="layersData"
              node-key="id"
              show-checkbox
-             @check-change="setLayerVisible"
+             @check-change="setLayerVisible1"
              :render-content="renderExtButton"
              :default-expanded-keys="defaultExpandedKeys"
              :default-checked-keys="defaultCheckedKeys">
     </el-tree>
+    <!-- </div> -->
+
+    <div v-if="multiViewport"
+         class="divider">
+      <el-divider direction="vertical"></el-divider>
+    </div>
+
+    <div>
+      <el-tree v-if="multiViewport"
+               :data="layersData"
+               node-key="id"
+               show-checkbox
+               @check-change="setLayerVisible2"
+               :render-content="renderExtButton"
+               :default-expanded-keys="defaultExpandedKeys"
+               :default-checked-keys="defaultCheckedKeys">
+      </el-tree>
+    </div>
   </div>
 </template>
 
 <script>
-import { layers } from './layers'
-
+import { layers } from '../layers'
 export default {
   data () {
     return {
       layersData: [],
       defaultExpandedKeys: [],
       defaultCheckedKeys: [],
+      multiViewport: false
     }
   },
   props: [],
@@ -30,17 +52,17 @@ export default {
       if (window.viewer) {
         this.addLayers(layers)
         this.layersData = layers
-        // const targ = layers.filter(x => x.display !== false)
-        // this.layersData = targ
+
         viewer.camera.flyTo({
           destination: Cesium.Cartesian3.fromDegrees(120.603, 31.175, 400.0),
           orientation: {
             heading: 0.027587479922354774,
             pitch: -0.5169824822585825,
             roll: 6.283185307179586
-          }
+          },
+          duration: 1.5
         });
-
+        viewer._element.appendChild(this.$refs.viewportSpliter)
       }
     },
     addLayers (layersData) {
@@ -82,34 +104,6 @@ export default {
                   ly.wireFrameMode = 2
                 }
               });
-
-              // window.viewer.scene.open(lyD.layer.url).then((lylist) => {
-
-              //   lyD.cesiumLayer = lylist
-              //   for (let clayer of lylist) {
-
-              //     clayer.visible = lyD.layer.visible
-              //     // clayer._name = lyD.label
-
-              //     if (lyD.layer.queryParameter) {
-              //       clayer.setQueryParameter(queryParameter);
-              //     }
-
-              //     if (lyD.layer.enableFillAndWireFrame) {
-              //       clayer.style3D.fillStyle = Cesium.FillStyle.Fill_And_WireFrame;
-              //       clayer.style3D.lineColor = Cesium.Color.fromCssColorString('rgb(0,0,0)');
-              //       clayer.style3D.lineWidth = 1;
-              //       clayer.wireFrameMode = 2
-              //     }
-              //   }
-              // });
-            }
-            else if (lyD.layer.layerName) {
-              // var slayer = scene.layers.find(lyD.layer.layerName);
-              // lyD.cesiumLayer = slayer
-              // if (slayer) {
-              //   slayer.visible = lyD.layer.visible
-              // }
             }
           }
           else if (lyD.layer.type === "MVT") {
@@ -133,24 +127,19 @@ export default {
         }
       }
     },
-    setLayerVisible (data, checked) {
+    setLayerVisible1 (data, checked) { this.setLayerVisible(0, data, checked) },
+    setLayerVisible2 (data, checked) { this.setLayerVisible(1, data, checked) },
+    setLayerVisible (viewport, data, checked) {
       if (data.children && data.children.length > 0) {
         return
       }
-      data.cesiumLayer.visible = checked
-      // if (data.cesiumLayer instanceof Array) {
-      //   for (let clayer of data.cesiumLayer) {
-      //     clayer.visible = checked
-      //   }
-      // } else if (data.layer.layerName) {
-      //   var slayer = scene.layers.find(data.layer.layerName);
-      //   if (slayer) {
-      //     data.cesiumLayer = slayer
-      //     data.cesiumLayer.visible = checked
-      //   }
-      // } else {
-      //   data.cesiumLayer.visible = checked
-      // }
+
+      if (this.multiViewport) {
+        data.cesiumLayer.setVisibleInViewport(viewport, checked);
+      }
+      else {
+        data.cesiumLayer.visible = checked
+      }
     },
     renderExtButton (h, { node, data }) {
       let checkedLayer = !(
@@ -160,39 +149,53 @@ export default {
 
       const gotoLayer = function (node, data) {
         viewer.flyTo(data.cesiumLayer)
-        // if (data.cesiumLayer instanceof Array) {
-        //   viewer.flyTo(data.cesiumLayer[0])
-        // } else if (data.cesiumLayer) {
-        //   viewer.flyTo(data.cesiumLayer)
-        // } else if (data.layer.layerName) {
-        //   var slayer = scene.layers.find(data.layer.layerName);
-        //   if (slayer) {
-        //     data.cesiumLayer = slayer
-        //     viewer.flyTo(slayer)
-        //   }
-        // }
       }
-
+      //v-show={checkedLayer}
       return (
         <span class="custom-tree-node">
           <span class="toggle-ext-button">{node.label}
-            <i v-show={checkedLayer} class="esri-icon-directions2 my-ext-button" on-click={() => gotoLayer(node, data)} />
+            <i class={checkedLayer ? "esri-icon-directions2 my-ext-button" : "esri-icon-directions2 my-ext-button my-ext-button-hidden"} on-click={() => gotoLayer(node, data)} />
           </span>
         </span>
       )
     },
-
+    toggleViewportMode () {
+      if (this.multiViewport) {
+        viewer.scene.multiViewportMode = Cesium.MultiViewportMode.NONE
+        this.multiViewport = false
+      }
+      else {
+        viewer.scene.multiViewportMode = Cesium.MultiViewportMode.HORIZONTAL
+        this.multiViewport = true
+      }
+    }
   }
 }
 </script>
 <style lang="scss">
 .layer-tree {
+  display: flex;
   height: 100%;
   width: 100%;
+  background: white;
+  padding: 10px 10px;
+
+  .tree-div {
+    padding: 10px;
+  }
+  .divider {
+    position: relative;
+    .el-divider {
+      height: 100%;
+    }
+  }
 }
+
 .custom-tree-node {
   display: flex;
+  margin-bottom: 6px;
 }
+
 .toggle-ext-button {
   i {
     opacity: 0;
@@ -201,9 +204,23 @@ export default {
     opacity: 1;
   }
 }
+
 .my-ext-button {
   margin-left: 4px;
   margin-top: 2px;
   float: right;
+}
+
+.my-ext-button-hidden {
+  visibility: hidden;
+}
+
+.viewport-spliter {
+  position: absolute;
+  background-color: white;
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
 }
 </style>

@@ -64,5 +64,6 @@ export default {
 
 .widget-content {
   color: black;
+  padding: 10px;
 }
 </style>

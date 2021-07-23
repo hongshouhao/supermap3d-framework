@@ -11,7 +11,7 @@
     </el-slider>
     <div class="others">
       <div class="sun-date">
-        <label>日 期</label>
+        <label style="margin-right:6px;margin-left:-15px;">日期</label>
         <el-date-picker v-model="date"
                         :clearable="false"
                         size="small"
@@ -22,7 +22,7 @@
       </div>
       <el-button type="primary"
                  size="small"
-                 @click="runSunlight">日照效果</el-button>
+                 @click="runSunlight">{{startText}}</el-button>
       <el-button type="primary"
                  size="small"
                  @click="doShadowQuery">阴影分析</el-button>
@@ -39,6 +39,8 @@ export default {
     return {
       date: "",
       currentHour: 8,
+      startText: "日照效果",
+      started: false,
       marks: {
       },
       startHour: 8,
@@ -78,9 +80,20 @@ export default {
 
     runSunlight () {
       let _this = this
-      _this.sunlightTool.start((h) => {
-        _this.currentHour = h
-      })
+      if (_this.sunlightTool.state === 'none' || _this.sunlightTool.state === 'paused') {
+        _this.sunlightTool.start((h) => {
+          _this.currentHour = h
+        },
+          () => {
+            _this.startText = "日照效果"
+          }
+        )
+        _this.startText = "暂停"
+      }
+      else if (_this.sunlightTool.state === 'running') {
+        _this.sunlightTool.pause()
+        _this.startText = "继续"
+      }
     },
 
     doShadowQuery () {
@@ -102,10 +115,10 @@ export default {
   }
 }
 </script>
-<style scoped lang="scss">
+<style lang="scss">
 .sunlight-setting {
   height: 130px;
-  width: 400px;
+  width: 450px;
   padding: 10px 25px;
 
   .others {
@@ -117,6 +130,9 @@ export default {
         width: 130px;
       }
     }
+  }
+  .el-slider__runway {
+    background-color: rgba(25, 137, 250, 0.5) !important;
   }
 }
 </style>

@@ -1,5 +1,4 @@
-import $ from 'jquery'
-
+import { setCursor, resetCursor } from '../../utils/CursorUtility'
 export default class ViewDomeTool {
   constructor(viewer) {
     this.viewer = viewer
@@ -22,16 +21,11 @@ export default class ViewDomeTool {
   }
 
   start() {
-    this.viewer.enableCursorStyle = false
-    this.viewer._element.style.cursor = ''
-    $('body')
-      .removeClass('drawCur')
-      .addClass('drawCur')
+    setCursor('cursor-crosshair')
 
     let _this = this
     this.handler.setInputAction(function(e) {
-      _this.viewer.enableCursorStyle = true
-      $('body').removeClass('drawCur')
+      resetCursor('cursor-crosshair')
 
       let position = _this.viewer.scene.pickPosition(e.position)
       let cartographic = Cesium.Cartographic.fromCartesian(position)

@@ -148,3 +148,20 @@ export function reCalculateCartesian(cartesian, height) {
     height
   )
 }
+
+export function getViewCenter() {
+  let ray = new Cesium.Ray(viewer.camera.position, viewer.camera.direction)
+  let intersection = Cesium.IntersectionTests.rayEllipsoid(
+    ray,
+    Cesium.Ellipsoid.WGS84
+  )
+
+  let point = Cesium.Ray.getPoint(ray, intersection.start)
+  return point
+}
+
+export function getCameraHeight() {
+  return viewer.scene.globe.ellipsoid.cartesianToCartographic(
+    viewer.camera.position
+  ).height
+}

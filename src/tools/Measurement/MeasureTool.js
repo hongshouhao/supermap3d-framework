@@ -1,4 +1,4 @@
-import $ from 'jquery'
+import { setCursor, resetCursor } from '../../utils/CursorUtility'
 
 export default class MeasureTool {
   constructor(viewer) {
@@ -16,19 +16,17 @@ export default class MeasureTool {
       var distance =
         dis > 1000 ? (dis / 1000).toFixed(2) + 'km' : dis.toFixed(2) + 'm'
       _this.handlerDis.disLabel.text = '距离:' + distance
+      // _this.handlerDis.disLabel.style = Cesium.LabelStyle.FILL
+      // _this.handlerDis.disLabel.fillColor = Cesium.Color.fromCssColorString(
+      //   '#99CCFF'
+      // )
     })
 
     _this.handlerDis.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
-        viewer.enableCursorStyle = false
-        viewer._element.style.cursor = ''
-
-        $('body')
-          .removeClass('measureCur')
-          .addClass('measureCur')
+        setCursor('cursor-crosshair')
       } else {
-        viewer.enableCursorStyle = true
-        $('body').removeClass('measureCur')
+        resetCursor('cursor-crosshair')
       }
     })
 
@@ -46,14 +44,9 @@ export default class MeasureTool {
     })
     _this.handlerArea.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
-        viewer.enableCursorStyle = false
-        viewer._element.style.cursor = ''
-        $('body')
-          .removeClass('measureCur')
-          .addClass('measureCur')
+        setCursor('cursor-crosshair')
       } else {
-        viewer.enableCursorStyle = true
-        $('body').removeClass('measureCur')
+        resetCursor('cursor-crosshair')
       }
     })
 
@@ -81,14 +74,9 @@ export default class MeasureTool {
     })
     _this.handlerHeight.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
-        viewer.enableCursorStyle = false
-        viewer._element.style.cursor = ''
-        $('body')
-          .removeClass('measureCur')
-          .addClass('measureCur')
+        setCursor('cursor-crosshair')
       } else {
-        viewer.enableCursorStyle = true
-        $('body').removeClass('measureCur')
+        resetCursor('cursor-crosshair')
       }
     })
   }

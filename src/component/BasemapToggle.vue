@@ -2,18 +2,17 @@
   <ul class="change-basemap">
     <li :class="{ active: !toSatellite }"
         @click="toggleBasemap(false)">
-      <i class="my-icon-maps"></i>
+      <i class="esri-icon-maps"></i>
       地图
     </li>
     <li :class="{ active: toSatellite }"
         @click="toggleBasemap(true)">
-      <i class="my-icon-public"></i>
+      <i class="esri-icon-globe"></i>
       影像
     </li>
   </ul>
 </template>
 <script>
-
 export default {
   data () {
     return {
@@ -74,7 +73,6 @@ export default {
 .change-basemap {
   margin: 0 10px 0 0;
   padding: 0 !important;
-  overflow: hidden;
   cursor: pointer;
   display: inline-block;
   position: relative;
@@ -85,16 +83,18 @@ export default {
     background: #dbdee2;
     content: "";
     position: absolute;
-    right: 85px;
-    top: 10px;
+    left: 68px;
+    top: 8px;
   }
 
   li {
     &:nth-child(1) {
       border-right: none;
+      padding: 6px 8px 6px 12px;
     }
     &:nth-child(2) {
       border-left: none;
+      padding: 6px 12px 6px 8px;
     }
     i {
       position: relative;
@@ -106,12 +106,11 @@ export default {
       position: relative;
       top: 3px;
     }
+
     float: left;
     background: #fff;
-    padding: 7px 18px;
     list-style: none;
     font-size: 14px;
-    border: 1px solid #ccc;
     color: #495060;
     &.active {
       color: #4279e4;

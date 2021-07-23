@@ -1,4 +1,3 @@
-import $ from 'jquery'
 import Enumerable from 'linq'
 import {
   pointProjectionOnLine,
@@ -8,6 +7,7 @@ import {
   cartesianToLonlat,
   reCalculateCartesian,
 } from '../../utils/CesiumMath'
+import { setCursor, resetCursor } from '../../utils/CursorUtility'
 
 export default class HighLimitTool {
   constructor(viewer) {
@@ -57,7 +57,6 @@ export default class HighLimitTool {
       this.clippingRectangle.rectangle.height = height
 
       for (let i = 0; i < this.clippingRectangleOutlinePositions.length; i++) {
-        debugger
         let ptNew = reCalculateCartesian(
           this.clippingRectangleOutlinePositions[i],
           height
@@ -89,7 +88,7 @@ export default class HighLimitTool {
       } else {
         let layer = this.scene.layers.find(lname)
         if (layer) {
-          layer.clipLineColor = Cesium.Color.RED
+          // layer.clipLineColor = Cesium.Color.RED
           let url = `${layer._baseUri.scheme}://${layer._baseUri.authority}${layer._baseUri.path}`
           url = url.replace('/data/path/', '/config')
           this.viewer.scene
@@ -100,7 +99,7 @@ export default class HighLimitTool {
               ly.style3D.lineColor = layer.style3D.lineColor
               ly.style3D.lineWidth = layer.style3D.lineWidth
               ly.wireFrameMode = layer.wireFrameMode
-              ly.clipLineColor = Cesium.Color.RED
+              // ly.clipLineColor = Cesium.Color.RED
               ly.style3D.fillForeColor = Cesium.Color.ORANGERED
             })
         }
@@ -300,9 +299,7 @@ export default class HighLimitTool {
             false
           )
 
-          $('body')
-            .removeClass('cursor-pointer')
-            .addClass('cursor-pointer')
+          setCursor('cursor-pointer')
         } else {
           _this.clippingRectangleOutline.polyline.width = new Cesium.CallbackProperty(
             function() {
@@ -310,7 +307,7 @@ export default class HighLimitTool {
             },
             false
           )
-          $('body').removeClass('cursor-pointer')
+          resetCursor('cursor-pointer')
         }
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)

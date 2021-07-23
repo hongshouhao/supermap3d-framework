@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="view-shed-setting-style">
     <div>
       <label>方向(度)</label>
       <input type="range"
@@ -80,3 +80,15 @@
     </div>
   </div>
 </template>
+<style scoped lang='scss'>
+.view-shed-setting-style {
+  > div {
+    > label {
+      width: 110px;
+    }
+    > input {
+      margin: 0 5px;
+    }
+  }
+}
+</style>
