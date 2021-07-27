@@ -29,13 +29,15 @@ export default {
       this.toSatellite = useSatellite
       if (useSatellite) {
         if (!this.layerSatellite) {
-          this.layerSatellite = viewer.imageryLayers.addImageryProvider(
-            new Cesium.BingMapsImageryProvider({
-              url: "https://dev.virtualearth.net",
-              mapStyle: Cesium.BingMapsStyle.AERIAL,
-              key: URL_CONFIG.BING_MAP_KEY
-            })
-          );
+
+          if (window.s3d.config.baseMapEarth.type === "bing") {
+            this.layerSatellite = window.s3d.viewer.imageryLayers.addImageryProvider(
+              new Cesium.BingMapsImageryProvider(window.s3d.config.baseMapEarth.params)
+            );
+          }
+          else {
+            throw "暂未实现"
+          }
 
           this.layerSatellite.visible = true
         }
@@ -48,12 +50,15 @@ export default {
       }
       else {
         if (!this.layerNormal) {
-          this.layerNormal = viewer.imageryLayers.addImageryProvider(
-            new Cesium.TiandituImageryProvider({
-              mapStyle: Cesium.TiandituMapsStyle["VEC_W"],
-              token: URL_CONFIG.TOKEN_TIANDITU
-            })
-          );
+
+          if (window.s3d.config.baseMapNormal.type === "tianditu") {
+            this.layerNormal = window.s3d.viewer.imageryLayers.addImageryProvider(
+              new Cesium.TiandituImageryProvider(window.s3d.config.baseMapNormal.params)
+            );
+          }
+          else {
+            throw "暂未实现"
+          }
 
           this.layerNormal.visible = true
         }

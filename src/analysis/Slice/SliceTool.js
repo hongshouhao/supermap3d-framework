@@ -321,7 +321,7 @@ export default class SliceTool {
             false
           )
 
-          setCursor('cursor-crosshair')
+          setCursor(_this.viewer, 'cursor-crosshair')
         } else {
           _this.clippingRectangleOutline.polyline.width = new Cesium.CallbackProperty(
             function() {
@@ -329,7 +329,7 @@ export default class SliceTool {
             },
             false
           )
-          resetCursor('cursor-crosshair')
+          resetCursor(_this.viewer, 'cursor-crosshair')
         }
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)

@@ -24,9 +24,9 @@ export default class MeasureTool {
 
     _this.handlerDis.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
-        setCursor('cursor-crosshair')
+        setCursor(viewer, 'cursor-crosshair')
       } else {
-        resetCursor('cursor-crosshair')
+        resetCursor(viewer, 'cursor-crosshair')
       }
     })
 
@@ -44,9 +44,9 @@ export default class MeasureTool {
     })
     _this.handlerArea.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
-        setCursor('cursor-crosshair')
+        setCursor(viewer, 'cursor-crosshair')
       } else {
-        resetCursor('cursor-crosshair')
+        resetCursor(viewer, 'cursor-crosshair')
       }
     })
 
@@ -74,9 +74,9 @@ export default class MeasureTool {
     })
     _this.handlerHeight.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
-        setCursor('cursor-crosshair')
+        setCursor(viewer, 'cursor-crosshair')
       } else {
-        resetCursor('cursor-crosshair')
+        resetCursor(viewer, 'cursor-crosshair')
       }
     })
   }

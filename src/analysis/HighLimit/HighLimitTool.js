@@ -34,8 +34,6 @@ export default class HighLimitTool {
         _this.createRectangle(e.endPosition)
       } else {
         _this.moveDefaultectangle(e.endPosition)
-        //根据下面的代码移动有误差，因为鼠标状态还没稳定
-        //_this.moveRectangle(e.startPosition, e.endPosition)
         _this.updateClipBox()
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
@@ -299,7 +297,7 @@ export default class HighLimitTool {
             false
           )
 
-          setCursor('cursor-pointer')
+          setCursor(_this.viewer, 'cursor-pointer')
         } else {
           _this.clippingRectangleOutline.polyline.width = new Cesium.CallbackProperty(
             function() {
@@ -307,7 +305,7 @@ export default class HighLimitTool {
             },
             false
           )
-          resetCursor('cursor-pointer')
+          resetCursor(_this.viewer, 'cursor-pointer')
         }
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)

@@ -66,10 +66,10 @@ export default {
   methods: {
     init () {
       if (!this.sunlightTool) {
-        this.sunlightTool = new SunlightTool(window.viewer)
+        this.sunlightTool = new SunlightTool(window.s3d.viewer)
       }
       if (!this.shadowQueryTool) {
-        this.shadowQueryTool = new ShadowQueryTool(window.viewer)
+        this.shadowQueryTool = new ShadowQueryTool(window.s3d.viewer)
       }
       this.timeChanged()
     },
@@ -103,7 +103,7 @@ export default {
     setCurrentTime () {
       let newDate = new Date(this.date.valueOf())
       newDate.setHours(this.currentHour)
-      window.viewer.clock.currentTime = Cesium.JulianDate.fromDate(newDate)
+      window.s3d.viewer.clock.currentTime = Cesium.JulianDate.fromDate(newDate)
     },
 
     reset () {

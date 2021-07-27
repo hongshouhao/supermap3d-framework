@@ -21,11 +21,11 @@ export default class ViewDomeTool {
   }
 
   start() {
-    setCursor('cursor-crosshair')
+    setCursor(this.viewer, 'cursor-crosshair')
 
     let _this = this
     this.handler.setInputAction(function(e) {
-      resetCursor('cursor-crosshair')
+      resetCursor(_this.viewer, 'cursor-crosshair')
 
       let position = _this.viewer.scene.pickPosition(e.position)
       let cartographic = Cesium.Cartographic.fromCartesian(position)

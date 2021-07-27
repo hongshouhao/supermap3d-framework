@@ -2,20 +2,8 @@
 //MapImagery 影像图层
 //S3M        三维图层
 //MVT        矢量瓦片图层
+let baseUrl = process.env.VUE_APP_ISERVER_BASE_URL
 export const layers = [
-  // {
-  //   id: '0',
-  //   label: '分层分户',
-  //   display: false,
-  //   expand: true,
-  //   layer: {
-  //     type: 'S3M',
-  //     visible: false,
-  //     enableFillAndWireFrame: true,
-  //     url:
-  //       'http://106.14.242.98:8090/iserver/services/3D-XCFCFH/rest/realspace',
-  //   },
-  // },
   {
     id: '2',
     label: '分层分户',
@@ -28,9 +16,7 @@ export const layers = [
           type: 'S3M',
           visible: true,
           enableFillAndWireFrame: true,
-          url:
-            'http://106.14.242.98:8090/iserver/services/3D-XCFCFH/rest/realspace/datas/FC/config',
-          // layerName: 'FC',
+          url: `${baseUrl}iserver/services/3D-XCFCFH/rest/realspace/datas/FC/config`,
         },
       },
       {
@@ -40,9 +26,7 @@ export const layers = [
           type: 'S3M',
           visible: false,
           enableFillAndWireFrame: true,
-          url:
-            'http://106.14.242.98:8090/iserver/services/3D-XCFCFH/rest/realspace/datas/FH/config',
-          //  layerName: 'FH',
+          url: `${baseUrl}iserver/services/3D-XCFCFH/rest/realspace/datas/FH/config`,
         },
       },
     ],
@@ -53,8 +37,7 @@ export const layers = [
     layer: {
       type: 'S3M',
       visible: false,
-      url:
-        'http://106.14.242.98:8090/iserver/services/3D-XCGX/rest/realspace/datas/GX/config',
+      url: `${baseUrl}iserver/services/3D-XCGX/rest/realspace/datas/GX/config`,
     },
   },
   {
@@ -63,8 +46,7 @@ export const layers = [
     layer: {
       type: 'S3M',
       visible: true,
-      url:
-        'http://106.14.242.98:8090/iserver/services/3D-XCJZDT/rest/realspace/datas/Config/config',
+      url: `${baseUrl}iserver/services/3D-XCJZDT/rest/realspace/datas/Config/config`,
     },
   },
 

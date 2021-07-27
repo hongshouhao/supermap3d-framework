@@ -202,40 +202,32 @@ export default {
   beforeMount () {
   },
   mounted () {
-    window.viewer.cesiumWidget.container.appendChild(this.$refs.viewshedSettingPanel.$el)
-    window.viewer.cesiumWidget.container.appendChild(this.$refs.sunlightSettingPanel.$el)
-    window.viewer.cesiumWidget.container.appendChild(this.$refs.highLimitSettingPanel.$el)
+    window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.viewshedSettingPanel.$el)
+    window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.sunlightSettingPanel.$el)
+    window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.highLimitSettingPanel.$el)
 
   },
   methods: {
     globeView () {
-      window.viewer.camera.flyTo({
-        destination: { x: -2778295.607780161, y: 4697279.964957479, z: 3301873.5146833723 },
-        orientation: {
-          heading: 0.027587479922354774,
-          pitch: -0.5169824822585829,
-          roll: 6.283185307179586,
-        },
-        duration: 1.5
-      })
+      window.s3d.viewer.camera.flyTo(window.s3d.config.defaultCamera)
     },
     toggleView () {
       if (!this.sceneModeToogleTool) {
-        this.sceneModeToogleTool = new SceneModeToogleTool(window.viewer)
+        this.sceneModeToogleTool = new SceneModeToogleTool(window.s3d.viewer)
       }
       this.sceneModeToogleTool.toogle()
       this.viewMode = this.sceneModeToogleTool.mode
     },
     zoomIn () {
-      window.viewer.camera.zoomIn(100)
+      window.s3d.viewer.camera.zoomIn(100)
     },
     zoomOut () {
-      window.viewer.camera.zoomOut(100)
+      window.s3d.viewer.camera.zoomOut(100)
     },
 
     startDistanceMeasure () {
       if (!this.measureTool) {
-        this.measureTool = new MeasureTool(window.viewer)
+        this.measureTool = new MeasureTool(window.s3d.viewer)
       }
       this.currentTool = "MeasureTool"
       this.measureTool.measureDistance()
@@ -243,7 +235,7 @@ export default {
 
     startAreaMeasure () {
       if (!this.measureTool) {
-        this.measureTool = new MeasureTool(window.viewer)
+        this.measureTool = new MeasureTool(window.s3d.viewer)
       }
       this.currentTool = "MeasureTool"
       this.measureTool.measureArea()
@@ -251,7 +243,7 @@ export default {
 
     annotatePoint () {
       if (!this.pointMeasurement) {
-        this.pointMeasurement = new PointMeasurement(window.viewer)
+        this.pointMeasurement = new PointMeasurement(window.s3d.viewer)
       }
       this.currentTool = "PointMeasurement"
       this.pointMeasurement.start()
@@ -259,7 +251,7 @@ export default {
 
     startSlice () {
       if (!this.sliceTool) {
-        this.sliceTool = new SliceTool(window.viewer)
+        this.sliceTool = new SliceTool(window.s3d.viewer)
       }
       this.sliceTool.start()
       this.currentTool = "SliceTool"
@@ -267,7 +259,7 @@ export default {
 
     startViewshed () {
       if (!this.viewshedTool) {
-        this.viewshedTool = new ViewshedTool(window.viewer)
+        this.viewshedTool = new ViewshedTool(window.s3d.viewer)
         this.viewshedTool.bindUI(this.$refs.viewshedSettingPanel.$el)
       }
       this.viewshedTool.start()
@@ -281,7 +273,7 @@ export default {
 
     startSkyline () {
       if (!this.skylineTool) {
-        this.skylineTool = new SkylineTool(window.viewer)
+        this.skylineTool = new SkylineTool(window.s3d.viewer)
       }
       this.currentTool = "SkylineTool"
       this.skylineTool.start()
@@ -289,7 +281,7 @@ export default {
 
     startViewDome () {
       if (!this.viewDomeTool) {
-        this.viewDomeTool = new ViewDomeTool(window.viewer)
+        this.viewDomeTool = new ViewDomeTool(window.s3d.viewer)
       }
       this.currentTool = "ViewDomeTool"
       this.viewDomeTool.start()
@@ -297,14 +289,14 @@ export default {
 
     startHighLimit () {
       if (!this.highLimitTool) {
-        this.highLimitTool = new HighLimitTool(window.viewer)
+        this.highLimitTool = new HighLimitTool(window.s3d.viewer)
       }
       this.currentTool = "HighLimitTool"
       this.highLimitTool.setTargetLayers(["楼幢"])
       this.highLimitTool.start()
     },
     multiViewport () {
-      window.layerTree.toggleViewportMode()
+      window.s3d.layerTree.toggleViewportMode()
     },
 
     updateHeight (height) {

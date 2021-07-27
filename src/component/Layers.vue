@@ -33,8 +33,7 @@
   </div>
 </template>
 
-<script>
-import { layers } from '../layers'
+<script> 
 export default {
   data () {
     return {
@@ -49,20 +48,12 @@ export default {
   },
   methods: {
     init () {
-      if (window.viewer) {
-        this.addLayers(layers)
-        this.layersData = layers
+      if (window.s3d.viewer) {
+        this.addLayers(window.s3d.config.layers)
+        this.layersData = window.s3d.config.layers
 
-        viewer.camera.flyTo({
-          destination: Cesium.Cartesian3.fromDegrees(120.603, 31.175, 400.0),
-          orientation: {
-            heading: 0.027587479922354774,
-            pitch: -0.5169824822585825,
-            roll: 6.283185307179586
-          },
-          duration: 1.5
-        });
-        viewer._element.appendChild(this.$refs.viewportSpliter)
+        window.s3d.viewer.camera.flyTo(window.s3d.config.defaultCamera);
+        window.s3d.viewer._element.appendChild(this.$refs.viewportSpliter)
       }
     },
     addLayers (layersData) {
@@ -80,7 +71,7 @@ export default {
             var l = new Cesium.SuperMapImageryProvider({
               url: lyD.layer.url
             });
-            window.viewer.imageryLayers.addImageryProvider(l)
+            window.s3d.viewer.imageryLayers.addImageryProvider(l)
             console.log(l)
           }
           else if (lyD.layer.type === "S3M") {
@@ -89,7 +80,7 @@ export default {
             }
 
             if (lyD.layer.url) {
-              window.viewer.scene.addS3MTilesLayerByScp(lyD.layer.url, { name: lyD.label }).then((ly) => {
+              window.s3d.viewer.scene.addS3MTilesLayerByScp(lyD.layer.url, { name: lyD.label }).then((ly) => {
                 lyD.cesiumLayer = ly
                 ly.visible = lyD.layer.visible
 
@@ -107,10 +98,10 @@ export default {
             }
           }
           else if (lyD.layer.type === "MVT") {
-            var mvtMap = window.viewer.scene.addVectorTilesMap({
+            var mvtMap = window.s3d.viewer.scene.addVectorTilesMap({
               url: lyD.layer.url,
               name: lyD.label,
-              viewer: window.viewer
+              viewer: window.s3d.viewer
             });
             console.log(mvtMap)
           }
@@ -148,9 +139,8 @@ export default {
       )
 
       const gotoLayer = function (node, data) {
-        viewer.flyTo(data.cesiumLayer)
+        window.s3d.viewer.flyTo(data.cesiumLayer)
       }
-      //v-show={checkedLayer}
       return (
         <span class="custom-tree-node">
           <span class="toggle-ext-button">{node.label}
@@ -161,11 +151,11 @@ export default {
     },
     toggleViewportMode () {
       if (this.multiViewport) {
-        viewer.scene.multiViewportMode = Cesium.MultiViewportMode.NONE
+        window.s3d.viewer.scene.multiViewportMode = Cesium.MultiViewportMode.NONE
         this.multiViewport = false
       }
       else {
-        viewer.scene.multiViewportMode = Cesium.MultiViewportMode.HORIZONTAL
+        window.s3d.viewer.scene.multiViewportMode = Cesium.MultiViewportMode.HORIZONTAL
         this.multiViewport = true
       }
     }

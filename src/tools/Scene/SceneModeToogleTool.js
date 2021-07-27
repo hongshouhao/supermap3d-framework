@@ -12,14 +12,14 @@ export default class SceneModeToogleTool {
 
   toogle() {
     if (this.mode === '3D') {
-      let center = getViewCenter()
+      let center = getViewCenter(this.viewer)
       this.preHeading = this.viewer.camera.heading
       this.prePitch = this.viewer.camera.pitch
       this.preRoll = this.viewer.camera.roll
       this.preDirection = this.viewer.camera.direction
-      this.preHeight = getCameraHeight()
-      debugger
-      this.preHeight2 = viewer.camera.positionCartographic.height
+      this.preHeight = getCameraHeight(this.viewer)
+
+      this.preHeight2 = this.viewer.camera.positionCartographic.height
       this.preVector = Cesium.Cartesian3.subtract(
         center,
         this.viewer.camera.position,
@@ -47,7 +47,7 @@ export default class SceneModeToogleTool {
       this.mode = '2D'
     } else if (this.mode === '2D') {
       console.log(this.viewer.camera.pitch)
-      let center = getViewCenter()
+      let center = getViewCenter(this.viewer)
       let destination = Cesium.Cartesian3.subtract(
         center,
         this.preVector,

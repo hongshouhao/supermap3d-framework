@@ -30,8 +30,8 @@ export default {
   },
 
   mounted () {
-    window.layerTree = this.$refs.layerTree
-    window.layerTree.init()
+    window.s3d.layerTree = this.$refs.layerTree
+    window.s3d.layerTree.init()
   },
   methods: {
   },

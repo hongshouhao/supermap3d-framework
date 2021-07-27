@@ -18,7 +18,7 @@ export default class ShadowQueryTool {
       if (isActive == true) {
         setCursor('cursor-crosshair')
       } else {
-        resetCursor('cursor-crosshair')
+        resetCursor(viewer, 'cursor-crosshair')
       }
     })
 

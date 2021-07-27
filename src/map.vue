@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div class="cesium-core-container">
     <div class="top-left-bar-container">
       <TopLeftBar />
     </div>
@@ -32,6 +32,10 @@ export default {
     }
   },
   beforeMount () {
+    if (!window.s3d || !window.s3d.config) {
+      throw '配置未初始化: window.s3d.config';
+    }
+
     this.sceneContainer = document.createElement("div")
     let viewer = new Cesium.Viewer(this.sceneContainer, {
       infoBox: false,
@@ -65,21 +69,21 @@ export default {
 
     viewer.scene.debugShowFramesPerSecond = false;
 
-    window.viewer = viewer
-    window.scene = viewer.scene
+    window.s3d.viewer = viewer
+    window.s3d.scene = viewer.scene
 
     console.log("viewer", viewer)
   },
   mounted () {
     this.$refs.cesiumContainer.appendChild(this.sceneContainer.children[0])
-    window.viewer.cesiumWidget.container.appendChild(this.$refs.popup.$el)
-    window.popup = this.$refs.popup
+    window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.popup.$el)
+    window.s3d.popup = this.$refs.popup
   }
 }
 </script>
 
 <style lang="scss">
-#app {
+.cesium-core-container {
   height: 100%;
   width: 100%;
 }
