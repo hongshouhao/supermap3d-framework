@@ -17,7 +17,7 @@ export default class ViewDomeTool {
     this.viewDome.startAngle = 0
     this.viewDome.endAngle = 360
     this.viewDome.isClosed = true
-    this.handler = new Cesium.ScreenSpaceEventHandler(scene.canvas)
+    this.handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
   }
 
   start() {

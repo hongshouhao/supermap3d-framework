@@ -22,6 +22,7 @@ export default {
     }
   },
   mounted () {
+    window.s3d.baseMap = {}
     this.toggleBasemap(true)
   },
   methods: {
@@ -34,6 +35,7 @@ export default {
             this.layerSatellite = window.s3d.viewer.imageryLayers.addImageryProvider(
               new Cesium.BingMapsImageryProvider(window.s3d.config.baseMapEarth.params)
             );
+            window.s3d.baseMap.earth = this.layerSatellite
           }
           else {
             throw "暂未实现"
@@ -55,6 +57,7 @@ export default {
             this.layerNormal = window.s3d.viewer.imageryLayers.addImageryProvider(
               new Cesium.TiandituImageryProvider(window.s3d.config.baseMapNormal.params)
             );
+            window.s3d.baseMap.normal = this.layerNormal
           }
           else {
             throw "暂未实现"

@@ -45,7 +45,7 @@ export default {
 </script>
 <style lang='scss'>
 .high-limit-setting {
-  width: 65px;
+  width: 70px;
   padding: 5px 0;
   .el-slider {
     .el-slider__runway {

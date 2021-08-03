@@ -5,7 +5,7 @@
                 trigger="click"
                 popper-class="layer-popup">
 
-      <Layers ref="layerTree" />
+      <Layers />
 
       <el-button slot="reference"
                  class="btn-layers">
@@ -30,7 +30,6 @@ export default {
   },
 
   mounted () {
-    window.s3d.layerTree = this.$refs.layerTree
     window.s3d.layerTree.init()
   },
   methods: {
@@ -61,6 +60,6 @@ export default {
   border-radius: 1px;
   background-color: rgba(255, 255, 255, 0) !important;
   border: none !important;
-  box-shadow: none !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
 }
 </style>

@@ -36,6 +36,18 @@ export default class Toolbar {
     }
   }
 
+  // hideButton(coords) {
+  //   let doms = $('.top-left-bar .esri-component')
+  //   if (doms.length <= coords[0]) {
+  //     throw '参数错误'
+  //   }
+
+  //   if (doms[coords[0]].children.length < coords[1]) {
+  //     throw '参数错误'
+  //   }
+  //   $(doms[coords[0]].children[coords[1]]).hide()
+  // }
+
   ///插入二级工具条按钮
   ///coords[0]:toolbar索引
   ///coords[1]:component索引

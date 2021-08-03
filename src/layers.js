@@ -49,6 +49,15 @@ export const layers = [
       url: `${baseUrl}iserver/services/3D-XCJZDT/rest/realspace/datas/Config/config`,
     },
   },
+  // {
+  //   id: '5',
+  //   label: 'tttt',
+  //   layer: {
+  //     type: 'S3M',
+  //     visible: true,
+  //     url: `http://106.14.242.98:8090/iserver/services/3D-local3DCache-Dataset4965020121NewDGN/rest/realspace/datas/Dataset_496_502_012_1@NewDGN/config`,
+  //   },
+  // },
 
   // {
   //   id: '1',

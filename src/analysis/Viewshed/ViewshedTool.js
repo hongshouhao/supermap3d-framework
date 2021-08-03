@@ -1,12 +1,10 @@
 export default class ViewshedTool {
   constructor(viewer) {
-    let _this = this
+    this.viewer = viewer
+    this.scene = viewer.scene
+    this.viewshedFlag = false
 
-    _this.viewer = viewer
-    _this.scene = viewer.scene
-    _this.viewshedFlag = false
-
-    _this.viewModel = {
+    this.viewModel = {
       direction: 1,
       pitch: 1,
       distance: 1,
@@ -14,25 +12,34 @@ export default class ViewshedTool {
       horizontalFov: 1,
     }
 
-    _this.viewshed3D = new Cesium.ViewShed3D(scene)
+    this.viewshed3D = new Cesium.ViewShed3D(this.scene)
     // var colorStr1 = viewshed3D.visibleAreaColor.toCssColorString()
     // var colorStr2 = viewshed3D.hiddenAreaColor.toCssColorString()
 
-    _this.pickPointHandler = new Cesium.DrawHandler(
-      _this.viewer,
+    this.pickPointHandler = new Cesium.DrawHandler(
+      this.viewer,
       Cesium.DrawMode.Point
     )
-    let drawHandler = new Cesium.ScreenSpaceEventHandler(_this.scene.canvas)
+    this.drawHandler = new Cesium.ScreenSpaceEventHandler(this.scene.canvas)
+  }
 
+  start() {
+    this.viewModel.direction = this.viewshed3D.direction
+    this.viewModel.pitch = this.viewshed3D.pitch
+    this.viewModel.distance = this.viewshed3D.distance
+    this.viewModel.verticalFov = this.viewshed3D.verticalFov
+    this.viewModel.horizontalFov = this.viewshed3D.horizontalFov
+
+    let _this = this
     let viewPosition = null
     // 鼠标移动时间回调
-    drawHandler.setInputAction(function(e) {
+    _this.drawHandler.setInputAction(function(e) {
       // 若此标记为false，则激活对可视域分析对象的操作
       if (!_this.viewshedFlag) {
         //获取鼠标屏幕坐标,并将其转化成笛卡尔坐标
         var position = e.endPosition
         var last = _this.scene.pickPosition(position)
-
+        debugger
         //计算该点与视口位置点坐标的距离
         var distance = Cesium.Cartesian3.distance(viewPosition, last)
 
@@ -55,7 +62,7 @@ export default class ViewshedTool {
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     // eslint-disable-next-line no-unused-vars
-    drawHandler.setInputAction(function(e) {
+    _this.drawHandler.setInputAction(function(e) {
       //鼠标右键事件回调，不再执行鼠标移动事件中对可视域的操作
       _this.viewshedFlag = true
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
@@ -84,14 +91,6 @@ export default class ViewshedTool {
         _this.viewshedFlag = false
       }
     })
-  }
-
-  start() {
-    this.viewModel.direction = this.viewshed3D.direction
-    this.viewModel.pitch = this.viewshed3D.pitch
-    this.viewModel.distance = this.viewshed3D.distance
-    this.viewModel.verticalFov = this.viewshed3D.verticalFov
-    this.viewModel.horizontalFov = this.viewshed3D.horizontalFov
 
     if (this.pickPointHandler.active) {
       this.pickPointHandler.deactivate()

@@ -1,7 +1,11 @@
 <template>
   <div ref="panel"
+       v-show="visible"
        class="widget-info-panel">
-    <div class="widget-info-title">{{ title }}</div>
+    <div class="widget-info-title">{{ title }}
+      <i class="esri-icon-close widget-info-panel-close"
+         @click="closeInfoPanel"></i>
+    </div>
     <div class="widget-content">
       <slot>
       </slot>
@@ -14,10 +18,12 @@ export default {
   components: {},
   props: ['title'],
   data () {
-    return {}
+    return {
+      visible: false
+    }
   },
   mounted () { },
-  directives: {
+  methods: {
     drag (el) {
       el.onmousedown = function (e) {
         var divx =
@@ -37,6 +43,10 @@ export default {
         }
       }
     },
+
+    closeInfoPanel () {
+      this.$emit("closed")
+    }
   },
 }
 </script>
@@ -44,8 +54,18 @@ export default {
 .widget-info-title {
   background-color: #4279e4;
   color: #fff;
-  line-height: 35px;
+  line-height: 33px;
   text-indent: 15px;
+
+  .widget-info-panel-close {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
 }
 .widget-info-panel {
   // width: 600px;

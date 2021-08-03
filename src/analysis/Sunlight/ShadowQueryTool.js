@@ -16,7 +16,7 @@ export default class ShadowQueryTool {
 
     this.polygonDrawHandler.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
-        setCursor('cursor-crosshair')
+        setCursor(viewer, 'cursor-crosshair')
       } else {
         resetCursor(viewer, 'cursor-crosshair')
       }

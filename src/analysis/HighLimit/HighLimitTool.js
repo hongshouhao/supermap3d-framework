@@ -28,6 +28,7 @@ export default class HighLimitTool {
 
   start() {
     let _this = this
+    _this.loadLayers()
     _this.resetState()
     _this.createHandler.setInputAction(function(e) {
       if (!_this.clippingRectangle) {
@@ -51,6 +52,7 @@ export default class HighLimitTool {
   }
 
   setHeight(height) {
+    this.clipping_height = height
     if (this.clippingRectangle) {
       this.clippingRectangle.rectangle.height = height
 
@@ -72,13 +74,14 @@ export default class HighLimitTool {
 
       this.updateClipBox()
     }
-
-    this.clipping_height = height
   }
 
   setTargetLayers(layerNames) {
     this.layers = layerNames
-    for (let lname of layerNames) {
+  }
+
+  loadLayers() {
+    for (let lname of this.layers) {
       let newLayerName = lname + '-HighLimit'
       let newLayer = this.scene.layers.find(newLayerName)
       if (newLayer) {
@@ -97,7 +100,7 @@ export default class HighLimitTool {
               ly.style3D.lineColor = layer.style3D.lineColor
               ly.style3D.lineWidth = layer.style3D.lineWidth
               ly.wireFrameMode = layer.wireFrameMode
-              // ly.clipLineColor = Cesium.Color.RED
+              ly.clipLineColor = Cesium.Color.RED
               ly.style3D.fillForeColor = Cesium.Color.ORANGERED
             })
         }

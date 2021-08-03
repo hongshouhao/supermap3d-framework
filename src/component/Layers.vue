@@ -3,16 +3,15 @@
     <div ref="viewportSpliter"
          v-show="multiViewport"
          class="viewport-spliter" />
-    <!-- <div class="tree-div"> -->
     <el-tree :data="layersData"
              node-key="id"
              show-checkbox
+             :props="{disabled:disableNode}"
              @check-change="setLayerVisible1"
              :render-content="renderExtButton"
              :default-expanded-keys="defaultExpandedKeys"
              :default-checked-keys="defaultCheckedKeys">
     </el-tree>
-    <!-- </div> -->
 
     <div v-if="multiViewport"
          class="divider">
@@ -24,6 +23,7 @@
                :data="layersData"
                node-key="id"
                show-checkbox
+               :props="{disabled:disableNode}"
                @check-change="setLayerVisible2"
                :render-content="renderExtButton"
                :default-expanded-keys="defaultExpandedKeys"
@@ -45,11 +45,12 @@ export default {
   },
   props: [],
   mounted () {
+    window.s3d.layerTree = this
   },
   methods: {
     init () {
       if (window.s3d.viewer) {
-        this.addLayers(window.s3d.config.layers)
+        this.addLayers(window.s3d.config.layers, -1)
         this.layersData = window.s3d.config.layers
 
         window.s3d.viewer.camera.flyTo(window.s3d.config.defaultCamera);
@@ -60,6 +61,7 @@ export default {
       let _this = this
       for (let lyD of layersData) {
         if (lyD.layer) {
+          lyD.opacity = 100
 
           if (lyD.layer.type === "Terrain") {
             new Cesium.CesiumTerrainProvider({
@@ -138,14 +140,30 @@ export default {
         node.checked === false
       )
 
-      const gotoLayer = function (node, data) {
-        window.s3d.viewer.flyTo(data.cesiumLayer)
+      const gotoLayer = function (layer) {
+        window.s3d.viewer.flyTo(layer)
+      }
+
+      const setLayerOpacity = function (opacity) {
+        if (data.cesiumLayer) {
+          data.cesiumLayer.style3D.fillForeColor = new Cesium.Color(1.0, 1.0, 1.0, opacity / 100);
+        }
       }
       return (
         <span class="custom-tree-node">
           <span class="toggle-ext-button">{node.label}
-            <i class={checkedLayer ? "esri-icon-directions2 my-ext-button" : "esri-icon-directions2 my-ext-button my-ext-button-hidden"} on-click={() => gotoLayer(node, data)} />
+            <i class={checkedLayer ? "esri-icon-directions2 my-ext-button" : "esri-icon-directions2 my-ext-button my-ext-button-hidden"} on-click={() => gotoLayer(data.cesiumLayer)} />
           </span>
+
+          <el-popover
+            placement="left"
+            popper-class="layer-setting-popup"
+            title="不透明度"
+            trigger="hover"
+          >
+            <el-slider min={10} max={100} v-model={data.opacity} on-input={setLayerOpacity}></el-slider>
+            <i slot="reference" class={checkedLayer ? "layer-more my-icon-more" : ""} />
+          </el-popover>
         </span>
       )
     },
@@ -158,7 +176,21 @@ export default {
         window.s3d.viewer.scene.multiViewportMode = Cesium.MultiViewportMode.HORIZONTAL
         this.multiViewport = true
       }
-    }
+    },
+    disableNode (data) {
+      if (data.children && data.children.length > 0) {
+        return false
+      }
+      else {
+        if (data.layer && data.layer.url) {
+          return false
+        }
+        else {
+          return true
+        }
+      }
+    },
+
   }
 }
 </script>
@@ -179,30 +211,41 @@ export default {
       height: 100%;
     }
   }
-}
 
-.custom-tree-node {
-  display: flex;
-  margin-bottom: 6px;
-}
+  .custom-tree-node {
+    display: flex;
+    margin-bottom: 5px;
 
-.toggle-ext-button {
-  i {
-    opacity: 0;
+    // margin-top: 2px;
+    // height: 100%;
+
+    .layer-more {
+      height: 19px;
+      width: 10px;
+
+      position: absolute;
+      right: -13px;
+    }
+
+    .toggle-ext-button {
+      i {
+        opacity: 0;
+      }
+      &:hover i {
+        opacity: 1;
+      }
+    }
+
+    .my-ext-button {
+      margin-left: 4px;
+      margin-top: 1px;
+      float: right;
+    }
+
+    .my-ext-button-hidden {
+      visibility: hidden;
+    }
   }
-  &:hover i {
-    opacity: 1;
-  }
-}
-
-.my-ext-button {
-  margin-left: 4px;
-  margin-top: 2px;
-  float: right;
-}
-
-.my-ext-button-hidden {
-  visibility: hidden;
 }
 
 .viewport-spliter {
@@ -212,5 +255,27 @@ export default {
   top: 0;
   width: 2px;
   height: 100%;
+}
+
+.layer-setting-popup {
+  border-radius: 1px !important;
+  border: 1px solid #dbdbdb !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  padding-top: 8px !important;
+  padding-bottom: 4px !important;
+
+  .popper__arrow {
+    border-left-color: #dbdbdb !important;
+    // border-bottom-color: #dbdbdb !important;
+  }
+  .el-popover__title {
+    font-size: 5px;
+    margin-bottom: 0px;
+  }
+
+  .el-slider__runway {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
 }
 </style>

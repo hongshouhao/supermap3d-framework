@@ -11,7 +11,7 @@
     </el-slider>
     <div class="others">
       <div class="sun-date">
-        <label style="margin-right:6px;margin-left:-15px;">日期</label>
+        <label style="margin-right:6px;margin-left:-10px; ">日期</label>
         <el-date-picker v-model="date"
                         :clearable="false"
                         size="small"
@@ -117,22 +117,23 @@ export default {
 </script>
 <style lang="scss">
 .sunlight-setting {
-  height: 130px;
+  // height: 130px;
   width: 450px;
-  padding: 10px 25px;
+  padding: 0px 15px;
 
   .others {
     display: flex;
     margin-top: 25px;
     .sun-date {
+      display: flex;
       width: 300px;
       .el-date-editor {
-        width: 130px;
+        width: 135px;
       }
     }
   }
   .el-slider__runway {
-    background-color: rgba(25, 137, 250, 0.5) !important;
+    background-color: rgba(25, 137, 250, 0.3) !important;
   }
 }
 </style>

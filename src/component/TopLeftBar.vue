@@ -130,11 +130,18 @@
         <span aria-hidden="true"
               class="esri-icon esri-icon-trash"></span>
       </div>
+      <div class="esri-widget--button esri-widget"
+           title="设置"
+           @click="settings">
+        <span aria-hidden="true"
+              class="esri-icon esri-icon-settings"></span>
+      </div>
     </div>
 
     <WidgetInfoPanel v-show="currentTool=='ViewshedTool'"
                      title="视域分析参数"
-                     ref="viewshedSettingPanel">
+                     ref="viewshedSettingPanel"
+                     @closed="stopViewshedTool()">
       <template>
         <ViewshedSetting />
       </template>
@@ -142,7 +149,8 @@
 
     <WidgetInfoPanel v-show="currentTool=='SunlightTool'"
                      title="阴影分析参数"
-                     ref="sunlightSettingPanel">
+                     ref="sunlightSettingPanel"
+                     @closed="stopSunlight()">
       <template>
         <SunlightSetting ref="sunlightSetting" />
       </template>
@@ -150,9 +158,19 @@
 
     <WidgetInfoPanel v-show="currentTool=='HighLimitTool'"
                      title="限高分析"
-                     ref="highLimitSettingPanel">
+                     ref="highLimitSettingPanel"
+                     @closed="stopHighLimitTool()">
       <template>
         <HighLimitSetting @height-changed="updateHeight" />
+      </template>
+    </WidgetInfoPanel>
+
+    <WidgetInfoPanel v-show="currentTool=='CommonSettings'"
+                     title="设置"
+                     ref="commonSettingsPanel"
+                     @closed="stopSetting()">
+      <template>
+        <Settings />
       </template>
     </WidgetInfoPanel>
   </div>
@@ -162,6 +180,8 @@
 import MeasureTool from '../tools/Measurement/MeasureTool'
 import PointMeasurement from '../tools/Measurement/PointMeasurement'
 import SceneModeToogleTool from '../tools/Scene/SceneModeToogleTool'
+// import RainTool from '../tools/Rain/RainTool'
+
 import ViewshedTool from '../analysis/Viewshed/ViewshedTool'
 import SliceTool from '../analysis/Slice/SliceTool'
 import SkylineTool from '../analysis/Skyline/SkylineTool'
@@ -172,6 +192,8 @@ import ViewshedSetting from '../analysis/Viewshed/ViewshedSetting.vue'
 import SunlightSetting from '../analysis/Sunlight/SunlightSetting.vue'
 import HighLimitSetting from '../analysis/HighLimit/HighLimitSetting.vue'
 
+import Settings from './Settings.vue'
+
 import WidgetInfoPanel from './WidgetInfoPanel'
 
 export default {
@@ -179,7 +201,8 @@ export default {
     WidgetInfoPanel,
     ViewshedSetting,
     SunlightSetting,
-    HighLimitSetting
+    HighLimitSetting,
+    Settings
   },
   data () {
     return {
@@ -190,10 +213,10 @@ export default {
       sceneModeToogleTool: null,
       viewshedTool: null,
       skylineTool: null,
-      shadowQueryTool: null,
       sliceTool: null,
       viewDomeTool: null,
       highLimitTool: null,
+      rainTool: null
     }
   },
   props: [],
@@ -202,10 +225,21 @@ export default {
   beforeMount () {
   },
   mounted () {
+    window.s3d.topLeftBar = this
     window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.viewshedSettingPanel.$el)
     window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.sunlightSettingPanel.$el)
     window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.highLimitSettingPanel.$el)
+    window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.commonSettingsPanel.$el)
 
+    // this.measureTool = new MeasureTool(window.s3d.viewer)
+    // this.pointMeasurement = new PointMeasurement(window.s3d.viewer)
+    // this.sceneModeToogleTool = new SceneModeToogleTool(window.s3d.viewer)
+    // this.viewshedTool = new ViewshedTool(window.s3d.viewer)
+    // this.skylineTool = new SkylineTool(window.s3d.viewer)
+    // this.sliceTool = new SliceTool(window.s3d.viewer)
+    // this.viewDomeTool = new ViewDomeTool(window.s3d.viewer)
+    // this.rainTool = new RainTool(window.s3d.viewer)
+    this.highLimitTool = new HighLimitTool(window.s3d.viewer)
   },
   methods: {
     globeView () {
@@ -292,7 +326,6 @@ export default {
         this.highLimitTool = new HighLimitTool(window.s3d.viewer)
       }
       this.currentTool = "HighLimitTool"
-      this.highLimitTool.setTargetLayers(["楼幢"])
       this.highLimitTool.start()
     },
     multiViewport () {
@@ -304,39 +337,70 @@ export default {
         this.highLimitTool.setHeight(height)
       }
     },
-    clearEverything () {
-      if (this.measureTool) {
-        this.measureTool.clear()
-      }
-
+    settings () {
+      this.currentTool = "CommonSettings"
+      // if (!this.rainTool) {
+      //   this.rainTool = new RainTool(window.s3d.viewer)
+      // }
+    },
+    stopViewshedTool () {
       if (this.viewshedTool) {
         this.viewshedTool.clear()
       }
-
+      this.currentTool = ""
+    },
+    stopMeasureTool () {
+      if (this.measureTool) {
+        this.measureTool.clear()
+      }
+      this.currentTool = ""
+    },
+    stopSkylineTool () {
       if (this.skylineTool) {
         this.skylineTool.clear()
       }
-
-      if (this.shadowQueryTool) {
-        this.shadowQueryTool.clear()
-      }
-
+      this.currentTool = ""
+    },
+    stopViewDomeTool () {
       if (this.viewDomeTool) {
         this.viewDomeTool.clear()
       }
-
+      this.currentTool = ""
+    },
+    stopHighLimitTool () {
       if (this.highLimitTool) {
         this.highLimitTool.clear()
       }
-
+      this.currentTool = ""
+    },
+    stopSliceTool () {
       if (this.sliceTool) {
         this.sliceTool.clear()
       }
-
+      this.currentTool = ""
+    },
+    stopPointMeasurement () {
       if (this.pointMeasurement) {
         this.pointMeasurement.clear()
       }
+      this.currentTool = ""
+    },
+    stopSunlight () {
       this.$refs.sunlightSetting.reset()
+      this.currentTool = ""
+    },
+    stopSetting () {
+      this.currentTool = ""
+    },
+    clearEverything () {
+      this.stopMeasureTool()
+      this.stopViewshedTool()
+      this.stopSkylineTool()
+      this.stopViewDomeTool()
+      this.stopHighLimitTool()
+      this.stopSliceTool()
+      this.stopPointMeasurement()
+      this.stopSunlight()
       this.currentTool = ""
     },
   },
