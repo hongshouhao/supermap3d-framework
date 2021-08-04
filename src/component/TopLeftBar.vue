@@ -63,15 +63,14 @@
       <el-popover placement="right"
                   trigger="click"
                   popper-class="small-pop">
-        <template #reference>
-          <div class="esri-widget--button esri-widget "
-               style="border-top:none"
-               title="分析">
-            <span aria-hidden="true"
-                  class="esri-icon my-icon-analysis"></span>
-          </div>
+        <div slot="reference"
+             class="esri-widget--button esri-widget "
+             style="border-top:none"
+             title="分析">
+          <span aria-hidden="true"
+                class="esri-icon my-icon-analysis"></span>
+        </div>
 
-        </template>
         <div class="top-left-popover-toolbar">
           <div class="esri-component esri-widget"
                style="margin:0;">
