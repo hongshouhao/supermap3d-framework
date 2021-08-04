@@ -68,6 +68,10 @@ export default {
     });
 
     viewer.scene.debugShowFramesPerSecond = false;
+    // viewer.scene.globe.baseColor = Cesium.Color.BLACK;
+    viewer.scene.globe.baseColor = new Cesium.Color(0, 0, 0, 0);
+    viewer.scene.globe.depthTestAgainstTerrain = !0;
+
 
     window.s3d.viewer = viewer
     window.s3d.scene = viewer.scene
@@ -84,6 +88,8 @@ export default {
 
 <style lang="scss">
 .cesium-core-container {
+  position: absolute;
+
   height: 100%;
   width: 100%;
 }
@@ -101,13 +107,13 @@ export default {
   position: absolute;
   right: 15px;
   top: 15px;
-  z-index: 10000;
+  z-index: 1;
 }
 
 .top-left-bar-container {
   position: absolute;
   left: 15px;
   top: 15px;
-  z-index: 10000;
+  z-index: 1;
 }
 </style>
