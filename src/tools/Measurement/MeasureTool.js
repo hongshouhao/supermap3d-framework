@@ -11,9 +11,9 @@ export default class MeasureTool {
 
     //注册测距功能事件
     _this.handlerDis.measureEvt.addEventListener(function(result) {
-      var dis = Number(result.distance)
+      let dis = Number(result.distance)
 
-      var distance =
+      let distance =
         dis > 1000 ? (dis / 1000).toFixed(2) + 'km' : dis.toFixed(2) + 'm'
       _this.handlerDis.disLabel.text = '距离:' + distance
       // _this.handlerDis.disLabel.style = Cesium.LabelStyle.FILL
@@ -37,8 +37,8 @@ export default class MeasureTool {
       0
     )
     _this.handlerArea.measureEvt.addEventListener(function(result) {
-      var mj = Number(result.area)
-      var area =
+      let mj = Number(result.area)
+      let area =
         mj > 1000000 ? (mj / 1000000).toFixed(2) + 'km²' : mj.toFixed(2) + '㎡'
       _this.handlerArea.areaLabel.text = '面积:' + area
     })
@@ -56,15 +56,15 @@ export default class MeasureTool {
       Cesium.MeasureMode.DVH
     )
     _this.handlerHeight.measureEvt.addEventListener(function(result) {
-      var distance =
+      let distance =
         result.distance > 1000
           ? (result.distance / 1000).toFixed(2) + 'km'
           : result.distance + 'm'
-      var vHeight =
+      let vHeight =
         result.verticalHeight > 1000
           ? (result.verticalHeight / 1000).toFixed(2) + 'km'
           : result.verticalHeight + 'm'
-      var hDistance =
+      let hDistance =
         result.horizontalDistance > 1000
           ? (result.horizontalDistance / 1000).toFixed(2) + 'km'
           : result.horizontalDistance + 'm'

@@ -28,9 +28,7 @@ export default {
     return {
     }
   },
-
   mounted () {
-    window.s3d.layerTree.init()
   },
   methods: {
   },

@@ -3,7 +3,7 @@ module.exports = {
   chainWebpack: (config) => {
     config.module
       .rule('url-loader')
-      .test(/\.(png|jpg|gif|cur)$/)
+      .test(/\.(cur)$/)
       .use('url-loader')
       .loader('url-loader')
       .end()

@@ -1,58 +1,83 @@
 <template>
   <div class="settings-pannel">
-    <el-divider content-position="left">底图透明度</el-divider>
-    <div class="slider-label-container">
-      <span class="demonstration">普通底图</span>
+    <!-- <el-divider content-position="left"></el-divider> -->
+    <div class="setting-item-container">
+      <span class="slider-demonstration">底图透明度</span>
       <el-slider class="basemap-alpha-settings"
-                 v-model="baseMapNormalAlpha"
-                 @input="changeBaseMapNormalAlpha"></el-slider>
-    </div>
-    <div class="slider-label-container">
-      <span class="demonstration">影像底图</span>
-      <el-slider class="basemap-alpha-settings"
-                 v-model="baseMapEarthAlpha"
-                 @input="changeBaseMapEarthAlpha"></el-slider>
+                 v-model="baseMapAlpha"
+                 @input="changeBaseMapAlpha"></el-slider>
     </div>
 
-    <div></div>
+    <div class="setting-item-container">
+      <span class="demonstration">雨水</span>
+      <el-switch v-model="rainEnable"
+                 @change="toggleRain">
+      </el-switch>
+
+    </div>
   </div>
 </template>
 <script>
+import RainTool from '../tools/Rain/RainTool'
 export default {
   data () {
     return {
-      baseMapNormalAlpha: 100,
-      baseMapEarthAlpha: 100,
+      baseMapAlpha: 100,
+      rainEnable: false,
     }
   },
+  mounted () {
+    let _this = this
+    window.s3d.eventBus.addEventListener("baseMap-changed", () => {
+      if (window.s3d.baseMaps.current) {
+        _this.baseMapAlpha = parseInt(window.s3d.baseMaps.current.alpha * 100)
+      }
+    });
+  },
   methods: {
-    changeBaseMapNormalAlpha (alpha) {
-      if (window.s3d.baseMap && window.s3d.baseMap.normal)
-        window.s3d.baseMap.normal.alpha = alpha / 100;
+    changeBaseMapAlpha (alpha) {
+      if (window.s3d.baseMaps && window.s3d.baseMaps.current)
+        window.s3d.baseMaps.current.alpha = alpha / 100;
     },
-    changeBaseMapEarthAlpha (alpha) {
-      if (window.s3d.baseMap && window.s3d.baseMap.earth)
-        window.s3d.baseMap.earth.alpha = alpha / 100;
-    },
+    toggleRain (enable) {
+      if (!this.rainTool) {
+        this.rainTool = new RainTool(window.s3d.viewer)
+      }
+
+      if (enable) {
+        this.rainTool.start()
+      }
+      else {
+        this.rainTool.clear()
+      }
+    }
   }
 }
 </script>
 
 <style lang="scss">
 .settings-pannel {
-  width: 220px;
+  width: 230px;
 
   .el-divider {
     margin-top: 4px;
     margin-bottom: 6px;
   }
-  .demonstration {
-    font-size: 13px;
-    margin-right: 10px;
-    margin-top: 5px;
-  }
-  .slider-label-container {
+
+  .setting-item-container {
     display: flex;
+
+    .slider-demonstration {
+      font-size: 13px;
+      margin-right: 10px;
+      margin-top: 5px;
+    }
+
+    .demonstration {
+      font-size: 13px;
+      margin-right: 10px;
+    }
+
     .basemap-alpha-settings {
       width: 145px;
       .el-slider__runway {

@@ -7,6 +7,7 @@ import './assets/themes/light/main.css'
 import './css/index.scss'
 
 import Toolbar from './tools/Toolbar'
+import EventBus from 'eventbusjs'
 
 export function setup(vue) {
   vue.use(Element)
@@ -22,10 +23,11 @@ class S3d {
     if (!config.iServerBaseURL) throw '参数不能为空: iServerBaseURL'
     if (!config.layers) throw '参数不能为空: layers'
     if (!config.defaultCamera) throw '参数不能为空: defaultCamera'
-    if (!config.baseMapEarth) throw '参数不能为空: baseMapEarth'
-    if (!config.baseMapNormal) throw '参数不能为空: baseMapNormal'
+    if (!config.baseMaps.earth) throw '参数不能为空: baseMaps.earth'
+    if (!config.baseMaps.normal) throw '参数不能为空: baseMaps.normal'
 
     this.config = config
     this.toolbar = new Toolbar()
+    this.eventBus = EventBus
   }
 }

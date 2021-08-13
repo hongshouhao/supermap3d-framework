@@ -31,6 +31,7 @@ export default class HighLimitTool {
     _this.loadLayers()
     _this.resetState()
     _this.createHandler.setInputAction(function(e) {
+      setCursor(_this.viewer, 'cursor-move')
       if (!_this.clippingRectangle) {
         _this.createRectangle(e.endPosition)
       } else {
@@ -40,6 +41,7 @@ export default class HighLimitTool {
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     _this.createHandler.setInputAction(function() {
+      resetCursor(_this.viewer, 'cursor-move')
       _this.createHandler.removeInputAction(
         Cesium.ScreenSpaceEventType.MOUSE_MOVE
       )
@@ -269,18 +271,22 @@ export default class HighLimitTool {
     _this.editHandler.setInputAction(function(e) {
       if (_this.ifMouseOnOutline(e.position)) {
         _this.state = 'scale'
+        setCursor(_this.viewer, 'cursor-pointer')
         _this.saveScaleStartPoint(e.position)
         _this.viewer.scene.screenSpaceCameraController.enableInputs = false
       } else if (_this.ifMouseInRectangle(e.position)) {
-        _this.viewer.scene.screenSpaceCameraController.enableInputs = false
         _this.state = 'move'
+        setCursor(_this.viewer, 'cursor-move')
+        _this.viewer.scene.screenSpaceCameraController.enableInputs = false
       }
     }, Cesium.ScreenSpaceEventType.LEFT_DOWN)
 
     _this.editHandler.setInputAction(function() {
-      if (_this.state === 'scale' || _this.state === 'move') {
-        _this.viewer.scene.screenSpaceCameraController.enableInputs = true
+      if (_this.state === 'move' || _this.state === 'scale') {
+        debugger
         _this.state = ''
+        resetCursor(_this.viewer, 'cursor-move')
+        _this.viewer.scene.screenSpaceCameraController.enableInputs = true
       }
     }, Cesium.ScreenSpaceEventType.LEFT_UP)
 

@@ -1,75 +1,107 @@
 <template>
-  <ul class="change-basemap">
-    <li :class="{ active: !toSatellite }"
-        @click="toggleBasemap(false)">
+  <ul class="change-basemap"
+      :class="{
+        'two-children': !enableNone,
+        'three-children': enableNone}">
+    <li :class="{ active: basemapType==='normal' }"
+        @click="toggleBasemap('normal')">
       <i class="esri-icon-maps"></i>
       地图
     </li>
-    <li :class="{ active: toSatellite }"
-        @click="toggleBasemap(true)">
+    <li :class="{ active: basemapType==='earth' }"
+        @click="toggleBasemap('earth')">
       <i class="esri-icon-globe"></i>
       影像
+    </li>
+    <li v-if="enableNone"
+        :class="{ active: basemapType==='none' }"
+        @click="toggleBasemap('none')">
+      <i class="esri-icon-default-action"></i>
+      全黑
     </li>
   </ul>
 </template>
 <script>
+import { createImageryProvider } from '../utils/ImageryProvider'
+
 export default {
   data () {
     return {
-      toSatellite: true,
+      basemapType: "",
       layerNormal: null,
       layerSatellite: null,
+      enableNoneBaseMapMode: false
+    }
+  },
+  computed: {
+    enableNone () {
+      return window.s3d.config.baseMaps.none && window.s3d.config.baseMaps.none.enable
     }
   },
   mounted () {
-    window.s3d.baseMap = {}
-    this.toggleBasemap(true)
+    window.s3d.baseMaps = {}
+    this.createMaps()
+
+    for (let mapKey in window.s3d.config.baseMaps) {
+      let map = window.s3d.config.baseMaps[mapKey]
+      if (map.default) {
+        this.toggleBasemap(mapKey)
+        break
+      }
+    }
   },
   methods: {
-    toggleBasemap (useSatellite) {
-      this.toSatellite = useSatellite
-      if (useSatellite) {
-        if (!this.layerSatellite) {
-
-          if (window.s3d.config.baseMapEarth.type === "bing") {
-            this.layerSatellite = window.s3d.viewer.imageryLayers.addImageryProvider(
-              new Cesium.BingMapsImageryProvider(window.s3d.config.baseMapEarth.params)
-            );
-            window.s3d.baseMap.earth = this.layerSatellite
-          }
-          else {
-            throw "暂未实现"
-          }
-
-          this.layerSatellite.visible = true
+    createMaps () {
+      for (let mapKey in window.s3d.config.baseMaps) {
+        if (mapKey === "none") {
+          continue;
         }
-
-        this.layerSatellite.alpha = 1;
-
-        if (this.layerNormal) {
-          this.layerNormal.alpha = 0;
+        let mapOptions = window.s3d.config.baseMaps[mapKey]
+        if (!mapOptions.default) {
+          let mapProvider = createImageryProvider(mapOptions)
+          let map = window.s3d.viewer.imageryLayers.addImageryProvider(
+            mapProvider
+          );
+          map.alpha = 0
+          window.s3d.baseMaps[mapKey] = map
+        }
+        else {
+          window.s3d.baseMaps[mapKey] = window.s3d.viewer.imageryLayers._layers[0]
         }
       }
+    },
+    toggleBasemap (type) {
+      this.basemapType = type
+
+      if (this.basemapType === 'none') {
+        window.s3d.scene.globe.show = false;
+        window.s3d.scene.skyBox.show = false;
+        window.s3d.scene.skyAtmosphere.show = false;
+        window.s3d.baseMaps.current = null
+        window.s3d.eventBus.dispatch("baseMap-changed");
+      }
       else {
-        if (!this.layerNormal) {
+        window.s3d.scene.globe.show = true;
+        window.s3d.scene.skyBox.show = true;
+        window.s3d.scene.skyAtmosphere.show = true;
 
-          if (window.s3d.config.baseMapNormal.type === "tianditu") {
-            this.layerNormal = window.s3d.viewer.imageryLayers.addImageryProvider(
-              new Cesium.TiandituImageryProvider(window.s3d.config.baseMapNormal.params)
-            );
-            window.s3d.baseMap.normal = this.layerNormal
-          }
-          else {
-            throw "暂未实现"
-          }
-
-          this.layerNormal.visible = true
+        let alpha = 1
+        if (window.s3d.baseMaps.current) {
+          alpha = window.s3d.baseMaps.current.alpha
         }
 
-        this.layerNormal.alpha = 1;
-
-        if (this.layerSatellite) {
-          this.layerSatellite.alpha = 0;
+        for (let mapKey in window.s3d.config.baseMaps) {
+          let map = window.s3d.baseMaps[mapKey]
+          if (map) {
+            if (mapKey === type) {
+              map.alpha = alpha
+              window.s3d.baseMaps.current = map
+              window.s3d.eventBus.dispatch("baseMap-changed");
+            }
+            else {
+              map.alpha = 0
+            }
+          }
         }
       }
     }
@@ -85,25 +117,8 @@ export default {
   display: inline-block;
   position: relative;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  &::after {
-    width: 1px;
-    height: 16px;
-    background: #dbdee2;
-    content: "";
-    position: absolute;
-    left: 68px;
-    top: 8px;
-  }
 
   li {
-    &:nth-child(1) {
-      border-right: none;
-      padding: 6px 8px 6px 12px;
-    }
-    &:nth-child(2) {
-      border-left: none;
-      padding: 6px 12px 6px 8px;
-    }
     i {
       position: relative;
       top: 2px;
@@ -122,6 +137,66 @@ export default {
     color: #495060;
     &.active {
       color: #4279e4;
+    }
+  }
+}
+
+$padding: 6px;
+.two-children {
+  li {
+    &:first-child {
+      border-right: none;
+      padding: $padding $padding $padding $padding * 2;
+      &::after {
+        width: 1px;
+        height: 16px;
+        background: #dbdee2;
+        content: "";
+        position: absolute;
+        left: 66px;
+        top: 8px;
+      }
+    }
+    &:last-child {
+      border-left: none;
+      padding: $padding $padding * 2 $padding $padding;
+    }
+  }
+}
+.three-children {
+  li {
+    &:first-child {
+      border-right: none;
+      padding: $padding $padding $padding $padding * 2;
+
+      &::after {
+        width: 1px;
+        height: 16px;
+        background: #dbdee2;
+        content: "";
+        position: absolute;
+        left: 66px;
+        top: 8px;
+      }
+    }
+    &:nth-child(2) {
+      border-left: none;
+      padding: $padding $padding $padding $padding;
+
+      &::after {
+        width: 1px;
+        height: 16px;
+        background: #dbdee2;
+        content: "";
+        position: absolute;
+        left: 126px;
+        top: 8px;
+      }
+    }
+
+    &:last-child {
+      border-left: none;
+      padding: $padding $padding * 2 $padding $padding;
     }
   }
 }

@@ -1,8 +1,4 @@
-import {
-  getViewCenter,
-  getCameraHeight,
-  reCalculateCartesian,
-} from '../../utils/CesiumMath'
+import { reCalculateCartesian } from '../../utils/CesiumMath'
 
 export default class SceneModeToogleTool {
   constructor(viewer) {
@@ -12,12 +8,12 @@ export default class SceneModeToogleTool {
 
   toogle() {
     if (this.mode === '3D') {
-      let center = getViewCenter(this.viewer)
+      let center = window.s3d.viewUtility.getViewCenter()
       this.preHeading = this.viewer.camera.heading
       this.prePitch = this.viewer.camera.pitch
       this.preRoll = this.viewer.camera.roll
       this.preDirection = this.viewer.camera.direction
-      this.preHeight = getCameraHeight(this.viewer)
+      this.preHeight = window.s3d.viewUtility.getCameraHeight()
 
       this.preHeight2 = this.viewer.camera.positionCartographic.height
       this.preVector = Cesium.Cartesian3.subtract(
@@ -47,7 +43,7 @@ export default class SceneModeToogleTool {
       this.mode = '2D'
     } else if (this.mode === '2D') {
       console.log(this.viewer.camera.pitch)
-      let center = getViewCenter(this.viewer)
+      let center = window.s3d.viewUtility.getViewCenter()
       let destination = Cesium.Cartesian3.subtract(
         center,
         this.preVector,

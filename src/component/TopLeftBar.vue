@@ -40,6 +40,12 @@
 
     <div class="esri-component esri-widget">
       <div class="esri-widget--button esri-widget"
+           title="点标注"
+           @click="annotatePoint">
+        <span aria-hidden="true"
+              class="esri-icon my-icon-mea-point"></span>
+      </div>
+      <div class="esri-widget--button esri-widget"
            title="长度测量"
            @click="startDistanceMeasure">
         <span aria-hidden="true"
@@ -52,10 +58,10 @@
               class="esri-icon esri-icon-measure-area"></span>
       </div>
       <div class="esri-widget--button esri-widget"
-           title="点标注"
-           @click="annotatePoint">
+           title="角度测量"
+           @click="startAngleMeasure">
         <span aria-hidden="true"
-              class="esri-icon my-icon-mea-point"></span>
+              class="esri-icon my-icon-mea-angle"></span>
       </div>
     </div>
 
@@ -178,8 +184,9 @@
 <script>
 import MeasureTool from '../tools/Measurement/MeasureTool'
 import PointMeasurement from '../tools/Measurement/PointMeasurement'
+import AngleMeasurement from '../tools/Measurement/AngleMeasurement'
+
 import SceneModeToogleTool from '../tools/Scene/SceneModeToogleTool'
-// import RainTool from '../tools/Rain/RainTool'
 
 import ViewshedTool from '../analysis/Viewshed/ViewshedTool'
 import SliceTool from '../analysis/Slice/SliceTool'
@@ -209,13 +216,13 @@ export default {
       currentTool: "",
       measureTool: null,
       pointMeasurement: null,
+      angleMeasurement: null,
       sceneModeToogleTool: null,
       viewshedTool: null,
       skylineTool: null,
       sliceTool: null,
       viewDomeTool: null,
       highLimitTool: null,
-      rainTool: null
     }
   },
   props: [],
@@ -237,7 +244,6 @@ export default {
     // this.skylineTool = new SkylineTool(window.s3d.viewer)
     // this.sliceTool = new SliceTool(window.s3d.viewer)
     // this.viewDomeTool = new ViewDomeTool(window.s3d.viewer)
-    // this.rainTool = new RainTool(window.s3d.viewer)
     this.highLimitTool = new HighLimitTool(window.s3d.viewer)
   },
   methods: {
@@ -282,12 +288,20 @@ export default {
       this.pointMeasurement.start()
     },
 
+    startAngleMeasure () {
+      if (!this.angleMeasurement) {
+        this.angleMeasurement = new AngleMeasurement(window.s3d.viewer)
+      }
+      this.currentTool = "AngleMeasurement"
+      this.angleMeasurement.start()
+    },
+
     startSlice () {
       if (!this.sliceTool) {
         this.sliceTool = new SliceTool(window.s3d.viewer)
       }
-      this.sliceTool.start()
       this.currentTool = "SliceTool"
+      this.sliceTool.start()
     },
 
     startViewshed () {
@@ -295,13 +309,13 @@ export default {
         this.viewshedTool = new ViewshedTool(window.s3d.viewer)
         this.viewshedTool.bindUI(this.$refs.viewshedSettingPanel.$el)
       }
-      this.viewshedTool.start()
       this.currentTool = "ViewshedTool"
+      this.viewshedTool.start()
     },
 
     startSunlight () {
-      this.$refs.sunlightSetting.init()
       this.currentTool = "SunlightTool"
+      this.$refs.sunlightSetting.init()
     },
 
     startSkyline () {
@@ -338,9 +352,6 @@ export default {
     },
     settings () {
       this.currentTool = "CommonSettings"
-      // if (!this.rainTool) {
-      //   this.rainTool = new RainTool(window.s3d.viewer)
-      // }
     },
     stopViewshedTool () {
       if (this.viewshedTool) {
@@ -351,6 +362,18 @@ export default {
     stopMeasureTool () {
       if (this.measureTool) {
         this.measureTool.clear()
+      }
+      this.currentTool = ""
+    },
+    stopPointMeasurement () {
+      if (this.pointMeasurement) {
+        this.pointMeasurement.clear()
+      }
+      this.currentTool = ""
+    },
+    stopAngleMeasurement () {
+      if (this.angleMeasurement) {
+        this.angleMeasurement.clear()
       }
       this.currentTool = ""
     },
@@ -378,12 +401,6 @@ export default {
       }
       this.currentTool = ""
     },
-    stopPointMeasurement () {
-      if (this.pointMeasurement) {
-        this.pointMeasurement.clear()
-      }
-      this.currentTool = ""
-    },
     stopSunlight () {
       this.$refs.sunlightSetting.reset()
       this.currentTool = ""
@@ -393,14 +410,14 @@ export default {
     },
     clearEverything () {
       this.stopMeasureTool()
+      this.stopAngleMeasurement()
+      this.stopPointMeasurement()
       this.stopViewshedTool()
       this.stopSkylineTool()
       this.stopViewDomeTool()
       this.stopHighLimitTool()
       this.stopSliceTool()
-      this.stopPointMeasurement()
       this.stopSunlight()
-      this.currentTool = ""
     },
   },
 }

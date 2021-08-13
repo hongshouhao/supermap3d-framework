@@ -46,6 +46,10 @@ export default {
   props: [],
   mounted () {
     window.s3d.layerTree = this
+    let _this = this
+    window.s3d.eventBus.addEventListener("framework-initialized", () => {
+      _this.init()
+    });
   },
   methods: {
     init () {
@@ -69,12 +73,11 @@ export default {
               isSct: true
             })
           }
-          else if (lyD.layer.type === "MapImagery") {
+          else if (lyD.layer.type === "SuperMapImagery") {
             var l = new Cesium.SuperMapImageryProvider({
               url: lyD.layer.url
             });
             window.s3d.viewer.imageryLayers.addImageryProvider(l)
-            console.log(l)
           }
           else if (lyD.layer.type === "S3M") {
             if (lyD.layer.visible) {
@@ -92,9 +95,9 @@ export default {
 
                 if (lyD.layer.enableFillAndWireFrame) {
                   ly.style3D.fillStyle = Cesium.FillStyle.Fill_And_WireFrame;
-                  ly.style3D.lineColor = Cesium.Color.fromCssColorString('rgb(0,0,0)');
+                  ly.style3D.lineColor = Cesium.Color.BLACK;
                   ly.style3D.lineWidth = 1;
-                  ly.wireFrameMode = 2
+                  ly.wireFrameMode = Cesium.WireFrameType.Triangle
                 }
               });
             }

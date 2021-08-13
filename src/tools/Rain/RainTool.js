@@ -1,7 +1,12 @@
 export default class RainTool {
   constructor(viewer) {
-    let rainParticleSize = viewer.scene.drawingBufferWidth / 80.0
+    this.viewer = viewer
+  }
+
+  start() {
+    let _this = this
     let rainRadius = 4000.0
+    let rainParticleSize = _this.viewer.scene.drawingBufferWidth / 80.0
     let rainImageSize = new Cesium.Cartesian2(
       rainParticleSize,
       rainParticleSize * 3.0
@@ -26,20 +31,20 @@ export default class RainTool {
       )
 
       let distance = Cesium.Cartesian3.distance(
-        viewer.scene.camera.position,
+        _this.viewer.scene.camera.position,
         particle.position
       )
       if (distance > rainRadius) {
         particle.endColor.alpha = 0.0
       } else {
         particle.endColor.alpha =
-          rainSystem.endColor.alpha / (distance / rainRadius + 0.1)
+          _this.rainSystem.endColor.alpha / (distance / rainRadius + 0.1)
       }
     }
 
-    let rainSystem = new Cesium.ParticleSystem({
+    _this.rainSystem = new Cesium.ParticleSystem({
       modelMatrix: new Cesium.Matrix4.fromTranslation(
-        viewer.scene.camera.position
+        _this.viewer.scene.camera.position
       ),
       speed: -1.0,
       lifetime: 10.0,
@@ -54,12 +59,11 @@ export default class RainTool {
       updateCallback: rainUpdate,
       performance: false,
     })
-    // rainSystem.loadRangeScale=100000;
 
-    viewer.scene.primitives.add(rainSystem)
-
-    rainSystem.lodRangeScale = 10000
+    _this.viewer.scene.primitives.add(_this.rainSystem)
   }
 
-  start() {}
+  clear() {
+    this.viewer.scene.primitives.remove(this.rainSystem)
+  }
 }

@@ -94,8 +94,6 @@ export default class ShadowQueryTool {
       this.polygonDrawHandler.polyline.show = false
     }
 
-    this.viewer.entities.removeAll()
-
     this.shadowQuery.qureyRegion({
       position: [0, 0],
       bottom: 0,

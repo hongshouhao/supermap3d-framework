@@ -1,3 +1,4 @@
+import { setCursor, resetCursor } from '../../utils/CursorUtility'
 export default class ViewshedTool {
   constructor(viewer) {
     this.viewer = viewer
@@ -13,8 +14,6 @@ export default class ViewshedTool {
     }
 
     this.viewshed3D = new Cesium.ViewShed3D(this.scene)
-    // var colorStr1 = viewshed3D.visibleAreaColor.toCssColorString()
-    // var colorStr2 = viewshed3D.hiddenAreaColor.toCssColorString()
 
     this.pickPointHandler = new Cesium.DrawHandler(
       this.viewer,
@@ -37,18 +36,17 @@ export default class ViewshedTool {
       // 若此标记为false，则激活对可视域分析对象的操作
       if (!_this.viewshedFlag) {
         //获取鼠标屏幕坐标,并将其转化成笛卡尔坐标
-        var position = e.endPosition
-        var last = _this.scene.pickPosition(position)
-        debugger
+        let position = e.endPosition
+        let last = _this.scene.pickPosition(position)
         //计算该点与视口位置点坐标的距离
-        var distance = Cesium.Cartesian3.distance(viewPosition, last)
+        let distance = Cesium.Cartesian3.distance(viewPosition, last)
 
         if (distance > 0) {
           // 将鼠标当前点坐标转化成经纬度
-          var cartographic = Cesium.Cartographic.fromCartesian(last)
-          var longitude = Cesium.Math.toDegrees(cartographic.longitude)
-          var latitude = Cesium.Math.toDegrees(cartographic.latitude)
-          var height = cartographic.height
+          let cartographic = Cesium.Cartographic.fromCartesian(last)
+          let longitude = Cesium.Math.toDegrees(cartographic.longitude)
+          let latitude = Cesium.Math.toDegrees(cartographic.latitude)
+          let height = cartographic.height
           // 通过该点设置可视域分析对象的距离及方向
           _this.viewshed3D.setDistDirByPoint([longitude, latitude, height])
         }
@@ -61,22 +59,23 @@ export default class ViewshedTool {
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
-    // eslint-disable-next-line no-unused-vars
-    _this.drawHandler.setInputAction(function(e) {
+    setCursor(_this.viewer, 'cursor-crosshair')
+    _this.drawHandler.setInputAction(function() {
       //鼠标右键事件回调，不再执行鼠标移动事件中对可视域的操作
+      resetCursor(_this.viewer, 'cursor-crosshair')
       _this.viewshedFlag = true
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
 
     _this.pickPointHandler.drawEvt.addEventListener(function(result) {
-      var point = result.object
-      var position = point.position
+      let point = result.object
+      let position = point.position
       viewPosition = position
 
       // 将获取的点的位置转化成经纬度
-      var cartographic = Cesium.Cartographic.fromCartesian(position)
-      var longitude = Cesium.Math.toDegrees(cartographic.longitude)
-      var latitude = Cesium.Math.toDegrees(cartographic.latitude)
-      var height = cartographic.height + 1.8
+      let cartographic = Cesium.Cartographic.fromCartesian(position)
+      let longitude = Cesium.Math.toDegrees(cartographic.longitude)
+      let latitude = Cesium.Math.toDegrees(cartographic.latitude)
+      let height = cartographic.height + 1.8
       point.position = Cesium.Cartesian3.fromDegrees(
         longitude,
         latitude,

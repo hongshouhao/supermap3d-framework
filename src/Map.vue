@@ -19,6 +19,8 @@
 import TopLeftBar from './component/TopLeftBar.vue'
 import TopRightBar from './component/TopRightBar.vue'
 import Popup from './component/Popup.vue'
+import { createImageryProvider } from './utils/ImageryProvider'
+import ViewUtility from './utils/ViewUtility'
 
 export default {
   components: {
@@ -36,14 +38,35 @@ export default {
       throw '配置未初始化: window.s3d.config';
     }
 
-    this.sceneContainer = document.createElement("div")
-    let viewer = new Cesium.Viewer(this.sceneContainer, {
+    let baseMapProvider = null
+    for (let mapKey in window.s3d.config.baseMaps) {
+      let map = window.s3d.config.baseMaps[mapKey]
+      if (map.default) {
+        if (mapKey !== "none") {
+          baseMapProvider = createImageryProvider(map)
+        }
+        break
+      }
+    }
+
+    let viewerOptions = {
       infoBox: false,
       shadows: true,
       navigation: false,
       baseLayerPicker: false,
       shouldAnimate: true,
-    })
+      imageryProvider: baseMapProvider
+      // imageryProvider: new Cesium.TileMapServiceImageryProvider({
+      //   url: 'http://cesium.agi.com/blackmarble',
+      //   maximumLevel: 8,
+      //   credit: 'Black Marble imagery courtesy NASA Earth Observatory',
+      // })
+    }
+
+    Object.assign(viewerOptions, window.s3d.config.viewerOptions)
+
+    this.sceneContainer = document.createElement("div")
+    let viewer = new Cesium.Viewer(this.sceneContainer, viewerOptions)
 
     viewer.scene.screenSpaceCameraController.tiltEventTypes = [
       Cesium.CameraEventType.RIGHT_DRAG,
@@ -68,20 +91,18 @@ export default {
     });
 
     viewer.scene.debugShowFramesPerSecond = false;
-    // viewer.scene.globe.baseColor = Cesium.Color.BLACK;
-    viewer.scene.globe.baseColor = new Cesium.Color(0, 0, 0, 0);
-    viewer.scene.globe.depthTestAgainstTerrain = !0;
-
 
     window.s3d.viewer = viewer
     window.s3d.scene = viewer.scene
+    window.s3d.viewUtility = new ViewUtility(viewer)
 
-    console.log("viewer", viewer)
+    console.log("s3d", window.s3d)
   },
   mounted () {
     this.$refs.cesiumContainer.appendChild(this.sceneContainer.children[0])
     window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.popup.$el)
     window.s3d.popup = this.$refs.popup
+    window.s3d.eventBus.dispatch("framework-initialized");
   }
 }
 </script>

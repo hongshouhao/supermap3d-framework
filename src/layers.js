@@ -29,6 +29,15 @@ export const layers = [
           url: `${baseUrl}iserver/services/3D-XCFCFH/rest/realspace/datas/FH/config`,
         },
       },
+      {
+        id: '23',
+        label: '欸图',
+        layer: {
+          type: 'SuperMapImagery',
+          visible: false,
+          url: `${baseUrl}iserver/services/map-PiCiZhiTu/rest/maps/批次`,
+        },
+      },
     ],
   },
   {

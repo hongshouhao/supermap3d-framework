@@ -28,6 +28,26 @@ export function pointProjectionOnLine(point, startPointOfLine, endPointOfLine) {
   return ptOnline
 }
 
+export function pointOnDirection(point, direction, distance) {
+  let nor = Cesium.Cartesian3.normalize(direction, new Cesium.Cartesian3())
+  let newV = Cesium.Cartesian3.multiplyByScalar(
+    nor,
+    distance,
+    new Cesium.Cartesian3()
+  )
+  let newEndPoint = Cesium.Cartesian3.add(newV, point, new Cesium.Cartesian3())
+  return newEndPoint
+}
+
+export function extendLine(startPoint, endPoint, distance) {
+  let v = Cesium.Cartesian3.subtract(
+    endPoint,
+    startPoint,
+    new Cesium.Cartesian3()
+  )
+  return pointOnDirection(startPoint, v, distance)
+}
+
 ///即使offsetZ=0时，此函数返回的点的高度会大于原始点的高度，位移越大，偏差越大，
 ///因为局部坐标系是平面的，而高度是按照球面计算的，若要返回点的高度同原始点在一个高度，需要反算一次（目前只知道这个方法）
 export function movePoint(origin, offsetX, offsetY, offsetZ) {
@@ -149,19 +169,25 @@ export function reCalculateCartesian(cartesian, height) {
   )
 }
 
-export function getViewCenter(viewer) {
-  let ray = new Cesium.Ray(viewer.camera.position, viewer.camera.direction)
-  let intersection = Cesium.IntersectionTests.rayEllipsoid(
-    ray,
-    Cesium.Ellipsoid.WGS84
+export function rotateVector(vector, normal, angle) {
+  let q = Cesium.Quaternion.fromAxisAngle(normal, angle)
+  let m3 = Cesium.Matrix3.fromQuaternion(q)
+  let m4 = Cesium.Matrix4.fromRotationTranslation(m3)
+  let vectorNew = Cesium.Matrix4.multiplyByPoint(
+    m4,
+    vector,
+    new Cesium.Cartesian3()
   )
-
-  let point = Cesium.Ray.getPoint(ray, intersection.start)
-  return point
+  return vectorNew
 }
 
-export function getCameraHeight(viewer) {
-  return viewer.scene.globe.ellipsoid.cartesianToCartographic(
-    viewer.camera.position
-  ).height
+export function pointRotateAroundPoint(center, point, normal, angle) {
+  let vector = Cesium.Cartesian3.subtract(
+    point,
+    center,
+    new Cesium.Cartesian3()
+  )
+  let vNew = rotateVector(vector, normal, angle)
+  let p = Cesium.Cartesian3.add(vNew, center, new Cesium.Cartesian3())
+  return p
 }
