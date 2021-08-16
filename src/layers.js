@@ -2,7 +2,14 @@
 //MapImagery 影像图层
 //S3M        三维图层
 //MVT        矢量瓦片图层
+
+import {
+  popupTemplateWithDefaultUI,
+  popupTemplateWithCustomUI,
+} from './popupTemplate'
+
 let baseUrl = process.env.VUE_APP_ISERVER_BASE_URL
+
 export const layers = [
   {
     id: '2',
@@ -17,16 +24,7 @@ export const layers = [
           visible: true,
           enableFillAndWireFrame: true,
           url: `${baseUrl}iserver/services/3D-XCFCFH/rest/realspace/datas/FC/config`,
-          popupTemplate: {
-            getHeader: function() {
-              return 'test'
-            },
-            getContent: function() {
-              let div = document.createElement('div')
-              div.innerHTML = 'test'
-              return div
-            },
-          },
+          popupTemplate: popupTemplateWithDefaultUI,
         },
       },
       {
@@ -37,6 +35,7 @@ export const layers = [
           visible: false,
           enableFillAndWireFrame: true,
           url: `${baseUrl}iserver/services/3D-XCFCFH/rest/realspace/datas/FH/config`,
+          popupTemplate: popupTemplateWithCustomUI,
         },
       },
     ],
