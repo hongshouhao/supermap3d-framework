@@ -1,5 +1,6 @@
 import Element from 'element-ui'
 import VueiClient from '@supermap/vue-iclient3d-webgl'
+import { lonLatToCartesian } from './utils/CesiumMath'
 
 import 'element-ui/lib/theme-chalk/index.css'
 import '@supermap/vue-iclient3d-webgl/dist/styles/vue-iclient3d-webgl.min.css'
@@ -29,5 +30,45 @@ class S3d {
     this.config = config
     this.toolbar = new Toolbar()
     this.eventBus = EventBus
+  }
+
+  getLayerConfig(layerName) {
+    let getConfig = function(layers) {
+      for (let lyConfig of layers) {
+        if (lyConfig.layer) {
+          if (lyConfig.label === layerName) {
+            return lyConfig.layer
+          }
+        } else if (lyConfig.children) {
+          return getConfig(lyConfig.children)
+        }
+      }
+    }
+
+    let config = getConfig(this.config.layers)
+    return config
+  }
+
+  /* 
+  data结构
+  {
+    object: {
+      id(此处可空),
+      layerName
+    },
+    position: {
+      longitude,
+      latitude,
+      height(此处可空),
+      },
+  }
+   */
+  openPopup(data) {
+    let worldPosition = lonLatToCartesian(
+      data.position.longitude,
+      data.position.latitude,
+      data.position.height
+    )
+    this.popup.renderPopup(worldPosition, data)
   }
 }

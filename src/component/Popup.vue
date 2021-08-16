@@ -62,32 +62,36 @@ export default {
       this.handler3D = new Cesium.ScreenSpaceEventHandler(window.s3d.viewer.scene.canvas)
       let _this = this
       this.handler3D.setInputAction(function (e) {
-        let pickobject = window.s3d.viewer.scene.pick(e.position)
-        if (pickobject) {
-          if (typeof pickobject.id !== 'string') {
+        if (!window.s3d.toolWorking) {
+          let pickobject = window.s3d.viewer.scene.pick(e.position)
+          if (pickobject) {
+            if (typeof pickobject.id !== 'string') {
+              _this.hidePopup()
+              return
+            }
+            let object = {}
+            if (pickobject.primitive) {
+              object.id = pickobject.id
+              object.layerName = pickobject.primitive.name
+            }
+
+            let position = window.s3d.viewer.scene.pickPosition(e.position)
+            let cartographic = Cesium.Cartographic.fromCartesian(position)
+            let longitude = Cesium.Math.toDegrees(cartographic.longitude)
+            let latitude = Cesium.Math.toDegrees(cartographic.latitude)
+            let height = cartographic.height
+
+            _this.renderPopup(position, {
+              object: object,
+              position: {
+                longitude: longitude,
+                latitude: latitude,
+                height: height,
+              },
+            })
+          } else {
             _this.hidePopup()
-            return
           }
-          let object = {}
-          if (pickobject.primitive) {
-            object.id = pickobject.id
-            object.layerName = pickobject.primitive.name
-          }
-
-          let position = window.s3d.viewer.scene.pickPosition(e.position)
-          let cartographic = Cesium.Cartographic.fromCartesian(position)
-          let longitude = Cesium.Math.toDegrees(cartographic.longitude)
-          let latitude = Cesium.Math.toDegrees(cartographic.latitude)
-          let height = cartographic.height
-
-          _this.renderPopup(position, {
-            object: object,
-            position: {
-              longitude: longitude,
-              latitude: latitude,
-              height: height,
-            },
-          })
         } else {
           _this.hidePopup()
         }
@@ -95,8 +99,23 @@ export default {
     },
 
     renderPopup (worldPosition, data) {
-      this.setHeader(this.getPopupHeader(data))
-      this.setContent(this.getPopupContent(data))
+      let lconfig = window.s3d.getLayerConfig(data.object.layerName)
+      if (lconfig && lconfig.popupTemplate) {
+        if (!lconfig.popupTemplate.getHeader) {
+          throw `配置错误: 图层${data.object.layerName}相关配置丢失, 函数popupTemplate.getHeader丢失`
+        }
+        if (!lconfig.popupTemplate.getContent) {
+          throw `配置错误: 图层${data.object.layerName}相关配置丢失, 函数popupTemplate.getContent丢失`
+        }
+
+        this.setHeader(lconfig.popupTemplate.getHeader(data))
+        this.setContent(lconfig.popupTemplate.getContent(data))
+      }
+      else {
+        this.setHeader(this.getPopupHeader(data))
+        this.setContent(this.getPopupContent(data))
+      }
+
       this.worldPosition = worldPosition
       this.popupVisible = true
 

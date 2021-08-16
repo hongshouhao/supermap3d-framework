@@ -29,8 +29,10 @@ export default class PointMeasurement {
     }
 
     let _this = this
-    setCursor(viewer, 'cursor-crosshair')
+    window.s3d.toolWorking = true
+    setCursor(_this.viewer, 'cursor-crosshair')
     _this.createHandler.setInputAction(function(e) {
+      debugger
       if (_this.status === 'none') {
         _this.status = 'moving'
         _this.addPonit(e.endPosition)
@@ -40,7 +42,7 @@ export default class PointMeasurement {
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     _this.createHandler.setInputAction(function() {
-      resetCursor(viewer, 'cursor-crosshair')
+      resetCursor(_this.viewer, 'cursor-crosshair')
       _this.createHandler.removeInputAction(
         Cesium.ScreenSpaceEventType.MOUSE_MOVE
       )
@@ -48,6 +50,7 @@ export default class PointMeasurement {
         Cesium.ScreenSpaceEventType.RIGHT_CLICK
       )
       _this.status = 'none'
+      window.s3d.toolWorking = false
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
 
     _this.editHandler.setInputAction(function(e) {
@@ -80,6 +83,7 @@ export default class PointMeasurement {
   }
 
   clear() {
+    window.s3d.toolWorking = false
     for (let ent of this.pointEntities) {
       this.viewer.entities.remove(ent)
     }

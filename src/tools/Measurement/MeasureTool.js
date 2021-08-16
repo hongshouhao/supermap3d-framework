@@ -20,6 +20,8 @@ export default class MeasureTool {
       // _this.handlerDis.disLabel.fillColor = Cesium.Color.fromCssColorString(
       //   '#99CCFF'
       // )
+
+      window.s3d.toolWorking = false
     })
 
     _this.handlerDis.activeEvt.addEventListener(function(isActive) {
@@ -41,6 +43,8 @@ export default class MeasureTool {
       let area =
         mj > 1000000 ? (mj / 1000000).toFixed(2) + 'km²' : mj.toFixed(2) + '㎡'
       _this.handlerArea.areaLabel.text = '面积:' + area
+
+      window.s3d.toolWorking = false
     })
     _this.handlerArea.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
@@ -71,6 +75,8 @@ export default class MeasureTool {
       _this.handlerHeight.disLabel.text = '空间距离:' + distance
       _this.handlerHeight.vLabel.text = '垂直高度:' + vHeight
       _this.handlerHeight.hLabel.text = '水平距离:' + hDistance
+
+      window.s3d.toolWorking = false
     })
     _this.handlerHeight.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
@@ -83,18 +89,22 @@ export default class MeasureTool {
 
   measureDistance() {
     this.deactive()
+    window.s3d.toolWorking = true
     this.handlerDis.activate()
   }
   measureArea() {
     this.deactive()
+    window.s3d.toolWorking = true
     this.handlerArea.activate()
   }
   measureHeight() {
     this.deactive()
+    window.s3d.toolWorking = true
     this.handlerHeight.activate()
   }
 
   deactive() {
+    window.s3d.toolWorking = false
     this.handlerDis.deactivate()
     this.handlerArea.deactivate()
     this.handlerHeight.deactivate()

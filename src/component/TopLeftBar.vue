@@ -341,6 +341,7 @@ export default {
       this.currentTool = "HighLimitTool"
       this.highLimitTool.start()
     },
+
     multiViewport () {
       window.s3d.layerTree.toggleViewportMode()
     },
@@ -350,9 +351,11 @@ export default {
         this.highLimitTool.setHeight(height)
       }
     },
+
     settings () {
       this.currentTool = "CommonSettings"
     },
+
     stopViewshedTool () {
       if (this.viewshedTool) {
         this.viewshedTool.clear()

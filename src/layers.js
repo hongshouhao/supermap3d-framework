@@ -17,6 +17,16 @@ export const layers = [
           visible: true,
           enableFillAndWireFrame: true,
           url: `${baseUrl}iserver/services/3D-XCFCFH/rest/realspace/datas/FC/config`,
+          popupTemplate: {
+            getHeader: function() {
+              return 'test'
+            },
+            getContent: function() {
+              let div = document.createElement('div')
+              div.innerHTML = 'test'
+              return div
+            },
+          },
         },
       },
       {
@@ -27,15 +37,6 @@ export const layers = [
           visible: false,
           enableFillAndWireFrame: true,
           url: `${baseUrl}iserver/services/3D-XCFCFH/rest/realspace/datas/FH/config`,
-        },
-      },
-      {
-        id: '23',
-        label: '欸图',
-        layer: {
-          type: 'SuperMapImagery',
-          visible: false,
-          url: `${baseUrl}iserver/services/map-PiCiZhiTu/rest/maps/批次`,
         },
       },
     ],
