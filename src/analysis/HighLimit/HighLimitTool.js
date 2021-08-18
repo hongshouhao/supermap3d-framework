@@ -283,7 +283,6 @@ export default class HighLimitTool {
 
     _this.editHandler.setInputAction(function() {
       if (_this.state === 'move' || _this.state === 'scale') {
-        debugger
         _this.state = ''
         resetCursor(_this.viewer, 'cursor-move')
         _this.viewer.scene.screenSpaceCameraController.enableInputs = true

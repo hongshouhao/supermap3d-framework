@@ -97,9 +97,7 @@ export default {
             console.debug("layer-url", lyD.layer.url);
             if (lyD.layer.url) {
               let promise = window.s3d.viewer.scene.addS3MTilesLayerByScp(lyD.layer.url, { name: lyD.label })
-              debugger
               let pp = promise.then((ly) => {
-                debugger
                 console.debug("layer-added", ly);
                 ly.type = "S3M"
                 ly.visible = lyD.layer.visible

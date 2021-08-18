@@ -32,7 +32,6 @@ export default class PointMeasurement {
     window.s3d.toolWorking = true
     setCursor(_this.viewer, 'cursor-crosshair')
     _this.createHandler.setInputAction(function(e) {
-      debugger
       if (_this.status === 'none') {
         _this.status = 'moving'
         _this.addPonit(e.endPosition)
