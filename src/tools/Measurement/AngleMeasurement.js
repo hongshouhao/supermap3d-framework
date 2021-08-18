@@ -1,4 +1,7 @@
-import { setCursor, resetCursor } from '../../utils/CursorUtility'
+import {
+  setCursor,
+  resetCursor
+} from '../../utils/CursorUtility'
 import {
   extendLine,
   pointOnDirection,
@@ -25,7 +28,7 @@ export default class AngleMeasurement {
     setCursor(_this.viewer, 'cursor-crosshair')
 
     _this.anglePositions = []
-    _this.angleDrawHandler.setInputAction(function(e) {
+    _this.angleDrawHandler.setInputAction(function (e) {
       let point = window.s3d.viewUtility.screenPositionToCartesian(e.position)
       if (step === 0) {
         _this.anglePositions.push(point)
@@ -41,7 +44,7 @@ export default class AngleMeasurement {
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
-    _this.angleDrawHandler.setInputAction(function(e) {
+    _this.angleDrawHandler.setInputAction(function (e) {
       let point = window.s3d.viewUtility.screenPositionToCartesian(
         e.endPosition
       )
@@ -64,7 +67,7 @@ export default class AngleMeasurement {
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
-    _this.angleDrawHandler.setInputAction(function() {
+    _this.angleDrawHandler.setInputAction(function () {
       resetCursor(_this.viewer, 'cursor-crosshair')
 
       _this.angleDrawHandler.removeInputAction(
@@ -202,6 +205,8 @@ export default class AngleMeasurement {
 
     if (this.textEntity) {
       this.textEntity.position = new Cesium.CallbackProperty(() => p, false)
+      this.textEntity.label.text = Cesium.Math.toDegrees(angle).toFixed(2) + '°'
+
     } else {
       this.textEntity = this.viewer.entities.add({
         position: p,
