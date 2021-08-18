@@ -47,7 +47,9 @@ export default {
   mounted () {
     window.s3d.layerTree = this
     let _this = this
+
     window.s3d.eventBus.addEventListener("framework-initialized", () => {
+      console.debug("framework-initialized")
       _this.init()
     });
   },
@@ -65,7 +67,13 @@ export default {
       let _this = this
       for (let lyD of layersData) {
         if (lyD.layer) {
-          lyD.opacity = 100
+          if (!lyD.layer.opacity) {
+            lyD.layer.opacity = 100
+          }
+
+          if (lyD.layer.visible) {
+            _this.defaultCheckedKeys.push(lyD.id)
+          }
 
           if (lyD.layer.type === "Terrain") {
             new Cesium.CesiumTerrainProvider({
@@ -77,17 +85,27 @@ export default {
             var l = new Cesium.SuperMapImageryProvider({
               url: lyD.layer.url
             });
-            window.s3d.viewer.imageryLayers.addImageryProvider(l)
+
+            let ly = window.s3d.viewer.imageryLayers.addImageryProvider(l)
+            ly.type = "TILE"
+            ly.show = lyD.layer.visible
+            console.debug("layer-" + lyD.label, ly);
+
+            lyD.cesiumLayer = ly
           }
           else if (lyD.layer.type === "S3M") {
-            if (lyD.layer.visible) {
-              _this.defaultCheckedKeys.push(lyD.id)
-            }
-
+            console.debug("layer-url", lyD.layer.url);
             if (lyD.layer.url) {
-              window.s3d.viewer.scene.addS3MTilesLayerByScp(lyD.layer.url, { name: lyD.label }).then((ly) => {
-                lyD.cesiumLayer = ly
+              let promise = window.s3d.viewer.scene.addS3MTilesLayerByScp(lyD.layer.url, { name: lyD.label })
+              debugger
+              let pp = promise.then((ly) => {
+                debugger
+                console.debug("layer-added", ly);
+                ly.type = "S3M"
                 ly.visible = lyD.layer.visible
+                console.debug("layer-" + lyD.label, ly);
+
+                lyD.cesiumLayer = ly
 
                 if (lyD.layer.queryParameter) {
                   ly.setQueryParameter(queryParameter);
@@ -99,7 +117,9 @@ export default {
                   ly.style3D.lineWidth = 1;
                   ly.wireFrameMode = Cesium.WireFrameType.Triangle
                 }
-              });
+              })
+
+              console.debug(pp)
             }
           }
           else if (lyD.layer.type === "MVT") {
@@ -134,41 +154,60 @@ export default {
         data.cesiumLayer.setVisibleInViewport(viewport, checked);
       }
       else {
-        data.cesiumLayer.visible = checked
+        if (data.cesiumLayer && data.layer.type === "SuperMapImagery") {
+          data.cesiumLayer.show = checked
+        }
+        else if (data.cesiumLayer && data.layer.type === "S3M") {
+          data.cesiumLayer.visible = checked
+        }
       }
     },
     renderExtButton (h, { node, data }) {
-      let checkedLayer = !(
-        (node.childNodes && node.childNodes.length > 0) ||
-        node.checked === false
-      )
+      // let checkedLayer = !(
+      //   (node.childNodes && node.childNodes.length > 0) ||
+      //   node.checked === false
+      // )
 
       const gotoLayer = function (layer) {
         window.s3d.viewer.flyTo(layer)
       }
 
       const setLayerOpacity = function (opacity) {
-        if (data.cesiumLayer) {
+        if (data.cesiumLayer && data.layer.type === "SuperMapImagery") {
+          data.cesiumLayer.alpha = opacity / 100
+        }
+        else if (data.cesiumLayer && data.layer.type === "S3M") {
           data.cesiumLayer.style3D.fillForeColor = new Cesium.Color(1.0, 1.0, 1.0, opacity / 100);
         }
       }
-      return (
-        <span class="custom-tree-node">
-          <span class="toggle-ext-button">{node.label}
-            <i class={checkedLayer ? "esri-icon-directions2 my-ext-button" : "esri-icon-directions2 my-ext-button my-ext-button-hidden"} on-click={() => gotoLayer(data.cesiumLayer)} />
-          </span>
 
-          <el-popover
-            placement="left"
-            popper-class="layer-setting-popup"
-            title="不透明度"
-            trigger="hover"
-          >
-            <el-slider min={10} max={100} v-model={data.opacity} on-input={setLayerOpacity}></el-slider>
-            <i slot="reference" class={checkedLayer ? "layer-more my-icon-more" : ""} />
-          </el-popover>
-        </span>
-      )
+      if (node.childNodes && node.childNodes.length > 0) {
+        return (
+          <span class="custom-tree-node">
+            <span class="toggle-ext-button">{node.label}
+            </span>
+          </span>
+        )
+      }
+      else {
+        return (
+          <span class="custom-tree-node">
+            <span class="toggle-ext-button">{node.label}
+              <i class={node.checked ? "esri-icon-directions2 my-ext-button" : "esri-icon-directions2 my-ext-button my-ext-button-hidden"} on-click={() => gotoLayer(data.cesiumLayer)} />
+            </span>
+
+            <el-popover
+              placement="left"
+              popper-class="layer-setting-popup"
+              title="不透明度"
+              trigger="hover"
+            >
+              <el-slider min={10} max={100} v-model={data.layer.opacity} on-input={setLayerOpacity}></el-slider>
+              <i slot="reference" class={node.checked ? "layer-more my-icon-more" : ""} />
+            </el-popover>
+          </span>
+        )
+      }
     },
     toggleViewportMode () {
       if (this.multiViewport) {

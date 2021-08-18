@@ -1,4 +1,6 @@
-import { layers } from './layers'
+import {
+  layers
+} from './layers'
 
 export const config = {
   iServerBaseURL: process.env.VUE_APP_ISERVER_BASE_URL,
@@ -29,8 +31,7 @@ export const config = {
     normal: {
       type: 'gaode',
       params: {
-        url:
-          'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+        url: 'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
       },
       //   type: 'tianditu',
       //   params: {

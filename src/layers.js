@@ -10,13 +10,11 @@ import {
 
 let baseUrl = process.env.VUE_APP_ISERVER_BASE_URL
 
-export const layers = [
-  {
+export const layers = [{
     id: '2',
     label: '分层分户',
     expand: true,
-    children: [
-      {
+    children: [{
         id: '21',
         label: '分层',
         layer: {
@@ -58,39 +56,13 @@ export const layers = [
       url: `${baseUrl}iserver/services/3D-XCJZDT/rest/realspace/datas/Config/config`,
     },
   },
-  // {
-  //   id: '5',
-  //   label: 'tttt',
-  //   layer: {
-  //     type: 'S3M',
-  //     visible: true,
-  //     url: `http://106.14.242.98:8090/iserver/services/3D-local3DCache-Dataset4965020121NewDGN/rest/realspace/datas/Dataset_496_502_012_1@NewDGN/config`,
-  //   },
-  // },
-
-  // {
-  //   id: '1',
-  //   label: '太湖新城',
-  //   children: [
-  //     {
-  //       id: '11',
-  //       label: '白色塑膜',
-  //       layer: {
-  //         type: 'S3M',
-  //         visible: true,
-  //         url:
-  //           'http://106.14.242.98:8090/iserver/services/3D-XCBM/rest/realspace',
-  //       },
-  //     },
-  //   ],
-  // },
-  // {
-  //   id: '2',
-  //   label: '地下管线',
-  //   layer: {
-  //     type: 'S3M',
-  //     visible: false,
-  //     url: 'http://106.14.242.98:8090/iserver/services/3D-DXGX/rest/realspace',
-  //   },
-  // },
+  {
+    id: '5',
+    label: '红线',
+    layer: {
+      type: 'SuperMapImagery',
+      visible: false,
+      url: `${baseUrl}iserver/services/map-PiCiZhiTu/rest/maps/批次`
+    }
+  }
 ]
