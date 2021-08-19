@@ -10,11 +10,13 @@ import {
 
 let baseUrl = process.env.VUE_APP_ISERVER_BASE_URL
 
-export const layers = [{
+export const layers = [
+  {
     id: '2',
     label: '分层分户',
     expand: true,
-    children: [{
+    children: [
+      {
         id: '21',
         label: '分层',
         layer: {
@@ -62,7 +64,26 @@ export const layers = [{
     layer: {
       type: 'SuperMapImagery',
       visible: false,
-      url: `${baseUrl}iserver/services/map-PiCiZhiTu/rest/maps/批次`
-    }
-  }
+      url: `${baseUrl}iserver/services/map-PiCiZhiTu/rest/maps/批次`,
+    },
+  },
+  {
+    id: '6',
+    label: 'TEST',
+    layer: {
+      type: 'S3M',
+      visible: true,
+      url: `${baseUrl}iserver/services/3D-DianXin/rest/realspace/datas/%E7%94%B5%E4%BF%A1_1@%E7%94%B5%E4%BF%A1/config`,
+      outFields: ['*'],
+    },
+  },
+  {
+    id: '7',
+    label: 'MVT',
+    layer: {
+      type: 'MVT',
+      visible: false,
+      url: `http://106.14.242.98:8090/iserver/services/map-DianTong/rest/maps/DT_POINT@%E7%94%B5%E9%80%9A/layers/DT_POINT@%E7%94%B5%E9%80%9A`,
+    },
+  },
 ]

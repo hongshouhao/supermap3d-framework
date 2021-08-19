@@ -18,18 +18,16 @@
       <el-divider direction="vertical"></el-divider>
     </div>
 
-    <div>
-      <el-tree v-if="multiViewport"
-               :data="layersData"
-               node-key="id"
-               show-checkbox
-               :props="{disabled:disableNode}"
-               @check-change="setLayerVisible2"
-               :render-content="renderExtButton"
-               :default-expanded-keys="defaultExpandedKeys"
-               :default-checked-keys="defaultCheckedKeys">
-      </el-tree>
-    </div>
+    <el-tree v-if="multiViewport"
+             :data="layersData"
+             node-key="id"
+             show-checkbox
+             :props="{disabled:disableNode}"
+             @check-change="setLayerVisible2"
+             :render-content="renderExtButton"
+             :default-expanded-keys="defaultExpandedKeys"
+             :default-checked-keys="defaultCheckedKeys">
+    </el-tree>
   </div>
 </template>
 
@@ -82,7 +80,7 @@ export default {
             })
           }
           else if (lyD.layer.type === "SuperMapImagery") {
-            var l = new Cesium.SuperMapImageryProvider({
+            let l = new Cesium.SuperMapImageryProvider({
               url: lyD.layer.url
             });
 
@@ -97,10 +95,12 @@ export default {
             console.debug("layer-url", lyD.layer.url);
             if (lyD.layer.url) {
               let promise = window.s3d.viewer.scene.addS3MTilesLayerByScp(lyD.layer.url, { name: lyD.label })
-              let pp = promise.then((ly) => {
+              promise.then((ly) => {
+
                 console.debug("layer-added", ly);
                 ly.type = "S3M"
                 ly.visible = lyD.layer.visible
+                ly.indexedDBSetting.isAttributesSave = true;
                 console.debug("layer-" + lyD.label, ly);
 
                 lyD.cesiumLayer = ly
@@ -116,17 +116,20 @@ export default {
                   ly.wireFrameMode = Cesium.WireFrameType.Triangle
                 }
               })
-
-              console.debug(pp)
             }
           }
           else if (lyD.layer.type === "MVT") {
-            var mvtMap = window.s3d.viewer.scene.addVectorTilesMap({
+
+            let mvtLy = window.s3d.scene.addVectorTilesMap({
               url: lyD.layer.url,
               name: lyD.label,
               viewer: window.s3d.viewer
             });
-            console.log(mvtMap)
+
+            mvtLy.type = "MVT"
+            mvtLy.show = lyD.layer.visible
+
+            lyD.cesiumLayer = mvtLy
           }
 
           else {
@@ -148,17 +151,26 @@ export default {
         return
       }
 
-      if (this.multiViewport) {
-        data.cesiumLayer.setVisibleInViewport(viewport, checked);
-      }
-      else {
-        if (data.cesiumLayer && data.layer.type === "SuperMapImagery") {
-          data.cesiumLayer.show = checked
+      if (data.cesiumLayer) {
+        if (this.multiViewport) {
+          data.cesiumLayer.setVisibleInViewport(viewport, checked);
         }
-        else if (data.cesiumLayer && data.layer.type === "S3M") {
-          data.cesiumLayer.visible = checked
+        else {
+          if (data.cesiumLayer) {
+
+            if (data.layer.type === "SuperMapImagery") {
+              data.cesiumLayer.show = checked
+            }
+            else if (data.layer.type === "MVT") {
+              data.cesiumLayer.show = checked
+            }
+          }
+          else if (data.cesiumLayer && data.layer.type === "S3M") {
+            data.cesiumLayer.visible = checked
+          }
         }
       }
+
     },
     renderExtButton (h, { node, data }) {
       // let checkedLayer = !(
@@ -167,7 +179,22 @@ export default {
       // )
 
       const gotoLayer = function (layer) {
-        window.s3d.viewer.flyTo(layer)
+        debugger
+        if (data.layer.type === "MVT") {
+          let bounds = layer.rectangle;
+          debugger
+          window.s3d.scene.camera.setView({
+            destination: new Cesium.Cartesian3.fromRadians((bounds.east + bounds.west) * 0.5, (bounds.north + bounds.south) *
+              0.5, 10000),
+            orientation: {
+              heading: 0,
+              roll: 0
+            }
+          });
+        }
+        else {
+          window.s3d.viewer.flyTo(layer)
+        }
       }
 
       const setLayerOpacity = function (opacity) {
@@ -217,6 +244,14 @@ export default {
         this.multiViewport = true
       }
     },
+    setLayerOpacity (opacity) {
+      if (data.cesiumLayer && data.layer.type === "SuperMapImagery") {
+        data.cesiumLayer.alpha = opacity / 100
+      }
+      else if (data.cesiumLayer && data.layer.type === "S3M") {
+        data.cesiumLayer.style3D.fillForeColor = new Cesium.Color(1.0, 1.0, 1.0, opacity / 100);
+      }
+    },
     disableNode (data) {
       if (data.children && data.children.length > 0) {
         return false
@@ -247,6 +282,7 @@ export default {
   }
   .divider {
     position: relative;
+    margin-left: 4px;
     .el-divider {
       height: 100%;
     }
@@ -264,7 +300,7 @@ export default {
       width: 10px;
 
       position: absolute;
-      right: -13px;
+      right: -5px;
     }
 
     .toggle-ext-button {

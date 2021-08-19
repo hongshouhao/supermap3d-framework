@@ -40,13 +40,36 @@ class S3d {
             return lyConfig.layer
           }
         } else if (lyConfig.children) {
-          return getConfig(lyConfig.children)
+          let result = getConfig(lyConfig.children)
+          if (result) {
+            return result
+          }
         }
       }
     }
 
     let config = getConfig(this.config.layers)
     return config
+  }
+
+  getLayer(layerName) {
+    let get = function(layers) {
+      for (let lyConfig of layers) {
+        if (lyConfig.layer) {
+          if (lyConfig.label === layerName) {
+            return lyConfig
+          }
+        } else if (lyConfig.children) {
+          let result = get(lyConfig.children)
+          if (result) {
+            return result
+          }
+        }
+      }
+    }
+
+    let lconfig = get(this.config.layers)
+    return lconfig.cesiumLayer
   }
 
   /* 

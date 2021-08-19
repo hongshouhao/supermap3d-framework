@@ -69,26 +69,54 @@ export default {
               _this.hidePopup()
               return
             }
-            let object = {}
+
+            let dobj = {
+              object: {
+                id: "",
+                layerName: "",
+                attributes: {}
+              },
+              position: {
+                longitude: 0,
+                latitude: 0,
+                height: 0,
+              },
+            }
+
             if (pickobject.primitive) {
-              object.id = pickobject.id
-              object.layerName = pickobject.primitive.name
+              dobj.object.id = pickobject.id
+              dobj.object.layerName = pickobject.primitive.name
+              dobj.position.longitude = pickobject.primitive.lon
+              dobj.position.latitude = pickobject.primitive.lat
+              dobj.position.height = pickobject.primitive.height
             }
 
             let position = window.s3d.viewer.scene.pickPosition(e.position)
-            let cartographic = Cesium.Cartographic.fromCartesian(position)
-            let longitude = Cesium.Math.toDegrees(cartographic.longitude)
-            let latitude = Cesium.Math.toDegrees(cartographic.latitude)
-            let height = cartographic.height
+            // let cartographic = Cesium.Cartographic.fromCartesian(position)
+            // longitude = Cesium.Math.toDegrees(cartographic.longitude)
+            // latitude = Cesium.Math.toDegrees(cartographic.latitude)
+            // height = cartographic.height
 
-            _this.renderPopup(position, {
-              object: object,
-              position: {
-                longitude: longitude,
-                latitude: latitude,
-                height: height,
-              },
-            })
+            let lconfig = window.s3d.getLayerConfig(dobj.object.layerName)
+            if (lconfig.outFields
+              && lconfig.outFields instanceof Array
+              && lconfig.outFields.length > 0) {
+              let theLayer = window.s3d.getLayer(dobj.object.layerName)
+              theLayer.getAttributesById(dobj.object.id).then((atts) => {
+                if (lconfig.outFields[0] === "*") {
+                  dobj.object.attributes = atts
+                }
+                else {
+                  for (let f of lconfig.outFields) {
+                    dobj.object.attributes[f] = atts[f]
+                  }
+                }
+                _this.renderPopup(position, dobj)
+              });
+            }
+            else {
+              _this.renderPopup(position, dobj)
+            }
           } else {
             _this.hidePopup()
           }
@@ -215,6 +243,13 @@ export default {
         key: '高度',
         value: data.position.height,
       })
+
+      for (let p in data.object.attributes) {
+        arr.push({
+          key: p,
+          value: data.object.attributes[p],
+        })
+      }
       return arr
     },
 
