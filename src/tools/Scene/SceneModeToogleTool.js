@@ -42,7 +42,6 @@ export default class SceneModeToogleTool {
       })
       this.mode = '2D'
     } else if (this.mode === '2D') {
-      console.log(this.viewer.camera.pitch)
       let center = window.s3d.viewUtility.getViewCenter()
       let destination = Cesium.Cartesian3.subtract(
         center,

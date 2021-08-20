@@ -94,4 +94,22 @@ class S3d {
     )
     this.popup.renderPopup(worldPosition, data)
   }
+
+  flyTo(lon, lat) {
+    debugger
+    let camera = window.s3d.viewer.camera
+    camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(
+        lon,
+        lat,
+        window.s3d.viewUtility.getCameraHeight()
+      ),
+      orientation: {
+        heading: camera.heading,
+        pitch: camera.pitch,
+        roll: camera.roll,
+      },
+      duration: 2,
+    })
+  }
 }

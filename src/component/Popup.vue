@@ -59,8 +59,12 @@ export default {
   },
   methods: {
     init () {
-      this.handler3D = new Cesium.ScreenSpaceEventHandler(window.s3d.viewer.scene.canvas)
+      this.initIQueryFor3D()
+      // this.initIQueryForMVT()
+    },
+    initIQueryFor3D () {
       let _this = this
+      this.handler3D = new Cesium.ScreenSpaceEventHandler(window.s3d.viewer.scene.canvas)
       this.handler3D.setInputAction(function (e) {
         if (!window.s3d.toolWorking) {
           let pickobject = window.s3d.viewer.scene.pick(e.position)
@@ -111,6 +115,8 @@ export default {
                     dobj.object.attributes[f] = atts[f]
                   }
                 }
+
+                console.log(dobj)
                 _this.renderPopup(position, dobj)
               });
             }
@@ -125,7 +131,37 @@ export default {
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
     },
+    initIQueryForMVT () {
+      window.s3d.viewer.selectedEntityChanged.addEventListener(function (entity) {
+        debugger
 
+        if (!Cesium.defined(entity) || !Cesium.defined(entity.pickResult)) {
+          return;
+        }
+
+        let pickResult = entity.pickResult;
+        let properties = null;
+
+        let labelOrBillboardClicked = Cesium.defined(pickResult.position);
+        if (labelOrBillboardClicked) {
+          properties = {};
+          for (let obj in pickResult) {
+            properties[obj] = pickResult[obj];
+          }
+        } else {
+          for (let obj in pickResult) {
+            let pickFeature = pickResult[obj][0].feature;
+            properties = pickFeature.properties;
+            break;
+          }
+        }
+        if (!properties) {
+          return;
+        }
+
+        console.log(properties)
+      });
+    },
     renderPopup (worldPosition, data) {
       let lconfig = window.s3d.getLayerConfig(data.object.layerName)
       if (lconfig && lconfig.popupTemplate) {

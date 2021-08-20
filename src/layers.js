@@ -1,5 +1,5 @@
 //Terrain    地形图
-//MapImagery 影像图层
+//SuperMapImagery 影像图层
 //S3M        三维图层
 //MVT        矢量瓦片图层
 
@@ -68,22 +68,12 @@ export const layers = [
     },
   },
   {
-    id: '6',
-    label: 'TEST',
+    id: '8',
+    label: '给水',
     layer: {
-      type: 'S3M',
-      visible: true,
-      url: `${baseUrl}iserver/services/3D-DianXin/rest/realspace/datas/%E7%94%B5%E4%BF%A1_1@%E7%94%B5%E4%BF%A1/config`,
-      outFields: ['*'],
-    },
-  },
-  {
-    id: '7',
-    label: 'MVT',
-    layer: {
-      type: 'MVT',
+      type: 'SuperMapImagery',
       visible: false,
-      url: `http://106.14.242.98:8090/iserver/services/map-DianTong/rest/maps/DT_POINT@%E7%94%B5%E9%80%9A/layers/DT_POINT@%E7%94%B5%E9%80%9A`,
+      url: `http://106.14.242.98:8090/iserver/services/map-ugcv5-GeiShuiDiTu/rest/maps/%E7%BB%99%E6%B0%B4%E5%9C%B0%E5%9B%BE`,
     },
   },
 ]

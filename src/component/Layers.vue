@@ -58,6 +58,7 @@ export default {
         this.layersData = window.s3d.config.layers
 
         window.s3d.viewer.camera.flyTo(window.s3d.config.defaultCamera);
+
         window.s3d.viewer._element.appendChild(this.$refs.viewportSpliter)
       }
     },
@@ -156,41 +157,30 @@ export default {
           data.cesiumLayer.setVisibleInViewport(viewport, checked);
         }
         else {
-          if (data.cesiumLayer) {
-
-            if (data.layer.type === "SuperMapImagery") {
-              data.cesiumLayer.show = checked
-            }
-            else if (data.layer.type === "MVT") {
-              data.cesiumLayer.show = checked
-            }
+          if (data.layer.type === "SuperMapImagery"
+            || data.layer.type === "MVT") {
+            data.cesiumLayer.show = checked
           }
-          else if (data.cesiumLayer && data.layer.type === "S3M") {
+          else if (data.layer.type === "S3M") {
             data.cesiumLayer.visible = checked
           }
         }
       }
-
     },
     renderExtButton (h, { node, data }) {
-      // let checkedLayer = !(
-      //   (node.childNodes && node.childNodes.length > 0) ||
-      //   node.checked === false
-      // )
-
       const gotoLayer = function (layer) {
-        debugger
         if (data.layer.type === "MVT") {
           let bounds = layer.rectangle;
-          debugger
-          window.s3d.scene.camera.setView({
+          window.s3d.viewer.camera.flyTo({
             destination: new Cesium.Cartesian3.fromRadians((bounds.east + bounds.west) * 0.5, (bounds.north + bounds.south) *
               0.5, 10000),
             orientation: {
               heading: 0,
-              roll: 0
-            }
-          });
+              roll: 0,
+              pitch: -1.57,
+            },
+            duration: 2,
+          })
         }
         else {
           window.s3d.viewer.flyTo(layer)
