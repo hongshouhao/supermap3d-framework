@@ -133,7 +133,6 @@ export default {
     },
     initIQueryForMVT () {
       window.s3d.viewer.selectedEntityChanged.addEventListener(function (entity) {
-        debugger
 
         if (!Cesium.defined(entity) || !Cesium.defined(entity.pickResult)) {
           return;
@@ -165,7 +164,6 @@ export default {
 
     renderPopup (worldPosition, data) {
       let lconfig = window.s3d.getLayerConfig(data.object.layer)
-      debugger
       if (lconfig && lconfig.popupTemplate) {
         if (!lconfig.popupTemplate.getHeader) {
           throw `配置错误: 图层${data.object.layer}相关配置丢失, 函数popupTemplate.getHeader丢失`

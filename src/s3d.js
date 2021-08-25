@@ -119,12 +119,12 @@ class S3d {
       for (let lyConfig of layers) {
         if (lyConfig.layer) {
           if (predicate(lyConfig.cesiumLayer)) {
-            list.push(lyConfig)
+            list.push(lyConfig.cesiumLayer)
           }
         } else if (lyConfig.children) {
           let ln = getLayerNode(lyConfig.children, list)
           if (ln) {
-            list.push(ln)
+            list.push(ln.cesiumLayer)
           }
         }
       }
