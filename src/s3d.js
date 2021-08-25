@@ -73,22 +73,6 @@ class S3d {
     if (lnode) {
       return lnode.layer
     }
-    // let getConfig = function(layers) {
-    //   for (let lyConfig of layers) {
-    //     if (lyConfig.layer) {
-    //       if (lyConfig.label === layer) {
-    //         return lyConfig.layer
-    //       }
-    //     } else if (lyConfig.children) {
-    //       let result = getConfig(lyConfig.children)
-    //       if (result) {
-    //         return result
-    //       }
-    //     }
-    //   }
-    // }
-    // let config = getConfig(this.config.layers)
-    // return config
   }
 
   getLayer(params) {
@@ -96,28 +80,12 @@ class S3d {
     if (lnode) {
       return lnode.cesiumLayer
     }
-    // let get = function(layers) {
-    //   for (let lyConfig of layers) {
-    //     if (lyConfig.layer) {
-    //       if (lyConfig.label === layer) {
-    //         return lyConfig
-    //       }
-    //     } else if (lyConfig.children) {
-    //       let result = get(lyConfig.children)
-    //       if (result) {
-    //         return result
-    //       }
-    //     }
-    //   }
-    // }
-    // let lconfig = get(this.config.layers)
-    // return lconfig.cesiumLayer
   }
 
   getAllLayers(predicate) {
     let getLayerNode = function(layers, list) {
       for (let lyConfig of layers) {
-        if (lyConfig.layer) {
+        if (lyConfig.layer && lyConfig.cesiumLayer) {
           if (predicate(lyConfig.cesiumLayer)) {
             list.push(lyConfig.cesiumLayer)
           }
