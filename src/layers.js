@@ -89,4 +89,14 @@ export const layers = [
       outFields: ['*'],
     },
   },
+  {
+    id: '10',
+    label: '标志标线',
+    layer: {
+      type: 'SuperMapImagery',
+      visible: false,
+      url: `${baseUrl}iserver/services/3D-BiaoXian/rest/realspace/datas/标志标线缓存`,
+      outFields: ['*'],
+    },
+  },
 ]

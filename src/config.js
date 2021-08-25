@@ -2,7 +2,8 @@ import { layers } from './layers'
 
 export const config = {
   iServerBaseURL: process.env.VUE_APP_ISERVER_BASE_URL,
-  DEM: 'http://106.14.242.98:8090/iserver/services/3D-DEM/rest/realspace',
+  DEM:
+    'http://106.14.242.98:8090/iserver/services/3D-DEM/rest/realspace/datas/DEM%E7%BC%93%E5%AD%98',
   // 'http://www.supermapol.com/realspace/services/3D-dixingyingxiang/rest/realspace/datas/DatasetDEM',
   layers: layers,
   defaultCamera: {

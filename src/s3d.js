@@ -43,35 +43,15 @@ class S3d {
     this.viewUtility = new ViewUtility(viewer)
   }
 
-  getLayerConfig(layer) {
-    let getConfig = function(layers) {
+  _getLayerNode(params) {
+    let getLayerNode = function(layers, predicate) {
       for (let lyConfig of layers) {
         if (lyConfig.layer) {
-          if (lyConfig.label === layer) {
-            return lyConfig.layer
-          }
-        } else if (lyConfig.children) {
-          let result = getConfig(lyConfig.children)
-          if (result) {
-            return result
-          }
-        }
-      }
-    }
-
-    let config = getConfig(this.config.layers)
-    return config
-  }
-
-  getLayer(layer) {
-    let get = function(layers) {
-      for (let lyConfig of layers) {
-        if (lyConfig.layer) {
-          if (lyConfig.label === layer) {
+          if (predicate(lyConfig)) {
             return lyConfig
           }
         } else if (lyConfig.children) {
-          let result = get(lyConfig.children)
+          let result = getLayerNode(lyConfig.children, predicate)
           if (result) {
             return result
           }
@@ -79,8 +59,127 @@ class S3d {
       }
     }
 
-    let lconfig = get(this.config.layers)
-    return lconfig.cesiumLayer
+    if (typeof params === 'function') {
+      return getLayerNode(this.config.layers, params)
+    } else if (typeof params === 'string') {
+      return getLayerNode(this.config.layers, (x) => x.label === params)
+    } else {
+      throw '暂不支持'
+    }
+  }
+
+  getLayerConfig(params) {
+    let lnode = this._getLayerNode(params)
+    if (lnode) {
+      return lnode.layer
+    }
+    // let getConfig = function(layers) {
+    //   for (let lyConfig of layers) {
+    //     if (lyConfig.layer) {
+    //       if (lyConfig.label === layer) {
+    //         return lyConfig.layer
+    //       }
+    //     } else if (lyConfig.children) {
+    //       let result = getConfig(lyConfig.children)
+    //       if (result) {
+    //         return result
+    //       }
+    //     }
+    //   }
+    // }
+    // let config = getConfig(this.config.layers)
+    // return config
+  }
+
+  getLayer(params) {
+    let lnode = this._getLayerNode(params)
+    if (lnode) {
+      return lnode.cesiumLayer
+    }
+    // let get = function(layers) {
+    //   for (let lyConfig of layers) {
+    //     if (lyConfig.layer) {
+    //       if (lyConfig.label === layer) {
+    //         return lyConfig
+    //       }
+    //     } else if (lyConfig.children) {
+    //       let result = get(lyConfig.children)
+    //       if (result) {
+    //         return result
+    //       }
+    //     }
+    //   }
+    // }
+    // let lconfig = get(this.config.layers)
+    // return lconfig.cesiumLayer
+  }
+
+  getAllLayers(predicate) {
+    let getLayerNode = function(layers, list) {
+      for (let lyConfig of layers) {
+        if (lyConfig.layer) {
+          if (predicate(lyConfig.cesiumLayer)) {
+            list.push(lyConfig)
+          }
+        } else if (lyConfig.children) {
+          let ln = getLayerNode(lyConfig.children, list)
+          if (ln) {
+            list.push(ln)
+          }
+        }
+      }
+    }
+
+    let list = []
+    getLayerNode(this.config.layers, list)
+    return list
+  }
+
+  /*
+  params: {
+    layer: ""
+    sql: "",   (二选一)
+    ids:[] (二选一)
+  }
+  */
+  query(params) {
+    let lconfig = this.getLayerConfig(params.layer)
+    if (!lconfig.datasetName) {
+      throw `图层(${params.layer})配置错误: "datasetName"为空`
+    }
+
+    let dataURL = ''
+    if (lconfig.dataURL) {
+      dataURL = lconfig.dataURL
+    } else {
+      let layer = this.getLayer(params.layer)
+      let url = `${layer._baseUri.scheme}://${layer._baseUri.authority}${layer._baseUri.path}`
+      let parts = url.split('/rest/realspace/')
+      url = parts[0] + '/rest/data/featureResults.json?returnContent=true'
+      dataURL = url.replace('/iserver/services/3D-', '/iserver/services/data-')
+    }
+
+    let queryParameter = null
+    if (params.sql && params.sql.length > 0) {
+      queryParameter = {
+        datasetNames: [lconfig.datasetName],
+        getFeatureMode: 'SQL',
+        queryParameter: {
+          attributeFilter: params.sql,
+        },
+      }
+    } else if (params.ids instanceof Array && params.ids.length > 0) {
+      queryParameter = {
+        datasetNames: [lconfig.datasetName],
+        getFeatureMode: 'ID',
+        queryParameter: {
+          ids: params.ids,
+        },
+      }
+    } else {
+      throw '暂不支持此查询'
+    }
+    return axios.post(dataURL, queryParameter)
   }
 
   /* 
@@ -195,72 +294,33 @@ class S3d {
       return this.viewUtility.flyToPoints([params])
     } else if (isS3mFeature(params)) {
       return this.viewUtility.flyToS3mFeatures([params])
-    } else if (params.layer && (params.ids || params.sql)) {
-      this.query(params).then((response) => {
-        return this.viewUtility.flyToS3mFeatures(response.data.features)
+    }
+  }
+
+  /*
+  params: {
+    layer: ""
+    sql: "",   (可选)
+    ids:[] ,(可选)
+    features:[] ,(可选)
+  }
+  */
+  flyToS3mFeatures(params) {
+    let _this = this
+    let fly = function(features) {
+      let ids = features.map((x) => x.ID)
+      _this.getLayer(params.layer).setSelection(ids)
+      return _this.viewUtility.flyToS3mFeatures(features)
+    }
+    if (params.layer && (params.ids || params.sql)) {
+      return this.query(params).then((response) => {
+        return fly(response.data.features)
       })
+    } else if (params.layer && params.features) {
+      return fly(params.features)
+      // let ids = params.features.map((x) => x.ID)
+      // this.getLayer(params.layer).setSelection(ids)
+      // return this.viewUtility.flyToS3mFeatures(response.data.features)
     }
-  }
-
-  /*
-  params: {
-    layer: ""
-    sql: "",   (二选一)
-    ids:[] (二选一)
-  }
-  */
-  query(params) {
-    let lconfig = this.getLayerConfig(params.layer)
-    if (!lconfig.datasetName) {
-      throw `图层(${params.layer})配置错误: "datasetName"为空`
-    }
-
-    let dataURL = ''
-    if (lconfig.dataURL) {
-      dataURL = lconfig.dataURL
-    } else {
-      let layer = this.getLayer(params.layer)
-      let url = `${layer._baseUri.scheme}://${layer._baseUri.authority}${layer._baseUri.path}`
-      let parts = url.split('/rest/realspace/')
-      url = parts[0] + '/rest/data/featureResults.json?returnContent=true'
-      dataURL = url.replace('/iserver/services/3D-', '/iserver/services/data-')
-    }
-
-    let queryParameter = null
-    if (params.sql && params.sql.length > 0) {
-      queryParameter = {
-        datasetNames: [lconfig.datasetName],
-        getFeatureMode: 'SQL',
-        queryParameter: {
-          attributeFilter: params.sql,
-        },
-      }
-    } else if (params.ids instanceof Array && params.ids.length > 0) {
-      queryParameter = {
-        datasetNames: [lconfig.datasetName],
-        getFeatureMode: 'ID',
-        queryParameter: {
-          ids: params.ids,
-        },
-      }
-    } else {
-      throw '暂不支持此查询'
-    }
-    return axios.post(dataURL, queryParameter)
-  }
-
-  /*
-  params: {
-    layer: ""
-    sql: "",   (二选一)
-    ids:[] (二选一)
-  }
-  */
-  highlight(params) {
-    return this.query(params).then((response) => {
-      let ids = response.data.features.map((x) => x.ID)
-      this.getLayer(params.layer).setSelection(ids)
-      return this.viewUtility.flyToS3mFeatures(response.data.features)
-    })
   }
 }
