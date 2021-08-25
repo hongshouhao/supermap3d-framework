@@ -54,6 +54,8 @@ export default {
   methods: {
     init () {
       if (window.s3d.viewer) {
+        window.s3d.viewer.scene.hdrEnabled = true;
+
         this.addLayers(window.s3d.config.layers, -1)
         this.layersData = window.s3d.config.layers
 
@@ -74,63 +76,60 @@ export default {
             _this.defaultCheckedKeys.push(lyD.id)
           }
 
-          if (lyD.layer.type === "Terrain") {
-            new Cesium.CesiumTerrainProvider({
-              url: TEST_TERRAIN,
-              isSct: true
-            })
-          }
-          else if (lyD.layer.type === "SuperMapImagery") {
+          if (lyD.layer.type === "SuperMapImagery") {
             let l = new Cesium.SuperMapImageryProvider({
               url: lyD.layer.url
             });
 
             let ly = window.s3d.viewer.imageryLayers.addImageryProvider(l)
             ly.type = "TILE"
+            ly.config = lyD.layer
             ly.show = lyD.layer.visible
-            console.debug("layer-" + lyD.label, ly);
 
             lyD.cesiumLayer = ly
           }
           else if (lyD.layer.type === "S3M") {
-            console.debug("layer-url", lyD.layer.url);
             if (lyD.layer.url) {
               let promise = window.s3d.viewer.scene.addS3MTilesLayerByScp(lyD.layer.url, { name: lyD.label })
               promise.then((ly) => {
 
-                console.debug("layer-added", ly);
                 ly.type = "S3M"
+                ly.config = lyD.layer
+
                 ly.visible = lyD.layer.visible
                 ly.indexedDBSetting.isAttributesSave = true;
-                console.debug("layer-" + lyD.label, ly);
+                ly.selectColorType = Cesium.SelectColorType.REPLACE
 
                 lyD.cesiumLayer = ly
 
-                if (lyD.layer.queryParameter) {
-                  ly.setQueryParameter(queryParameter);
-                }
+                // if (lyD.layer.queryParameter) {
+                //   ly.setQueryParameter(queryParameter);
+                // }
 
                 if (lyD.layer.enableFillAndWireFrame) {
                   ly.style3D.fillStyle = Cesium.FillStyle.Fill_And_WireFrame;
                   ly.style3D.lineColor = Cesium.Color.BLACK;
                   ly.style3D.lineWidth = 1;
-                  ly.wireFrameMode = Cesium.WireFrameType.Triangle
+                  ly.wireFrameMode = Cesium.WireFrameType.EffectOutline
+                  // ly.wireFrameMode = Cesium.WireFrameType.Triangle
                 }
               })
             }
           }
           else if (lyD.layer.type === "MVT") {
 
-            let mvtLy = window.s3d.scene.addVectorTilesMap({
+            let ly = window.s3d.scene.addVectorTilesMap({
               url: lyD.layer.url,
               name: lyD.label,
               viewer: window.s3d.viewer
             });
 
-            mvtLy.type = "MVT"
-            mvtLy.show = lyD.layer.visible
+            ly.type = "MVT"
+            ly.config = lyD.layer
 
-            lyD.cesiumLayer = mvtLy
+            ly.show = lyD.layer.visible
+
+            lyD.cesiumLayer = ly
           }
 
           else {
@@ -233,6 +232,9 @@ export default {
         window.s3d.viewer.scene.multiViewportMode = Cesium.MultiViewportMode.HORIZONTAL
         this.multiViewport = true
       }
+
+      console.log(window.s3d.viewer)
+      console.log(window.s3d.viewer.scene)
     },
     setLayerOpacity (opacity) {
       if (data.cesiumLayer && data.layer.type === "SuperMapImagery") {

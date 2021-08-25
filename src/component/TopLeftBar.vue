@@ -143,6 +143,15 @@
       </div>
     </div>
 
+    <div class="esri-component esri-widget">
+      <div class="esri-widget--button esri-widget"
+           title="测试"
+           @click="test()">
+        <span aria-hidden="true"
+              class="esri-icon esri-icon-experimental"></span>
+      </div>
+    </div>
+
     <WidgetInfoPanel v-show="currentTool=='ViewshedTool'"
                      title="视域分析参数"
                      ref="viewshedSettingPanel"
@@ -201,6 +210,7 @@ import HighLimitSetting from '../analysis/HighLimit/HighLimitSetting.vue'
 import Settings from './Settings.vue'
 
 import WidgetInfoPanel from './WidgetInfoPanel'
+import { doTest } from '../test'
 
 export default {
   components: {
@@ -227,6 +237,9 @@ export default {
   },
   props: [],
   computed: {
+    developing () {
+      return process.env.VUE_APP_MODE === 'development' ? true : false
+    }
   },
   beforeMount () {
   },
@@ -422,6 +435,10 @@ export default {
       this.stopSliceTool()
       this.stopSunlight()
     },
+
+    test () {
+      doTest()
+    }
   },
 }
 </script>

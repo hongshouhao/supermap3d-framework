@@ -1,14 +1,17 @@
 import Element from 'element-ui'
 import VueiClient from '@supermap/vue-iclient3d-webgl'
-import { lonLatToCartesian } from './utils/CesiumMath'
+import axios from 'axios'
 
 import 'element-ui/lib/theme-chalk/index.css'
 import '@supermap/vue-iclient3d-webgl/dist/styles/vue-iclient3d-webgl.min.css'
 import './assets/themes/light/main.css'
 import './css/index.scss'
 
+import { lonLatToCartesian } from './utils/CesiumMath'
 import Toolbar from './tools/Toolbar'
 import EventBus from 'eventbusjs'
+import ViewUtility from './utils/ViewUtility'
+import { isS3mFeature, isCartesian3 } from './utils/IfUtility'
 
 export function setup(vue) {
   vue.use(Element)
@@ -30,13 +33,21 @@ class S3d {
     this.config = config
     this.toolbar = new Toolbar()
     this.eventBus = EventBus
+    this.viewer = null
+    this.scene = null
   }
 
-  getLayerConfig(layerName) {
+  setViewer(viewer) {
+    this.viewer = viewer
+    this.scene = viewer.scene
+    this.viewUtility = new ViewUtility(viewer)
+  }
+
+  getLayerConfig(layer) {
     let getConfig = function(layers) {
       for (let lyConfig of layers) {
         if (lyConfig.layer) {
-          if (lyConfig.label === layerName) {
+          if (lyConfig.label === layer) {
             return lyConfig.layer
           }
         } else if (lyConfig.children) {
@@ -52,11 +63,11 @@ class S3d {
     return config
   }
 
-  getLayer(layerName) {
+  getLayer(layer) {
     let get = function(layers) {
       for (let lyConfig of layers) {
         if (lyConfig.layer) {
-          if (lyConfig.label === layerName) {
+          if (lyConfig.label === layer) {
             return lyConfig
           }
         } else if (lyConfig.children) {
@@ -76,40 +87,180 @@ class S3d {
   data结构
   {
     object: {
-      id(此处可空),
-      layerName
+      id(可空),
+      sql(可空),
+      layer,
     },
     position: {
       longitude,
       latitude,
-      height(此处可空),
+      height(可空),
       },
   }
-   */
+  */
   openPopup(data) {
-    let worldPosition = lonLatToCartesian(
-      data.position.longitude,
-      data.position.latitude,
-      data.position.height
-    )
-    this.popup.renderPopup(worldPosition, data)
+    if (data.position) {
+      let worldPosition = lonLatToCartesian(
+        data.position.longitude,
+        data.position.latitude,
+        data.position.height
+      )
+      this.popup.renderPopup(worldPosition, data)
+    } else if (data.object.id || data.object.sql) {
+      this.query({
+        layer: data.object.layer,
+        sql: data.object.sql,
+        ids: [data.object.id],
+      }).then((response) => {
+        if (response.data.features.length > 0) {
+          let feature = response.data.features[0]
+
+          data.position = {
+            longitude: feature.geometry.position.x,
+            latitude: feature.geometry.position.y,
+            height: feature.geometry.position.z,
+          }
+          data.object.attributes = {}
+
+          let lconfig = this.getLayerConfig(data.object.layer)
+          if (
+            lconfig.outFields &&
+            lconfig.outFields instanceof Array &&
+            lconfig.outFields.length > 0
+          ) {
+            if (lconfig.outFields[0] === '*') {
+              for (let i = 0; i < feature.fieldNames.length; i++) {
+                let field = feature.fieldNames[i]
+                let value = feature.fieldValues[i]
+                data.object.attributes[field] = value
+              }
+            } else {
+              for (let field of lconfig.outFields) {
+                let idx = feature.fieldNames.indexOf(field)
+                if (idx > 0) {
+                  let field = feature.fieldNames[idx]
+                  let value = feature.fieldValues[idx]
+                  data.object.attributes[field] = value
+                }
+              }
+            }
+          }
+
+          let layer = this.getLayer(data.object.layer)
+          layer.setSelection([feature.ID])
+
+          this.viewUtility.flyToS3mFeatures([feature]).then(() => {
+            let worldPosition = lonLatToCartesian(
+              feature.geometry.position.x,
+              feature.geometry.position.y,
+              feature.geometry.position.z
+            )
+            this.popup.renderPopup(worldPosition, data)
+          })
+        }
+      })
+    }
   }
 
-  flyTo(lon, lat) {
-    debugger
-    let camera = window.s3d.viewer.camera
-    camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(
-        lon,
-        lat,
-        window.s3d.viewUtility.getCameraHeight()
-      ),
-      orientation: {
-        heading: camera.heading,
-        pitch: camera.pitch,
-        roll: camera.roll,
-      },
-      duration: 2,
+  /*
+  params参数
+  1. double数组: 经度、纬度数组或者经度、纬度、高度数组
+  2. 单个Cartesian3对象或数组
+  3. 单个S3mFeature或数组
+  4. {
+       layer,
+       ids,
+       sql
+     }
+   */
+  flyTo(params) {
+    if (params instanceof Array && params.length > 0) {
+      let sample = params[0]
+      if (typeof sample === 'number') {
+        let pts = null
+        if (params.length % 2 === 0) {
+          pts = Cesium.Cartesian3.fromDegreesArray(params)
+        } else if (params.length % 3 === 0) {
+          pts = Cesium.Cartesian3.fromDegreesArrayHeights(params)
+        } else {
+          throw '参数错误'
+        }
+        return this.viewUtility.flyToPoints(pts)
+      } else if (isCartesian3(sample)) {
+        return this.viewUtility.flyToPoints(params)
+      } else if (isS3mFeature(sample)) {
+        return this.viewUtility.flyToS3mFeatures(params)
+      }
+    } else if (isCartesian3(params)) {
+      return this.viewUtility.flyToPoints([params])
+    } else if (isS3mFeature(params)) {
+      return this.viewUtility.flyToS3mFeatures([params])
+    } else if (params.layer && (params.ids || params.sql)) {
+      this.query(params).then((response) => {
+        return this.viewUtility.flyToS3mFeatures(response.data.features)
+      })
+    }
+  }
+
+  /*
+  params: {
+    layer: ""
+    sql: "",   (二选一)
+    ids:[] (二选一)
+  }
+  */
+  query(params) {
+    let lconfig = this.getLayerConfig(params.layer)
+    if (!lconfig.datasetName) {
+      throw `图层(${params.layer})配置错误: "datasetName"为空`
+    }
+
+    let dataURL = ''
+    if (lconfig.dataURL) {
+      dataURL = lconfig.dataURL
+    } else {
+      let layer = this.getLayer(params.layer)
+      let url = `${layer._baseUri.scheme}://${layer._baseUri.authority}${layer._baseUri.path}`
+      let parts = url.split('/rest/realspace/')
+      url = parts[0] + '/rest/data/featureResults.json?returnContent=true'
+      dataURL = url.replace('/iserver/services/3D-', '/iserver/services/data-')
+    }
+
+    let queryParameter = null
+    if (params.sql && params.sql.length > 0) {
+      queryParameter = {
+        datasetNames: [lconfig.datasetName],
+        getFeatureMode: 'SQL',
+        queryParameter: {
+          attributeFilter: params.sql,
+        },
+      }
+    } else if (params.ids instanceof Array && params.ids.length > 0) {
+      queryParameter = {
+        datasetNames: [lconfig.datasetName],
+        getFeatureMode: 'ID',
+        queryParameter: {
+          ids: params.ids,
+        },
+      }
+    } else {
+      throw '暂不支持此查询'
+    }
+    return axios.post(dataURL, queryParameter)
+  }
+
+  /*
+  params: {
+    layer: ""
+    sql: "",   (二选一)
+    ids:[] (二选一)
+  }
+  */
+  highlight(params) {
+    return this.query(params).then((response) => {
+      let ids = response.data.features.map((x) => x.ID)
+      this.getLayer(params.layer).setSelection(ids)
+      return this.viewUtility.flyToS3mFeatures(response.data.features)
     })
   }
 }

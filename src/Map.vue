@@ -20,7 +20,6 @@ import TopLeftBar from './component/TopLeftBar.vue'
 import TopRightBar from './component/TopRightBar.vue'
 import Popup from './component/Popup.vue'
 import { createImageryProvider } from './utils/ImageryProvider'
-import ViewUtility from './utils/ViewUtility'
 
 export default {
   components: {
@@ -55,7 +54,11 @@ export default {
       navigation: false,
       baseLayerPicker: false,
       shouldAnimate: true,
-      imageryProvider: baseMapProvider
+      imageryProvider: baseMapProvider,
+      terrainProvider: new Cesium.CesiumTerrainProvider({
+        url: window.s3d.config.DEM,
+        isSct: true
+      })
       // imageryProvider: new Cesium.TileMapServiceImageryProvider({
       //   url: 'http://cesium.agi.com/blackmarble',
       //   maximumLevel: 8,
@@ -92,9 +95,7 @@ export default {
 
     viewer.scene.debugShowFramesPerSecond = false;
 
-    window.s3d.viewer = viewer
-    window.s3d.scene = viewer.scene
-    window.s3d.viewUtility = new ViewUtility(viewer)
+    window.s3d.setViewer(viewer)
 
     console.log("s3d", window.s3d)
   },

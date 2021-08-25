@@ -77,7 +77,7 @@ export default {
             let dobj = {
               object: {
                 id: "",
-                layerName: "",
+                layer: "",
                 attributes: {}
               },
               position: {
@@ -89,7 +89,7 @@ export default {
 
             if (pickobject.primitive) {
               dobj.object.id = pickobject.id
-              dobj.object.layerName = pickobject.primitive.name
+              dobj.object.layer = pickobject.primitive.name
               dobj.position.longitude = pickobject.primitive.lon
               dobj.position.latitude = pickobject.primitive.lat
               dobj.position.height = pickobject.primitive.height
@@ -101,11 +101,12 @@ export default {
             // latitude = Cesium.Math.toDegrees(cartographic.latitude)
             // height = cartographic.height
 
-            let lconfig = window.s3d.getLayerConfig(dobj.object.layerName)
+            let lconfig = window.s3d.getLayerConfig(dobj.object.layer)
             if (lconfig.outFields
               && lconfig.outFields instanceof Array
               && lconfig.outFields.length > 0) {
-              let theLayer = window.s3d.getLayer(dobj.object.layerName)
+              let theLayer = window.s3d.getLayer(dobj.object.layer)
+
               theLayer.getAttributesById(dobj.object.id).then((atts) => {
                 if (lconfig.outFields[0] === "*") {
                   dobj.object.attributes = atts
@@ -116,7 +117,6 @@ export default {
                   }
                 }
 
-                console.log(dobj)
                 _this.renderPopup(position, dobj)
               });
             }
@@ -162,14 +162,16 @@ export default {
         console.log(properties)
       });
     },
+
     renderPopup (worldPosition, data) {
-      let lconfig = window.s3d.getLayerConfig(data.object.layerName)
+      let lconfig = window.s3d.getLayerConfig(data.object.layer)
+      debugger
       if (lconfig && lconfig.popupTemplate) {
         if (!lconfig.popupTemplate.getHeader) {
-          throw `配置错误: 图层${data.object.layerName}相关配置丢失, 函数popupTemplate.getHeader丢失`
+          throw `配置错误: 图层${data.object.layer}相关配置丢失, 函数popupTemplate.getHeader丢失`
         }
         if (!lconfig.popupTemplate.getContent) {
-          throw `配置错误: 图层${data.object.layerName}相关配置丢失, 函数popupTemplate.getContent丢失`
+          throw `配置错误: 图层${data.object.layer}相关配置丢失, 函数popupTemplate.getContent丢失`
         }
 
         this.setHeader(lconfig.popupTemplate.getHeader(data))
@@ -261,7 +263,7 @@ export default {
       let arr = []
       arr.push({
         key: '对象',
-        value: data.object.layerName,
+        value: data.object.layer,
       })
       arr.push({
         key: '标识',
@@ -290,7 +292,7 @@ export default {
     },
 
     getPopupHeader (data) {
-      return data.object.layerName + ' - ' + data.object.id
+      return data.object.layer + ' - ' + data.object.id
     },
 
     hidePopup () {
@@ -334,7 +336,7 @@ export default {
 
   .esri-popup__main-container {
     max-width: 500px !important;
-    max-height: 800px !important;
+    max-height: 500px !important;
     width: unset;
   }
 

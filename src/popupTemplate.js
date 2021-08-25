@@ -1,23 +1,23 @@
 export const popupTemplateWithCustomUI = {
   getHeader: function(data) {
-    return data.object.layerName + 'test'
+    return data.object.layer + 'test'
   },
   getContent: function(data) {
     let div = document.createElement('div')
-    div.innerHTML = data.object.layerName
+    div.innerHTML = data.object.layer
     return div
   },
 }
 
 export const popupTemplateWithDefaultUI = {
   getHeader: function(data) {
-    return data.object.layerName + ' - ' + data.object.id
+    return data.object.layer + ' - ' + data.object.id
   },
   getContent: function(data) {
     let arr = []
     arr.push({
       key: '对象',
-      value: data.object.layerName,
+      value: data.object.layer,
     })
     arr.push({
       key: '标识',

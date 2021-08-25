@@ -34,4 +34,53 @@ export default class ViewUtility {
       cartographic.height
     )
   }
+
+  flyToS3mFeatures(features) {
+    let pts = []
+    for (let feature of features) {
+      pts.push(
+        Cesium.Cartesian3.fromDegrees(
+          feature.geometry.boundingBox.lower.x,
+          feature.geometry.boundingBox.lower.y,
+          feature.geometry.boundingBox.lower.z
+        )
+      )
+
+      pts.push(
+        Cesium.Cartesian3.fromDegrees(
+          feature.geometry.boundingBox.upper.x,
+          feature.geometry.boundingBox.upper.y,
+          feature.geometry.boundingBox.upper.z
+        )
+      )
+    }
+    return this.flyToPoints(pts)
+  }
+
+  flyToPoints(points, scale) {
+    let _this = this
+    return new Promise(function(resolve, reject) {
+      let boundingSphere = Cesium.BoundingSphere.fromPoints(points)
+      if (scale) {
+        boundingSphere.radius = boundingSphere.radius * scale
+      } else {
+        // boundingSphere.radius = boundingSphere.radius * scale
+      }
+
+      _this.viewer.camera.flyToBoundingSphere(boundingSphere, {
+        duration: 2,
+        complete: function() {
+          resolve()
+        },
+        cancel: function() {
+          reject()
+        },
+        // offset: {
+        //   heading: Cesium.Math.toRadians(heading),
+        //   pitch: Cesium.Math.toRadians(pitch),
+        //   range: 0.0,
+        // },
+      })
+    })
+  }
 }

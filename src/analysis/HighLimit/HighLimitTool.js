@@ -92,8 +92,10 @@ export default class HighLimitTool {
         let layer = this.scene.layers.find(lname)
         if (layer) {
           // layer.clipLineColor = Cesium.Color.RED
-          let url = `${layer._baseUri.scheme}://${layer._baseUri.authority}${layer._baseUri.path}`
-          url = url.replace('/data/path/', '/config')
+
+          let url = window.s3d.getLayerConfig(lname).url
+          //let url = `${layer._baseUri.scheme}://${layer._baseUri.authority}${layer._baseUri.path}`
+          //url = url.replace('/data/path/', '/config')
           this.viewer.scene
             .addS3MTilesLayerByScp(url, { name: newLayerName })
             .then((ly) => {

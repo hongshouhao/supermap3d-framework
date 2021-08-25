@@ -69,11 +69,24 @@ export const layers = [
   },
   {
     id: '8',
-    label: '给水',
+    label: '供电',
     layer: {
-      type: 'SuperMapImagery',
+      type: 'S3M',
       visible: false,
-      url: `http://106.14.242.98:8090/iserver/services/map-ugcv5-GeiShuiDiTu/rest/maps/%E7%BB%99%E6%B0%B4%E5%9C%B0%E5%9B%BE`,
+      url: `${baseUrl}iserver/services/3D-GongDian/rest/realspace/datas/供电_1@供电/config`,
+      datasetName: '供电:供电_1',
+      outFields: ['*'],
+    },
+  },
+  {
+    id: '9',
+    label: '污水',
+    layer: {
+      type: 'S3M',
+      visible: false,
+      url: `${baseUrl}iserver/services/3D-WuShui/rest/realspace/datas/污水_1@污水/config`,
+      datasetName: '污水:污水_1',
+      outFields: ['*'],
     },
   },
 ]
