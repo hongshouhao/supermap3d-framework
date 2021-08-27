@@ -210,7 +210,7 @@ import HighLimitSetting from '../analysis/HighLimit/HighLimitSetting.vue'
 import Settings from './Settings.vue'
 
 import WidgetInfoPanel from './WidgetInfoPanel'
-import { doTest } from '../test'
+import Test from '../Test'
 
 export default {
   components: {
@@ -233,6 +233,7 @@ export default {
       sliceTool: null,
       viewDomeTool: null,
       highLimitTool: null,
+      testTool: new Test(),
     }
   },
   props: [],
@@ -437,7 +438,7 @@ export default {
     },
 
     test () {
-      doTest()
+      this.testTool.doTest()
     }
   },
 }

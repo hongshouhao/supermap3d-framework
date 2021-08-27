@@ -32,13 +32,16 @@
 </template>
 
 <script> 
+import LayersRenderer from './LayersRender'
+import { flyTo, setVisible, setOpacity } from '../utils/LayerUtility'
 export default {
   data () {
     return {
       layersData: [],
       defaultExpandedKeys: [],
       defaultCheckedKeys: [],
-      multiViewport: false
+      multiViewport: false,
+      layersRenderer: new LayersRenderer()
     }
   },
   props: [],
@@ -54,93 +57,84 @@ export default {
   methods: {
     init () {
       if (window.s3d.viewer) {
-        window.s3d.viewer.scene.hdrEnabled = true;
-
         this.addLayers(window.s3d.config.layers, -1)
         this.layersData = window.s3d.config.layers
 
         window.s3d.viewer.camera.flyTo(window.s3d.config.defaultCamera);
-
         window.s3d.viewer._element.appendChild(this.$refs.viewportSpliter)
       }
     },
     addLayers (layersData) {
       let _this = this
-      for (let lyD of layersData) {
-        if (lyD.layer) {
-          if (!lyD.layer.opacity) {
-            lyD.layer.opacity = 100
+      for (let lyNode of layersData) {
+        if (lyNode.layer) {
+          if (!lyNode.layer.opacity) {
+            lyNode.layer.opacity = 100
           }
-
-          if (lyD.layer.visible) {
-            _this.defaultCheckedKeys.push(lyD.id)
+          if (lyNode.layer.visible) {
+            _this.defaultCheckedKeys.push(lyNode.id)
           }
-
-          if (lyD.layer.type === "SuperMapImagery") {
-            let l = new Cesium.SuperMapImageryProvider({
-              url: lyD.layer.url
+          if (lyNode.layer.type === "SMIMG") {
+            let imgl = new Cesium.SuperMapImageryProvider({
+              url: lyNode.layer.url
             });
-
-            let ly = window.s3d.viewer.imageryLayers.addImageryProvider(l)
-            ly.type = "TILE"
-            ly.config = lyD.layer
-            ly.show = lyD.layer.visible
-
-            lyD.cesiumLayer = ly
+            let cly = window.s3d.viewer.imageryLayers.addImageryProvider(imgl)
+            cly.type = lyNode.layer.type
+            cly.config = lyNode.layer
+            cly.show = lyNode.layer.visible
+            lyNode.cesiumLayer = cly
           }
-          else if (lyD.layer.type === "S3M") {
-            if (lyD.layer.url) {
-              let promise = window.s3d.viewer.scene.addS3MTilesLayerByScp(lyD.layer.url, { name: lyD.label })
-              promise.then((ly) => {
-
-                ly.type = "S3M"
-                ly.config = lyD.layer
-
-                ly.visible = lyD.layer.visible
-                ly.indexedDBSetting.isAttributesSave = true;
-                ly.selectColorType = Cesium.SelectColorType.REPLACE
-
-                lyD.cesiumLayer = ly
-
-                // if (lyD.layer.queryParameter) {
-                //   ly.setQueryParameter(queryParameter);
+          else if (lyNode.layer.type === "S3M") {
+            if (lyNode.layer.url) {
+              let promise = window.s3d.viewer.scene.addS3MTilesLayerByScp(lyNode.layer.url, { name: lyNode.name })
+              promise.then((cly) => {
+                cly.type = lyNode.layer.type
+                cly.config = lyNode.layer
+                cly.visible = lyNode.layer.visible
+                cly.indexedDBSetting.isAttributesSave = true;
+                cly.selectColorType = Cesium.SelectColorType.REPLACE
+                lyNode.cesiumLayer = cly
+                // if (lyNode.layer.queryParameter) {
+                //   cly.setQueryParameter(queryParameter);
                 // }
 
-                if (lyD.layer.enableFillAndWireFrame) {
-                  ly.style3D.fillStyle = Cesium.FillStyle.Fill_And_WireFrame;
-                  ly.style3D.lineColor = Cesium.Color.BLACK;
-                  ly.style3D.lineWidth = 1;
-                  ly.wireFrameMode = Cesium.WireFrameType.EffectOutline
-                  // ly.wireFrameMode = Cesium.WireFrameType.Triangle
+                if (lyNode.layer.enableFillAndWireFrame) {
+                  cly.style3D.fillStyle = Cesium.FillStyle.Fill_And_WireFrame;
+                  cly.style3D.lineColor = Cesium.Color.BLACK;
+                  cly.style3D.lineWidth = 1;
+                  cly.wireFrameMode = Cesium.WireFrameType.EffectOutline
+                  // cly.wireFrameMode = Cesium.WireFrameType.Triangle
                 }
+
+                // if (lyNode.layer.renderer) {
+                //   this.layersRenderer.addRender(lyNode.name)
+                // }
               })
             }
+            else {
+              throw 'S3M图层配置错误:URL'
+            }
           }
-          else if (lyD.layer.type === "MVT") {
-
-            let ly = window.s3d.scene.addVectorTilesMap({
-              url: lyD.layer.url,
-              name: lyD.label,
+          else if (lyNode.layer.type === "MVT") {
+            let cly = window.s3d.scene.addVectorTilesMap({
+              url: lyNode.layer.url,
+              name: lyNode.name,
               viewer: window.s3d.viewer
             });
-
-            ly.type = "MVT"
-            ly.config = lyD.layer
-
-            ly.show = lyD.layer.visible
-
-            lyD.cesiumLayer = ly
+            cly.type = lyNode.layer.type
+            cly.config = lyNode.layer
+            cly.show = lyNode.layer.visible
+            lyNode.cesiumLayer = cly
           }
-
           else {
             throw '图层类型配置错误'
           }
         }
-        else if (lyD.children) {
-          if (lyD.expand) {
-            _this.defaultExpandedKeys.push(lyD.id)
+        else if (lyNode.children) {
+          if (lyNode.expand) {
+            _this.defaultExpandedKeys.push(lyNode.id)
           }
-          this.addLayers(lyD.children)
+          this.addLayers(lyNode.children)
         }
       }
     },
@@ -156,44 +150,19 @@ export default {
           data.cesiumLayer.setVisibleInViewport(viewport, checked);
         }
         else {
-          if (data.layer.type === "SuperMapImagery"
-            || data.layer.type === "MVT") {
-            data.cesiumLayer.show = checked
-          }
-          else if (data.layer.type === "S3M") {
-            data.cesiumLayer.visible = checked
-          }
+          setVisible(data.cesiumLayer, checked)
         }
       }
     },
     renderExtButton (h, { node, data }) {
-      const gotoLayer = function (layer) {
-        if (data.layer.type === "MVT") {
-          let bounds = layer.rectangle;
-          window.s3d.viewer.camera.flyTo({
-            destination: new Cesium.Cartesian3.fromRadians((bounds.east + bounds.west) * 0.5, (bounds.north + bounds.south) *
-              0.5, 10000),
-            orientation: {
-              heading: 0,
-              roll: 0,
-              pitch: -1.57,
-            },
-            duration: 2,
-          })
-        }
-        else {
-          window.s3d.viewer.flyTo(layer)
-        }
-      }
-
-      const setLayerOpacity = function (opacity) {
-        if (data.cesiumLayer && data.layer.type === "SuperMapImagery") {
-          data.cesiumLayer.alpha = opacity / 100
-        }
-        else if (data.cesiumLayer && data.layer.type === "S3M") {
-          data.cesiumLayer.style3D.fillForeColor = new Cesium.Color(1.0, 1.0, 1.0, opacity / 100);
-        }
-      }
+      // const setLayerOpacity = function (opacity) {
+      //   if (data.cesiumLayer && data.layer.type === "SMIMG") {
+      //     data.cesiumLayer.alpha = opacity / 100
+      //   }
+      //   else if (data.cesiumLayer && data.layer.type === "S3M") {
+      //     data.cesiumLayer.style3D.fillForeColor = new Cesium.Color(1.0, 1.0, 1.0, opacity / 100);
+      //   }
+      // }
 
       if (node.childNodes && node.childNodes.length > 0) {
         return (
@@ -207,7 +176,7 @@ export default {
         return (
           <span class="custom-tree-node">
             <span class="toggle-ext-button">{node.label}
-              <i class={node.checked ? "esri-icon-directions2 my-ext-button" : "esri-icon-directions2 my-ext-button my-ext-button-hidden"} on-click={() => gotoLayer(data.cesiumLayer)} />
+              <i class={node.checked ? "esri-icon-directions2 my-ext-button" : "esri-icon-directions2 my-ext-button my-ext-button-hidden"} on-click={() => flyTo(data.cesiumLayer)} />
             </span>
 
             <el-popover
@@ -216,7 +185,8 @@ export default {
               title="不透明度"
               trigger="hover"
             >
-              <el-slider min={10} max={100} v-model={data.layer.opacity} on-input={setLayerOpacity}></el-slider>
+              <el-slider min={10} max={100} v-model={data.layer.opacity}
+                on-input={(opacity) => setOpacity(data.cesiumLayer, opacity)}></el-slider>
               <i slot="reference" class={node.checked ? "layer-more my-icon-more" : ""} />
             </el-popover>
           </span>
@@ -236,14 +206,6 @@ export default {
       console.log(window.s3d.viewer)
       console.log(window.s3d.viewer.scene)
     },
-    setLayerOpacity (opacity) {
-      if (data.cesiumLayer && data.layer.type === "SuperMapImagery") {
-        data.cesiumLayer.alpha = opacity / 100
-      }
-      else if (data.cesiumLayer && data.layer.type === "S3M") {
-        data.cesiumLayer.style3D.fillForeColor = new Cesium.Color(1.0, 1.0, 1.0, opacity / 100);
-      }
-    },
     disableNode (data) {
       if (data.children && data.children.length > 0) {
         return false
@@ -257,7 +219,6 @@ export default {
         }
       }
     },
-
   }
 }
 </script>

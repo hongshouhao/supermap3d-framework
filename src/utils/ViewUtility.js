@@ -54,7 +54,7 @@ export default class ViewUtility {
         )
       )
     }
-    return this.flyToPoints(pts)
+    return this.flyToPoints(pts, 10)
   }
 
   flyToPoints(points, scale) {

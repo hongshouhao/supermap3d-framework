@@ -1,5 +1,4 @@
-//Terrain    地形图
-//SuperMapImagery 影像图层
+//SMIMG 影像图层
 //S3M        三维图层
 //MVT        矢量瓦片图层
 
@@ -18,7 +17,7 @@ export const layers = [
     children: [
       {
         id: '21',
-        label: '分层',
+        name: '分层',
         layer: {
           type: 'S3M',
           visible: true,
@@ -29,7 +28,7 @@ export const layers = [
       },
       {
         id: '22',
-        label: '分户',
+        name: '分户',
         layer: {
           type: 'S3M',
           visible: false,
@@ -42,7 +41,7 @@ export const layers = [
   },
   {
     id: '3',
-    label: '地下管线',
+    name: '地下管线',
     layer: {
       type: 'S3M',
       visible: false,
@@ -51,7 +50,7 @@ export const layers = [
   },
   {
     id: '4',
-    label: '楼幢',
+    name: '楼幢',
     layer: {
       type: 'S3M',
       visible: true,
@@ -60,27 +59,35 @@ export const layers = [
   },
   {
     id: '5',
-    label: '红线',
+    name: '红线',
     layer: {
-      type: 'SuperMapImagery',
+      type: 'SMIMG',
       visible: false,
       url: `${baseUrl}iserver/services/map-PiCiZhiTu/rest/maps/批次`,
     },
   },
   {
     id: '8',
-    label: '供电',
+    name: '供电',
     layer: {
       type: 'S3M',
-      visible: false,
+      visible: true,
       url: `${baseUrl}iserver/services/3D-GongDian/rest/realspace/datas/供电_1@供电/config`,
       datasetName: '供电:供电_1',
       outFields: ['*'],
+      renderer: {
+        type: 'pipe',
+        symbol: {
+          color: Cesium.Color.fromCssColorString('rgba(118，232, 241，1.0)'),
+          trailLength: 0.2,
+          period: 1,
+        },
+      },
     },
   },
   {
     id: '9',
-    label: '污水',
+    name: '污水',
     layer: {
       type: 'S3M',
       visible: false,
@@ -90,13 +97,44 @@ export const layers = [
     },
   },
   {
-    id: '10',
-    label: '标志标线',
+    id: '11',
+    name: '有线电视',
     layer: {
-      type: 'SuperMapImagery',
+      type: 'S3M',
+      visible: false,
+      url: `${baseUrl}iserver/services/3D-YouXianDianShi/rest/realspace/datas/有线电视_1@有线电视/config`,
+      datasetName: '有线电视:有线电视_1',
+      outFields: ['*'],
+    },
+  },
+  {
+    id: '12',
+    name: '交通信号',
+    layer: {
+      type: 'S3M',
+      visible: false,
+      url: `${baseUrl}iserver/services/3D-JiaoTongXinHao/rest/realspace/datas/交通信号_1@交通信号/config`,
+      datasetName: '交通信号投影面:交通信号投影面',
+      outFields: ['*'],
+    },
+  },
+  {
+    id: '10',
+    name: '标志标线',
+    layer: {
+      type: 'SMIMG',
       visible: false,
       url: `${baseUrl}iserver/services/3D-BiaoXian/rest/realspace/datas/标志标线缓存`,
       outFields: ['*'],
+    },
+  },
+  {
+    id: '13',
+    name: '二维电筒',
+    layer: {
+      type: 'SMIMG',
+      visible: false,
+      url: `${baseUrl}iserver/services/map-ugcv5-DianTongDiTu/rest/maps/电通地图`,
     },
   },
 ]

@@ -11,6 +11,7 @@ import { lonLatToCartesian } from './utils/CesiumMath'
 import Toolbar from './tools/Toolbar'
 import EventBus from 'eventbusjs'
 import ViewUtility from './utils/ViewUtility'
+import { setVisible } from './utils/LayerUtility'
 import { isS3mFeature, isCartesian3 } from './utils/IfUtility'
 
 export function setup(vue) {
@@ -35,6 +36,37 @@ class S3d {
     this.eventBus = EventBus
     this.viewer = null
     this.scene = null
+
+    let setLabel = function(layers, nameList) {
+      for (let ln of layers) {
+        if (ln.layer) {
+          if (!ln.name) {
+            throw `图层配置错误: "name"属性缺失\n错误节点: ${JSON.stringify(
+              ln
+            )}`
+          } else {
+            if (nameList[ln.name]) {
+              nameList[ln.name] = nameList[ln.name] + 1
+            } else {
+              nameList[ln.name] = 1
+            }
+            if (!ln.label) {
+              ln.label = ln.name
+            }
+          }
+        } else if (ln.children) {
+          setLabel(ln.children, nameList)
+        }
+      }
+    }
+    let nameList = {}
+    setLabel(config.layers, nameList)
+
+    for (let key in nameList) {
+      if (nameList[key] > 1) {
+        throw `图层配置错误: 图层名(${key})重复`
+      }
+    }
   }
 
   setViewer(viewer) {
@@ -62,7 +94,7 @@ class S3d {
     if (typeof params === 'function') {
       return getLayerNode(this.config.layers, params)
     } else if (typeof params === 'string') {
-      return getLayerNode(this.config.layers, (x) => x.label === params)
+      return getLayerNode(this.config.layers, (x) => x.name === params)
     } else {
       throw '暂不支持'
     }
@@ -103,6 +135,11 @@ class S3d {
     return list
   }
 
+  setLayerVisible(layer, visible) {
+    let ly = this.getLayer(layer)
+    setVisible(ly, visible)
+  }
+
   /*
   params: {
     layer: ""
@@ -140,9 +177,7 @@ class S3d {
       queryParameter = {
         datasetNames: [lconfig.datasetName],
         getFeatureMode: 'ID',
-        queryParameter: {
-          ids: params.ids,
-        },
+        ids: params.ids,
       }
     } else {
       throw '暂不支持此查询'
@@ -182,38 +217,12 @@ class S3d {
         if (response.data.features.length > 0) {
           let feature = response.data.features[0]
 
-          data.position = {
-            longitude: feature.geometry.position.x,
-            latitude: feature.geometry.position.y,
-            height: feature.geometry.position.z,
-          }
-          data.object.attributes = {}
-
-          let lconfig = this.getLayerConfig(data.object.layer)
-          if (
-            lconfig.outFields &&
-            lconfig.outFields instanceof Array &&
-            lconfig.outFields.length > 0
-          ) {
-            if (lconfig.outFields[0] === '*') {
-              for (let i = 0; i < feature.fieldNames.length; i++) {
-                let field = feature.fieldNames[i]
-                let value = feature.fieldValues[i]
-                data.object.attributes[field] = value
-              }
-            } else {
-              for (let field of lconfig.outFields) {
-                let idx = feature.fieldNames.indexOf(field)
-                if (idx > 0) {
-                  let field = feature.fieldNames[idx]
-                  let value = feature.fieldValues[idx]
-                  data.object.attributes[field] = value
-                }
-              }
-            }
-          }
-
+          let dobj = this.popup.$data.popupUtility.convertS3mFeatureToDataObject(
+            data.object.layer,
+            feature
+          )
           let layer = this.getLayer(data.object.layer)
+          setVisible(layer, true)
           layer.setSelection([feature.ID])
 
           this.viewUtility.flyToS3mFeatures([feature]).then(() => {
@@ -222,11 +231,15 @@ class S3d {
               feature.geometry.position.y,
               feature.geometry.position.z
             )
-            this.popup.renderPopup(worldPosition, data)
+            this.popup.renderPopup(worldPosition, dobj)
           })
         }
       })
     }
+  }
+
+  closePopup() {
+    this.popup.hidePopup()
   }
 
   /*

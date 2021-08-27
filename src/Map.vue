@@ -57,7 +57,6 @@ export default {
       imageryProvider: baseMapProvider,
       terrainProvider: new Cesium.CesiumTerrainProvider({
         url: window.s3d.config.DEM,
-        isSct: true
       })
       // imageryProvider: new Cesium.TileMapServiceImageryProvider({
       //   url: 'http://cesium.agi.com/blackmarble',
@@ -71,6 +70,8 @@ export default {
     this.sceneContainer = document.createElement("div")
     let viewer = new Cesium.Viewer(this.sceneContainer, viewerOptions)
 
+    viewer.scene.hdrEnabled = true;
+    viewer.scene.debugShowFramesPerSecond = false;
     viewer.scene.screenSpaceCameraController.tiltEventTypes = [
       Cesium.CameraEventType.RIGHT_DRAG,
       Cesium.CameraEventType.PINCH,
@@ -88,15 +89,7 @@ export default {
     viewer.clock.multiplier = 1
     viewer.clock.shouldAnimate = true
 
-    viewer.terrainProvider = new Cesium.CesiumTerrainProvider({
-      url: URL_CONFIG.SiChuan_TERRAIN,
-      isSct: true
-    });
-
-    viewer.scene.debugShowFramesPerSecond = false;
-
     window.s3d.setViewer(viewer)
-
     console.log("s3d", window.s3d)
   },
   mounted () {

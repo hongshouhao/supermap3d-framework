@@ -35,19 +35,22 @@
 </template>
 
 <script>
+import { cartesianToLonlat } from '../utils/CesiumMath'
 import PropertyGrid from './PropertyGrid.vue'
+import PopupUtility from './PopupUtility.js'
 export default {
   data () {
     return {
       propArray: [],
       title: "",
       dockered: false,
-      handler3D: null,
+      mouseEventHandler: null,
       popupTool: null,
       popupVisible: false,
-      worldPosition: null,
+      popupPosition: null,
       showPropGrid: true,
       removePostRenderHandler: null,
+      popupUtility: new PopupUtility()
     }
   },
   components: {
@@ -59,72 +62,54 @@ export default {
   },
   methods: {
     init () {
-      this.initIQueryFor3D()
+      this.initIQuery()
       // this.initIQueryForMVT()
     },
-    initIQueryFor3D () {
+    initIQuery () {
       let _this = this
-      this.handler3D = new Cesium.ScreenSpaceEventHandler(window.s3d.viewer.scene.canvas)
-      this.handler3D.setInputAction(function (e) {
+      this.mouseEventHandler = new Cesium.ScreenSpaceEventHandler(window.s3d.viewer.scene.canvas)
+      this.mouseEventHandler.setInputAction(function (e) {
         if (!window.s3d.toolWorking) {
-          let pickobject = window.s3d.viewer.scene.pick(e.position)
-          if (pickobject) {
-            if (typeof pickobject.id !== 'string') {
+          let pickObject = window.s3d.viewer.scene.pick(e.position)
+          let position = window.s3d.viewer.scene.pickPosition(e.position)
+          if (pickObject) {
+            if (typeof pickObject.id !== 'string') {
               _this.hidePopup()
               return
             }
 
-            let dobj = {
-              object: {
-                id: "",
-                layer: "",
-                attributes: {}
-              },
-              position: {
-                longitude: 0,
-                latitude: 0,
-                height: 0,
-              },
-            }
-
-            if (pickobject.primitive) {
-              dobj.object.id = pickobject.id
-              dobj.object.layer = pickobject.primitive.name
-              dobj.position.longitude = pickobject.primitive.lon
-              dobj.position.latitude = pickobject.primitive.lat
-              dobj.position.height = pickobject.primitive.height
-            }
-
-            let position = window.s3d.viewer.scene.pickPosition(e.position)
-            // let cartographic = Cesium.Cartographic.fromCartesian(position)
-            // longitude = Cesium.Math.toDegrees(cartographic.longitude)
-            // latitude = Cesium.Math.toDegrees(cartographic.latitude)
-            // height = cartographic.height
-
-            let lconfig = window.s3d.getLayerConfig(dobj.object.layer)
-            if (lconfig.outFields
-              && lconfig.outFields instanceof Array
-              && lconfig.outFields.length > 0) {
-              let theLayer = window.s3d.getLayer(dobj.object.layer)
-
-              theLayer.getAttributesById(dobj.object.id).then((atts) => {
-                if (lconfig.outFields[0] === "*") {
-                  dobj.object.attributes = atts
-                }
-                else {
-                  for (let f of lconfig.outFields) {
-                    dobj.object.attributes[f] = atts[f]
+            if (pickObject.primitive) {
+              _this.popupUtility.getDataFromPrimitive(pickObject)
+                .then((data) => {
+                  if (!data.position) {
+                    data.position = cartesianToLonlat(position)
                   }
-                }
-
-                _this.renderPopup(position, dobj)
-              });
-            }
-            else {
-              _this.renderPopup(position, dobj)
+                  _this.renderPopup(position, data)
+                })
+                .catch((err) => {
+                  _this.hidePopup()
+                  console.error(err)
+                })
             }
           } else {
-            _this.hidePopup()
+            let imgLayers = window.s3d.getAllLayers(x => x.type === 'SMIMG' && x.show)
+            if (imgLayers.length > 0) {
+              // let position = window.s3d.viewer.scene.pickPosition(e.position)
+              // let lonlat = cartesianToLonlat(position)
+              // imgLayers.map(l => {
+
+              // })
+
+              // let cartographic = Cesium.Cartographic.fromCartesian(position)
+              // dobj.position.longitude = Cesium.Math.toDegrees(cartographic.longitude)
+              // dobj.position.latitude = Cesium.Math.toDegrees(cartographic.latitude)
+              // dobj.position.height = cartographic.height
+
+              // _this.renderPopup(position, dobj)
+            }
+            else {
+              _this.hidePopup()
+            }
           }
         } else {
           _this.hidePopup()
@@ -161,7 +146,6 @@ export default {
         console.log(properties)
       });
     },
-
     renderPopup (worldPosition, data) {
       let lconfig = window.s3d.getLayerConfig(data.object.layer)
       if (lconfig && lconfig.popupTemplate) {
@@ -180,7 +164,7 @@ export default {
         this.setContent(this.getPopupContent(data))
       }
 
-      this.worldPosition = worldPosition
+      this.popupPosition = worldPosition
       this.popupVisible = true
 
       if (!this.dockered) {
@@ -196,7 +180,7 @@ export default {
         function () {
           let screenPosition = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
             window.s3d.viewer.scene,
-            _this.worldPosition
+            _this.popupPosition
           )
           let popupDom = _this.$refs.popup
           let left = screenPosition.x - popupDom.offsetWidth / 2
@@ -228,7 +212,6 @@ export default {
         }
       )
     },
-
     enableDock () {
       this.setPopupStyle(true)
       if (this.removePostRenderHandler) {
@@ -237,7 +220,6 @@ export default {
       }
       this.dockered = true
     },
-
     disableDock () {
       this.setPopupStyle(false)
       this.enableStickRender()
@@ -288,11 +270,9 @@ export default {
       }
       return arr
     },
-
     getPopupHeader (data) {
       return data.object.layer + ' - ' + data.object.id
     },
-
     hidePopup () {
       if (this.removePostRenderHandler) {
         this.removePostRenderHandler()
@@ -300,7 +280,6 @@ export default {
       }
       this.popupVisible = false
     },
-
     setHeader (title) {
       this.title = title
     },
@@ -333,9 +312,10 @@ export default {
   max-width: 500px;
 
   .esri-popup__main-container {
-    max-width: 500px !important;
-    max-height: 500px !important;
-    width: unset;
+    width: 500px;
+    max-width: 700px !important;
+    max-height: 700px !important;
+    // width: unset;
   }
 
   // .esri-popup__content {
