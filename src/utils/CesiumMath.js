@@ -147,8 +147,8 @@ export function getPointOnPlane1(
   return Cesium.Cartesian3.add(pointOnRay, newVRay, new Cesium.Cartesian3())
 }
 
-export function lonLatToCartesian(lng, lat, alt) {
-  let cartographic = Cesium.Cartographic.fromDegrees(lng, lat, alt)
+export function lonLatToCartesian(lng, lat, height) {
+  let cartographic = Cesium.Cartographic.fromDegrees(lng, lat, height)
   return Cesium.Ellipsoid.WGS84.cartographicToCartesian(cartographic)
 }
 

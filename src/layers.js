@@ -75,14 +75,6 @@ export const layers = [
       url: `${baseUrl}iserver/services/3D-GongDian/rest/realspace/datas/供电_1@供电/config`,
       datasetName: '供电:供电_1',
       outFields: ['*'],
-      renderer: {
-        type: 'pipe',
-        symbol: {
-          color: Cesium.Color.fromCssColorString('rgba(118，232, 241，1.0)'),
-          trailLength: 0.2,
-          period: 1,
-        },
-      },
     },
   },
   {
@@ -94,6 +86,13 @@ export const layers = [
       url: `${baseUrl}iserver/services/3D-WuShui/rest/realspace/datas/污水_1@污水/config`,
       datasetName: '污水:污水_1',
       outFields: ['*'],
+      renderer: {
+        type: 'S3MLAYER',
+        layer: {
+          url: `${baseUrl}iserver/services/3D-test/rest/realspace/datas/WS_LINE_4_1@污水1/config`,
+          textureUVSpeed: new Cesium.Cartesian2(-0.5, 0),
+        },
+      },
     },
   },
   {
@@ -130,11 +129,11 @@ export const layers = [
   },
   {
     id: '13',
-    name: '二维电筒',
+    name: '地图服务',
     layer: {
       type: 'SMIMG',
       visible: false,
-      url: `${baseUrl}iserver/services/map-ugcv5-DianTongDiTu/rest/maps/电通地图`,
+      url: `${baseUrl}iserver/services/map-ugcv5-FanWei1DiTuFuWu/rest/maps/范围_1%40地图服务`,
     },
   },
 ]

@@ -11,8 +11,10 @@ import { lonLatToCartesian } from './utils/CesiumMath'
 import Toolbar from './tools/Toolbar'
 import EventBus from 'eventbusjs'
 import ViewUtility from './utils/ViewUtility'
+import DebugUtility from './utils/DebugUtility'
 import { setVisible } from './utils/LayerUtility'
 import { isS3mFeature, isCartesian3 } from './utils/IfUtility'
+import './materials'
 
 export function setup(vue) {
   vue.use(Element)
@@ -37,6 +39,39 @@ class S3d {
     this.viewer = null
     this.scene = null
 
+    this._setLabel()
+    // this._loadCustomMaterials()
+  }
+
+  setViewer(viewer) {
+    this.viewer = viewer
+    this.scene = viewer.scene
+    this.viewUtility = new ViewUtility(viewer)
+    this.debugUtility = new DebugUtility(viewer)
+  }
+
+  _loadCustomMaterials() {
+    Cesium.Material._materialCache.addMaterial(
+      Cesium.Material.PolylineTrailLinkType,
+      {
+        fabric: {
+          type: Cesium.Material.PolylineTrailLinkType,
+          uniforms: {
+            color: new Cesium.Color(0.0, 0.0, 1.0, 0.5),
+            image: Cesium.Material.PolylineTrailLinkImage,
+            time: -20,
+          },
+          source: Cesium.Material.PolylineTrailLinkSource,
+        },
+        // eslint-disable-next-line no-unused-vars
+        translucent: function(material) {
+          return true
+        },
+      }
+    )
+  }
+
+  _setLabel() {
     let setLabel = function(layers, nameList) {
       for (let ln of layers) {
         if (ln.layer) {
@@ -60,19 +95,13 @@ class S3d {
       }
     }
     let nameList = {}
-    setLabel(config.layers, nameList)
+    setLabel(this.config.layers, nameList)
 
     for (let key in nameList) {
       if (nameList[key] > 1) {
         throw `图层配置错误: 图层名(${key})重复`
       }
     }
-  }
-
-  setViewer(viewer) {
-    this.viewer = viewer
-    this.scene = viewer.scene
-    this.viewUtility = new ViewUtility(viewer)
   }
 
   _getLayerNode(params) {

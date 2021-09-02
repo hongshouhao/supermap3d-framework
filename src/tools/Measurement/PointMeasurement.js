@@ -95,8 +95,8 @@ export default class PointMeasurement {
     this.editHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE)
   }
 
-  addPonit(position) {
-    let p = this.transformMousePosition(position)
+  addPonit(mousePosition) {
+    let p = this.transformMousePosition(mousePosition)
     let pointPosition = Cesium.Cartesian3.fromDegrees(
       p.longitude,
       p.latitude,

@@ -63,6 +63,12 @@
         <span aria-hidden="true"
               class="esri-icon my-icon-mea-angle"></span>
       </div>
+      <div class="esri-widget--button esri-widget"
+           title="观察"
+           @click="startModelObservation">
+        <span aria-hidden="true"
+              class="esri-icon my-icon-model-rotate"></span>
+      </div>
     </div>
 
     <div class="esri-component esri-widget">
@@ -152,6 +158,16 @@
       </div>
     </div>
 
+    <div ref='compass'
+         title="罗盘仪"
+         class="esri-component esri-widget esri-widget--button esri-compass">
+      <span aria-hidden="true"
+            class="esri-compass__icon esri-icon-compass"
+            @click="setViewNorthUp">
+      </span>
+      <span class="esri-icon-font-fallback-text">重置罗盘仪方向</span>
+    </div>
+
     <WidgetInfoPanel v-show="currentTool=='ViewshedTool'"
                      title="视域分析参数"
                      ref="viewshedSettingPanel"
@@ -179,6 +195,16 @@
       </template>
     </WidgetInfoPanel>
 
+    <WidgetInfoPanel v-show="currentTool=='ModelObservationTool'"
+                     title="模型"
+                     ref="modelObservationPanel"
+                     @closed="stopSetting()">
+      <template>
+        <ModelObservationSetting ref="modelObservationSetting"
+                                 :tool="modelObservationTool" />
+      </template>
+    </WidgetInfoPanel>
+
     <WidgetInfoPanel v-show="currentTool=='CommonSettings'"
                      title="设置"
                      ref="commonSettingsPanel"
@@ -194,8 +220,8 @@
 import MeasureTool from '../tools/Measurement/MeasureTool'
 import PointMeasurement from '../tools/Measurement/PointMeasurement'
 import AngleMeasurement from '../tools/Measurement/AngleMeasurement'
-
 import SceneModeToogleTool from '../tools/Scene/SceneModeToogleTool'
+import ModelObservationTool from '../tools/Model/ModelObservationTool'
 
 import ViewshedTool from '../analysis/Viewshed/ViewshedTool'
 import SliceTool from '../analysis/Slice/SliceTool'
@@ -206,7 +232,7 @@ import HighLimitTool from '../analysis/HighLimit/HighLimitTool'
 import ViewshedSetting from '../analysis/Viewshed/ViewshedSetting.vue'
 import SunlightSetting from '../analysis/Sunlight/SunlightSetting.vue'
 import HighLimitSetting from '../analysis/HighLimit/HighLimitSetting.vue'
-
+import ModelObservationSetting from '../tools/Model/ModelObservationSetting.vue'
 import Settings from './Settings.vue'
 
 import WidgetInfoPanel from './WidgetInfoPanel'
@@ -218,6 +244,7 @@ export default {
     ViewshedSetting,
     SunlightSetting,
     HighLimitSetting,
+    ModelObservationSetting,
     Settings
   },
   data () {
@@ -233,6 +260,7 @@ export default {
       sliceTool: null,
       viewDomeTool: null,
       highLimitTool: null,
+      modelObservationTool: null,
       testTool: new Test(),
     }
   },
@@ -249,27 +277,40 @@ export default {
     window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.viewshedSettingPanel.$el)
     window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.sunlightSettingPanel.$el)
     window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.highLimitSettingPanel.$el)
+    window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.modelObservationPanel.$el)
     window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.commonSettingsPanel.$el)
 
-    // this.measureTool = new MeasureTool(window.s3d.viewer)
-    // this.pointMeasurement = new PointMeasurement(window.s3d.viewer)
-    // this.sceneModeToogleTool = new SceneModeToogleTool(window.s3d.viewer)
-    // this.viewshedTool = new ViewshedTool(window.s3d.viewer)
-    // this.skylineTool = new SkylineTool(window.s3d.viewer)
-    // this.sliceTool = new SliceTool(window.s3d.viewer)
-    // this.viewDomeTool = new ViewDomeTool(window.s3d.viewer)
-    this.highLimitTool = new HighLimitTool(window.s3d.viewer)
+    let _this = this
+    window.s3d.viewer.camera.changed.addEventListener(function () {
+      _this.$refs.compass.style = `transform: rotateZ(-${Cesium.Math.toDegrees(window.s3d.viewer.camera.heading)}deg);`
+    })
+
+    window.s3d.eventBus.addEventListener("framework-initialized", () => {
+      _this.sceneModeToogleTool = new SceneModeToogleTool(window.s3d.viewer)
+      _this.measureTool = new MeasureTool(window.s3d.viewer)
+      _this.pointMeasurement = new PointMeasurement(window.s3d.viewer)
+      _this.angleMeasurement = new AngleMeasurement(window.s3d.viewer)
+      _this.viewshedTool = new ViewshedTool(window.s3d.viewer)
+      _this.skylineTool = new SkylineTool(window.s3d.viewer)
+      _this.sliceTool = new SliceTool(window.s3d.viewer)
+      _this.viewDomeTool = new ViewDomeTool(window.s3d.viewer)
+      _this.highLimitTool = new HighLimitTool(window.s3d.viewer)
+      _this.modelObservationTool = new ModelObservationTool(window.s3d.viewer)
+
+      _this.viewshedTool.bindUI(_this.$refs.viewshedSettingPanel.$el)
+      _this.$refs.modelObservationSetting.setTool(_this.modelObservationTool)
+    });
   },
   methods: {
     globeView () {
       window.s3d.viewer.camera.flyTo(window.s3d.config.defaultCamera)
     },
     toggleView () {
-      if (!this.sceneModeToogleTool) {
-        this.sceneModeToogleTool = new SceneModeToogleTool(window.s3d.viewer)
-      }
       this.sceneModeToogleTool.toogle()
       this.viewMode = this.sceneModeToogleTool.mode
+    },
+    setViewNorthUp () {
+      window.s3d.viewUtility.rotateZ(window.s3d.viewer.camera.heading)
     },
     zoomIn () {
       window.s3d.viewer.camera.zoomIn(100)
@@ -277,149 +318,101 @@ export default {
     zoomOut () {
       window.s3d.viewer.camera.zoomOut(100)
     },
-
     startDistanceMeasure () {
-      if (!this.measureTool) {
-        this.measureTool = new MeasureTool(window.s3d.viewer)
-      }
       this.currentTool = "MeasureTool"
       this.measureTool.measureDistance()
     },
-
     startAreaMeasure () {
-      if (!this.measureTool) {
-        this.measureTool = new MeasureTool(window.s3d.viewer)
-      }
       this.currentTool = "MeasureTool"
       this.measureTool.measureArea()
     },
-
     annotatePoint () {
-      if (!this.pointMeasurement) {
-        this.pointMeasurement = new PointMeasurement(window.s3d.viewer)
-      }
       this.currentTool = "PointMeasurement"
       this.pointMeasurement.start()
     },
-
     startAngleMeasure () {
-      if (!this.angleMeasurement) {
-        this.angleMeasurement = new AngleMeasurement(window.s3d.viewer)
-      }
       this.currentTool = "AngleMeasurement"
       this.angleMeasurement.start()
     },
-
     startSlice () {
-      if (!this.sliceTool) {
-        this.sliceTool = new SliceTool(window.s3d.viewer)
-      }
       this.currentTool = "SliceTool"
       this.sliceTool.start()
     },
-
     startViewshed () {
-      if (!this.viewshedTool) {
-        this.viewshedTool = new ViewshedTool(window.s3d.viewer)
-        this.viewshedTool.bindUI(this.$refs.viewshedSettingPanel.$el)
-      }
       this.currentTool = "ViewshedTool"
       this.viewshedTool.start()
     },
-
     startSunlight () {
       this.currentTool = "SunlightTool"
       this.$refs.sunlightSetting.init()
     },
-
     startSkyline () {
-      if (!this.skylineTool) {
-        this.skylineTool = new SkylineTool(window.s3d.viewer)
-      }
       this.currentTool = "SkylineTool"
       this.skylineTool.start()
     },
-
     startViewDome () {
-      if (!this.viewDomeTool) {
-        this.viewDomeTool = new ViewDomeTool(window.s3d.viewer)
-      }
       this.currentTool = "ViewDomeTool"
       this.viewDomeTool.start()
     },
-
     startHighLimit () {
-      if (!this.highLimitTool) {
-        this.highLimitTool = new HighLimitTool(window.s3d.viewer)
-      }
       this.currentTool = "HighLimitTool"
       this.highLimitTool.start()
     },
-
+    startModelObservation () {
+      this.currentTool = "ModelObservationTool"
+      this.modelObservationTool.start(() => {
+        this.modelObservationTool.lookAtFront()
+      })
+    },
     multiViewport () {
       window.s3d.layerTree.toggleViewportMode()
     },
-
     updateHeight (height) {
       if (this.highLimitTool) {
         this.highLimitTool.setHeight(height)
       }
     },
-
     settings () {
       this.currentTool = "CommonSettings"
     },
-
     stopViewshedTool () {
-      if (this.viewshedTool) {
-        this.viewshedTool.clear()
-      }
+      this.viewshedTool.clear()
       this.currentTool = ""
     },
     stopMeasureTool () {
-      if (this.measureTool) {
-        this.measureTool.clear()
-      }
+      this.measureTool.clear()
       this.currentTool = ""
     },
     stopPointMeasurement () {
-      if (this.pointMeasurement) {
-        this.pointMeasurement.clear()
-      }
+      this.pointMeasurement.clear()
       this.currentTool = ""
     },
     stopAngleMeasurement () {
-      if (this.angleMeasurement) {
-        this.angleMeasurement.clear()
-      }
+      this.angleMeasurement.clear()
       this.currentTool = ""
     },
     stopSkylineTool () {
-      if (this.skylineTool) {
-        this.skylineTool.clear()
-      }
+      this.skylineTool.clear()
       this.currentTool = ""
     },
     stopViewDomeTool () {
-      if (this.viewDomeTool) {
-        this.viewDomeTool.clear()
-      }
+      this.viewDomeTool.clear()
       this.currentTool = ""
     },
     stopHighLimitTool () {
-      if (this.highLimitTool) {
-        this.highLimitTool.clear()
-      }
+      this.highLimitTool.clear()
       this.currentTool = ""
     },
     stopSliceTool () {
-      if (this.sliceTool) {
-        this.sliceTool.clear()
-      }
+      this.sliceTool.clear()
       this.currentTool = ""
     },
     stopSunlight () {
       this.$refs.sunlightSetting.reset()
+      this.currentTool = ""
+    },
+    stopModelObservation () {
+      this.modelObservationTool.clear()
       this.currentTool = ""
     },
     stopSetting () {
@@ -435,6 +428,7 @@ export default {
       this.stopHighLimitTool()
       this.stopSliceTool()
       this.stopSunlight()
+      this.stopModelObservation()
     },
 
     test () {

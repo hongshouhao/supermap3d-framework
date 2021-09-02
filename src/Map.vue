@@ -72,6 +72,7 @@ export default {
 
     viewer.scene.hdrEnabled = true;
     viewer.scene.debugShowFramesPerSecond = false;
+    viewer.scene.logarithmicDepthBuffer = false;
     viewer.scene.screenSpaceCameraController.tiltEventTypes = [
       Cesium.CameraEventType.RIGHT_DRAG,
       Cesium.CameraEventType.PINCH,

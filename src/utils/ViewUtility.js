@@ -1,13 +1,14 @@
+import { rotateVector } from '../utils/CesiumMath'
+import DebugUtility from '../utils/DebugUtility'
 export default class ViewUtility {
   constructor(viewer) {
     this.viewer = viewer
+    this.camera = this.viewer.camera
+    this.pointMeasurement = new DebugUtility(this.viewer)
   }
 
   getViewCenter() {
-    let ray = new Cesium.Ray(
-      this.viewer.camera.position,
-      this.viewer.camera.direction
-    )
+    let ray = new Cesium.Ray(this.camera.position, this.camera.direction)
     let intersection = Cesium.IntersectionTests.rayEllipsoid(
       ray,
       Cesium.Ellipsoid.WGS84
@@ -19,8 +20,36 @@ export default class ViewUtility {
 
   getCameraHeight() {
     return this.viewer.scene.globe.ellipsoid.cartesianToCartographic(
-      this.viewer.camera.position
+      this.camera.position
     ).height
+  }
+
+  rotateZ(offset) {
+    let center = this.getViewCenter()
+    let vec = Cesium.Cartesian3.subtract(
+      center,
+      this.camera.position,
+      new Cesium.Cartesian3()
+    )
+
+    let nVec = rotateVector(vec, center, offset)
+    let nPosition = Cesium.Cartesian3.subtract(
+      center,
+      nVec,
+      new Cesium.Cartesian3()
+    )
+
+    let tar = {
+      destination: nPosition,
+      orientation: {
+        heading: this.camera.heading - offset,
+        pitch: this.camera.pitch,
+        roll: this.camera.roll,
+      },
+      duration: 2,
+    }
+
+    this.camera.flyTo(tar)
   }
 
   screenPositionToCartesian(screenPosition) {
@@ -54,32 +83,91 @@ export default class ViewUtility {
         )
       )
     }
-    return this.flyToPoints(pts, 10)
+    return this.flyToPoints(pts, { scale: 1.5 })
   }
 
-  flyToPoints(points, scale) {
+  lookAtFeature(feature, direction, options) {
+    let pts = []
+    pts.push(
+      Cesium.Cartesian3.fromDegrees(
+        feature.geometry.boundingBox.lower.x,
+        feature.geometry.boundingBox.lower.y,
+        feature.geometry.boundingBox.lower.z
+      )
+    )
+    pts.push(
+      Cesium.Cartesian3.fromDegrees(
+        feature.geometry.boundingBox.upper.x,
+        feature.geometry.boundingBox.upper.y,
+        feature.geometry.boundingBox.upper.z
+      )
+    )
+    let pitch = -0.25
+    let offset = null
+    if (typeof direction === 'string') {
+      if (direction === 'north') {
+        offset = {
+          heading: Math.PI,
+          pitch: pitch,
+        }
+      } else if (direction === 'south') {
+        offset = {
+          heading: 0,
+          pitch: pitch,
+        }
+      } else if (direction === 'west') {
+        offset = {
+          heading: Math.PI * 1.5,
+          pitch: pitch,
+        }
+      } else if (direction === 'east') {
+        offset = {
+          heading: Math.PI * 0.5,
+          pitch: pitch,
+        }
+      } else if (direction === 'top') {
+        offset = {
+          heading: this.camera.heading,
+          pitch: Math.PI * -0.5,
+        }
+      }
+    } else if (typeof direction === 'number') {
+      offset = {
+        heading: direction,
+        pitch: pitch,
+      }
+    }
+
+    return this.flyToPoints(pts, {
+      offset: offset,
+      scale: options?.scale,
+      duration: options?.duration,
+    })
+  }
+
+  flyToPoints(points, options) {
     let _this = this
     return new Promise(function(resolve, reject) {
       let boundingSphere = Cesium.BoundingSphere.fromPoints(points)
-      if (scale) {
-        boundingSphere.radius = boundingSphere.radius * scale
-      } else {
-        // boundingSphere.radius = boundingSphere.radius * scale
+
+      if (options?.scale) {
+        boundingSphere.radius = boundingSphere.radius * options.scale
       }
 
+      window.s3d.debugUtility.drawBoundingSphereAndPoints(
+        boundingSphere,
+        points
+      )
+
       _this.viewer.camera.flyToBoundingSphere(boundingSphere, {
-        duration: 2,
+        duration: options?.duration ?? 2,
         complete: function() {
           resolve()
         },
         cancel: function() {
           reject()
         },
-        // offset: {
-        //   heading: Cesium.Math.toRadians(heading),
-        //   pitch: Cesium.Math.toRadians(pitch),
-        //   range: 0.0,
-        // },
+        offset: options?.offset,
       })
     })
   }

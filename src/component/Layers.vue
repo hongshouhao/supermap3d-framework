@@ -32,16 +32,19 @@
 </template>
 
 <script> 
-import LayersRenderer from './LayersRender'
-import { flyTo, setVisible, setOpacity } from '../utils/LayerUtility'
+import LayerSetting from './LayerSetting.vue'
+import { flyTo, setVisible } from '../utils/LayerUtility'
 export default {
+  components: {
+    // eslint-disable-next-line vue/no-unused-components
+    LayerSetting
+  },
   data () {
     return {
       layersData: [],
       defaultExpandedKeys: [],
       defaultCheckedKeys: [],
       multiViewport: false,
-      layersRenderer: new LayersRenderer()
     }
   },
   props: [],
@@ -86,7 +89,10 @@ export default {
           }
           else if (lyNode.layer.type === "S3M") {
             if (lyNode.layer.url) {
-              let promise = window.s3d.viewer.scene.addS3MTilesLayerByScp(lyNode.layer.url, { name: lyNode.name })
+              let promise = window.s3d.viewer.scene.addS3MTilesLayerByScp(lyNode.layer.url,
+                {
+                  name: lyNode.name,
+                })
               promise.then((cly) => {
                 cly.type = lyNode.layer.type
                 cly.config = lyNode.layer
@@ -94,9 +100,6 @@ export default {
                 cly.indexedDBSetting.isAttributesSave = true;
                 cly.selectColorType = Cesium.SelectColorType.REPLACE
                 lyNode.cesiumLayer = cly
-                // if (lyNode.layer.queryParameter) {
-                //   cly.setQueryParameter(queryParameter);
-                // }
 
                 if (lyNode.layer.enableFillAndWireFrame) {
                   cly.style3D.fillStyle = Cesium.FillStyle.Fill_And_WireFrame;
@@ -105,10 +108,6 @@ export default {
                   cly.wireFrameMode = Cesium.WireFrameType.EffectOutline
                   // cly.wireFrameMode = Cesium.WireFrameType.Triangle
                 }
-
-                // if (lyNode.layer.renderer) {
-                //   this.layersRenderer.addRender(lyNode.name)
-                // }
               })
             }
             else {
@@ -155,15 +154,6 @@ export default {
       }
     },
     renderExtButton (h, { node, data }) {
-      // const setLayerOpacity = function (opacity) {
-      //   if (data.cesiumLayer && data.layer.type === "SMIMG") {
-      //     data.cesiumLayer.alpha = opacity / 100
-      //   }
-      //   else if (data.cesiumLayer && data.layer.type === "S3M") {
-      //     data.cesiumLayer.style3D.fillForeColor = new Cesium.Color(1.0, 1.0, 1.0, opacity / 100);
-      //   }
-      // }
-
       if (node.childNodes && node.childNodes.length > 0) {
         return (
           <span class="custom-tree-node">
@@ -180,16 +170,14 @@ export default {
             </span>
 
             <el-popover
-              placement="left"
+              placement="bottom"
               popper-class="layer-setting-popup"
-              title="不透明度"
               trigger="hover"
             >
-              <el-slider min={10} max={100} v-model={data.layer.opacity}
-                on-input={(opacity) => setOpacity(data.cesiumLayer, opacity)}></el-slider>
-              <i slot="reference" class={node.checked ? "layer-more my-icon-more" : ""} />
+              <LayerSetting conf={data} />
+              <i slot="reference" class={node.checked ? "layer-settings my-icon-more" : ""} />
             </el-popover>
-          </span>
+          </span >
         )
       }
     },
@@ -233,6 +221,7 @@ export default {
   .tree-div {
     padding: 10px;
   }
+
   .divider {
     position: relative;
     margin-left: 4px;
@@ -248,9 +237,9 @@ export default {
     // margin-top: 2px;
     // height: 100%;
 
-    .layer-more {
+    .layer-settings {
       height: 19px;
-      width: 10px;
+      width: 13px;
 
       position: absolute;
       right: -5px;
@@ -294,17 +283,13 @@ export default {
   padding-bottom: 4px !important;
 
   .popper__arrow {
-    border-left-color: #dbdbdb !important;
-    // border-bottom-color: #dbdbdb !important;
+    // border-left-color: #dbdbdb !important;
+    border-bottom-color: #dbdbdb !important;
   }
+
   .el-popover__title {
     font-size: 5px;
     margin-bottom: 0px;
-  }
-
-  .el-slider__runway {
-    margin-top: 10px;
-    margin-bottom: 10px;
   }
 }
 </style>
