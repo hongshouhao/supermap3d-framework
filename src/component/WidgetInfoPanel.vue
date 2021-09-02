@@ -73,7 +73,7 @@ export default {
   position: absolute;
   bottom: 15px;
   right: 12px;
-  border: 1px solid #ccc;
+  // border: 1px solid #ccc;
   border-radius: 1px;
   background: #f3f3f3;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);

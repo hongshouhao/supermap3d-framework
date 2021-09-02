@@ -125,6 +125,18 @@ export default {
             cly.show = lyNode.layer.visible
             lyNode.cesiumLayer = cly
           }
+          else if (lyNode.layer.type === "DEM") {
+            lyNode.dem = new Cesium.CesiumTerrainProvider({
+              url: lyNode.layer.url,
+            })
+
+            if (lyNode.layer.visible) {
+              window.s3d.viewer.terrainProvider = lyNode.dem
+            }
+            else {
+              window.s3d.emptyDEM();
+            }
+          }
           else {
             throw '图层类型配置错误'
           }
@@ -150,6 +162,14 @@ export default {
         }
         else {
           setVisible(data.cesiumLayer, checked)
+        }
+      }
+      else if (data.dem) {
+        if (checked) {
+          window.s3d.viewer.terrainProvider = data.dem
+        }
+        else {
+          window.s3d.emptyDEM();
         }
       }
     },
@@ -207,6 +227,7 @@ export default {
         }
       }
     },
+
   }
 }
 </script>

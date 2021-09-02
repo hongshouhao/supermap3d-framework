@@ -13,7 +13,7 @@ export default class SceneModeToogleTool {
       this.prePitch = this.viewer.camera.pitch
       this.preRoll = this.viewer.camera.roll
       this.preDirection = this.viewer.camera.direction
-      this.preHeight = window.s3d.viewUtility.getCameraHeight()
+      this.preHeight = window.s3d.cameraUtility.getCameraHeight()
 
       this.preHeight2 = this.viewer.camera.positionCartographic.height
       this.preVector = Cesium.Cartesian3.subtract(

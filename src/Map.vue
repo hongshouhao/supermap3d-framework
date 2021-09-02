@@ -55,14 +55,17 @@ export default {
       baseLayerPicker: false,
       shouldAnimate: true,
       imageryProvider: baseMapProvider,
-      terrainProvider: new Cesium.CesiumTerrainProvider({
-        url: window.s3d.config.DEM,
-      })
       // imageryProvider: new Cesium.TileMapServiceImageryProvider({
       //   url: 'http://cesium.agi.com/blackmarble',
       //   maximumLevel: 8,
       //   credit: 'Black Marble imagery courtesy NASA Earth Observatory',
       // })
+    }
+
+    if (window.s3d.config.DEM) {
+      viewerOptions.terrainProvider = new Cesium.CesiumTerrainProvider({
+        url: window.s3d.config.DEM,
+      })
     }
 
     Object.assign(viewerOptions, window.s3d.config.viewerOptions)
@@ -72,7 +75,7 @@ export default {
 
     viewer.scene.hdrEnabled = true;
     viewer.scene.debugShowFramesPerSecond = false;
-    viewer.scene.logarithmicDepthBuffer = false;
+    // viewer.scene.logarithmicDepthBuffer = false;
     viewer.scene.screenSpaceCameraController.tiltEventTypes = [
       Cesium.CameraEventType.RIGHT_DRAG,
       Cesium.CameraEventType.PINCH,
@@ -81,8 +84,10 @@ export default {
     ];
 
     viewer.scene.screenSpaceCameraController.zoomEventTypes =
-      [Cesium.CameraEventType.WHEEL,
-      Cesium.CameraEventType.PINCH];
+      [
+        Cesium.CameraEventType.WHEEL,
+        Cesium.CameraEventType.PINCH
+      ];
 
     let currentTime = new Date()
     currentTime.setHours(12)

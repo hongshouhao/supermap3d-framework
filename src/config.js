@@ -2,10 +2,10 @@ import { layers } from './layers'
 
 export const config = {
   iServerBaseURL: process.env.VUE_APP_ISERVER_BASE_URL,
-  DEM:
-    'http://106.14.242.98:8090/iserver/services/3D-DEM/rest/realspace/datas/DEM缓存',
+  // DEM:
+  //   'http://106.14.242.98:8090/iserver/services/3D-DEM/rest/realspace/datas/DEM缓存',
+  // DEM:
   //  'http://106.14.242.98:8090/iserver/services/3D-DEM100/rest/realspace/datas/%E5%A4%B8%E5%BC%A0%E6%A0%85%E6%A0%BC4490@DEM',
-  //'http://www.supermapol.com/realspace/services/3D-dixingyingxiang/rest/realspace/datas/DatasetDEM',
   layers: layers,
   defaultCamera: {
     destination: Cesium.Cartesian3.fromDegrees(120.603, 31.175, 400.0),

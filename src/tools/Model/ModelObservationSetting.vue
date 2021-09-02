@@ -35,7 +35,6 @@ export default {
     return {
       tool: null,
       slideValueChangedByUser: false,
-      slideValueChangedByCode: false,
     }
   },
   mounted () {
@@ -46,14 +45,12 @@ export default {
       width: 8,
       startAngle: 270,
       endAngle: "+360",
-      // circleShape: "full",
       handleSize: "+10",
       handleShape: "dot",
       sliderType: "min-range",
       showTooltip: false,
       max: 360,
       min: 0,
-      // value: 270,
       update: function (e) {
         if (!_this.tool) {
           return
@@ -73,9 +70,8 @@ export default {
       if (_this.slideValueChangedByUser) {
         return
       }
-      _this.slideValueChangedByCode = true
       let val = Cesium.Math.toDegrees(window.s3d.viewer.camera.heading)
-      console.log(val)
+
       _this.$refs.buttonContainer.style = `transform: rotateZ(${val}deg);`
       dom.data("roundSlider").option("value", val);
     })

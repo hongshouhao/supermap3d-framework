@@ -1,7 +1,7 @@
 //SMIMG 影像图层
 //S3M        三维图层
 //MVT        矢量瓦片图层
-
+//DEM
 import {
   popupTemplateWithDefaultUI,
   popupTemplateWithCustomUI,
@@ -10,6 +10,15 @@ import {
 let baseUrl = process.env.VUE_APP_ISERVER_BASE_URL
 
 export const layers = [
+  {
+    id: '1',
+    name: 'DEM',
+    layer: {
+      type: 'DEM',
+      visible: false,
+      url: `${baseUrl}iserver/services/3D-DEM/rest/realspace/datas/DEM缓存`,
+    },
+  },
   {
     id: '2',
     label: '分层分户',
@@ -118,6 +127,17 @@ export const layers = [
     },
   },
   {
+    id: '13',
+    name: '电通',
+    layer: {
+      type: 'S3M',
+      visible: false,
+      url: `${baseUrl}iserver/services/3D-DianTong/rest/realspace/datas/电通_1@电通/config`,
+      datasetName: '电通:电通_1',
+      outFields: ['*'],
+    },
+  },
+  {
     id: '10',
     name: '标志标线',
     layer: {
@@ -128,7 +148,7 @@ export const layers = [
     },
   },
   {
-    id: '13',
+    id: '14',
     name: '地图服务',
     layer: {
       type: 'SMIMG',

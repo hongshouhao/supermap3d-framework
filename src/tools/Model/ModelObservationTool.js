@@ -34,37 +34,37 @@ export default class ModelObservationTool {
     if (!this.feature) {
       return
     }
-    window.s3d.viewUtility.lookAtFeature(this.feature, angle, { duration: 0 })
+    window.s3d.cameraUtility.rotateZAroundFeature(this.feature, angle)
   }
   lookAtFront() {
     if (!this.feature) {
       return
     }
-    window.s3d.viewUtility.lookAtFeature(this.feature, 'south')
+    window.s3d.cameraUtility.lookAtFeature(this.feature, 'south')
   }
   lookAtBehind() {
     if (!this.feature) {
       return
     }
-    window.s3d.viewUtility.lookAtFeature(this.feature, 'north')
+    window.s3d.cameraUtility.lookAtFeature(this.feature, 'north')
   }
   lookAtLeft() {
     if (!this.feature) {
       return
     }
-    window.s3d.viewUtility.lookAtFeature(this.feature, 'west')
+    window.s3d.cameraUtility.lookAtFeature(this.feature, 'west')
   }
   lookAtRight() {
     if (!this.feature) {
       return
     }
-    window.s3d.viewUtility.lookAtFeature(this.feature, 'east')
+    window.s3d.cameraUtility.lookAtFeature(this.feature, 'east')
   }
   lookAtTop() {
     if (!this.feature) {
       return
     }
-    window.s3d.viewUtility.lookAtFeature(this.feature, 'top')
+    window.s3d.cameraUtility.lookAtFeature(this.feature, 'top')
   }
 
   clear() {

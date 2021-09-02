@@ -11,6 +11,7 @@ import { lonLatToCartesian } from './utils/CesiumMath'
 import Toolbar from './tools/Toolbar'
 import EventBus from 'eventbusjs'
 import ViewUtility from './utils/ViewUtility'
+import CameraUtility from './utils/CameraUtility'
 import DebugUtility from './utils/DebugUtility'
 import { setVisible } from './utils/LayerUtility'
 import { isS3mFeature, isCartesian3 } from './utils/IfUtility'
@@ -47,6 +48,7 @@ class S3d {
     this.viewer = viewer
     this.scene = viewer.scene
     this.viewUtility = new ViewUtility(viewer)
+    this.cameraUtility = new CameraUtility(viewer)
     this.debugUtility = new DebugUtility(viewer)
   }
 
@@ -169,6 +171,10 @@ class S3d {
     setVisible(ly, visible)
   }
 
+  emptyDEM() {
+    this.viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider({})
+  }
+
   /*
   params: {
     layer: ""
@@ -254,7 +260,7 @@ class S3d {
           setVisible(layer, true)
           layer.setSelection([feature.ID])
 
-          this.viewUtility.flyToS3mFeatures([feature]).then(() => {
+          this.cameraUtility.flyToS3mFeatures([feature]).then(() => {
             let worldPosition = lonLatToCartesian(
               feature.geometry.position.x,
               feature.geometry.position.y,
@@ -294,16 +300,16 @@ class S3d {
         } else {
           throw '参数错误'
         }
-        return this.viewUtility.flyToPoints(pts)
+        return this.cameraUtility.flyToPoints(pts)
       } else if (isCartesian3(sample)) {
-        return this.viewUtility.flyToPoints(params)
+        return this.cameraUtility.flyToPoints(params)
       } else if (isS3mFeature(sample)) {
-        return this.viewUtility.flyToS3mFeatures(params)
+        return this.cameraUtility.flyToS3mFeatures(params)
       }
     } else if (isCartesian3(params)) {
-      return this.viewUtility.flyToPoints([params])
+      return this.cameraUtility.flyToPoints([params])
     } else if (isS3mFeature(params)) {
-      return this.viewUtility.flyToS3mFeatures([params])
+      return this.cameraUtility.flyToS3mFeatures([params])
     }
   }
 
@@ -320,7 +326,7 @@ class S3d {
     let fly = function(features) {
       let ids = features.map((x) => x.ID)
       _this.getLayer(params.layer).setSelection(ids)
-      return _this.viewUtility.flyToS3mFeatures(features)
+      return _this.cameraUtility.flyToS3mFeatures(features)
     }
     if (params.layer && (params.ids || params.sql)) {
       return this.query(params).then((response) => {
@@ -328,9 +334,6 @@ class S3d {
       })
     } else if (params.layer && params.features) {
       return fly(params.features)
-      // let ids = params.features.map((x) => x.ID)
-      // this.getLayer(params.layer).setSelection(ids)
-      // return this.viewUtility.flyToS3mFeatures(response.data.features)
     }
   }
 }
