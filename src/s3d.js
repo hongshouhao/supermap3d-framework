@@ -171,11 +171,6 @@ class S3d {
     setVisible(ly, visible)
   }
 
-  emptyDEM() {
-    this.viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider({})
-    this.viewer.terrainProvider.isCreateSkirt = false
-  }
-
   /*
   params: {
     layer: ""

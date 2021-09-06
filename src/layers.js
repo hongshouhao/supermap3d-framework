@@ -17,6 +17,7 @@ export const layers = [
       type: 'DEM',
       visible: false,
       url: `${baseUrl}iserver/services/3D-DEM/rest/realspace/datas/DEM缓存`,
+      url0: `${baseUrl}iserver/services/3D-DEM0/rest/realspace/datas/DEM0`,
     },
   },
   {

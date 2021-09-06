@@ -129,12 +129,16 @@ export default {
             lyNode.dem = new Cesium.CesiumTerrainProvider({
               url: lyNode.layer.url,
             })
+            lyNode.dem0 = new Cesium.CesiumTerrainProvider({
+              url: lyNode.layer.url0,
+            })
             lyNode.dem.isCreateSkirt = false;
+            lyNode.dem0.isCreateSkirt = false;
             if (lyNode.layer.visible) {
               window.s3d.viewer.terrainProvider = lyNode.dem
             }
             else {
-              window.s3d.emptyDEM();
+              window.s3d.viewer.terrainProvider = lyNode.dem0
             }
           }
           else {
@@ -169,7 +173,7 @@ export default {
           window.s3d.viewer.terrainProvider = data.dem
         }
         else {
-          window.s3d.emptyDEM();
+          window.s3d.viewer.terrainProvider = data.dem0
         }
       }
     },
@@ -210,9 +214,6 @@ export default {
         window.s3d.viewer.scene.multiViewportMode = Cesium.MultiViewportMode.HORIZONTAL
         this.multiViewport = true
       }
-
-      console.log(window.s3d.viewer)
-      console.log(window.s3d.viewer.scene)
     },
     disableNode (data) {
       if (data.children && data.children.length > 0) {
