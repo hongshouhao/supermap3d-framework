@@ -7,7 +7,8 @@ export const createImageryProvider = function(options) {
     case 'custom':
       return new Cesium.TileMapServiceImageryProvider(options.params)
     case 'arcgis':
-      return new Cesium.ArcGisMapServerImageryProvider(options.params)
+      // return new Cesium.ArcGisMapServerImageryProvider(options.params)
+      return new Cesium.CGCS2000MapServerImageryProvider(options.params)
     case 'gaode':
       return new Cesium.UrlTemplateImageryProvider(options.params)
     case 'supermap':

@@ -15,6 +15,7 @@ export default class LayersRenderer {
   _getS3MRenderLayerName(lyName) {
     return `${lyName}-s3mrender`
   }
+
   addS3MRender(ly) {
     // let ly = window.s3d.getLayer(layer)
     let lyName = this._getS3MRenderLayerName(ly.name)

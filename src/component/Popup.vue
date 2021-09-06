@@ -49,8 +49,9 @@ export default {
       popupVisible: false,
       popupPosition: null,
       showPropGrid: true,
+      mvtData: null,
       removePostRenderHandler: null,
-      popupUtility: new PopupUtility()
+      popupUtility: new PopupUtility(window.s3d.viewer)
     }
   },
   components: {
@@ -63,52 +64,55 @@ export default {
   methods: {
     init () {
       this.initIQuery()
-      // this.initIQueryForMVT()
+      this.initIQueryForMVT()
     },
     initIQuery () {
       let _this = this
       this.mouseEventHandler = new Cesium.ScreenSpaceEventHandler(window.s3d.viewer.scene.canvas)
       this.mouseEventHandler.setInputAction(function (e) {
+        let position = window.s3d.viewer.scene.pickPosition(e.position)
         if (!window.s3d.toolWorking) {
-          let pickObject = window.s3d.viewer.scene.pick(e.position)
-          let position = window.s3d.viewer.scene.pickPosition(e.position)
-          if (pickObject) {
-            if (typeof pickObject.id !== 'string') {
-              _this.hidePopup()
-              return
-            }
+          if (_this.mvtData) {
+            _this.renderPopup(position, _this.mvtData)
+          }
+          else {
+            let pickObject = window.s3d.viewer.scene.pick(e.position)
+            if (pickObject) {
+              if (typeof pickObject.id !== 'string') {
+                _this.hidePopup()
+                return
+              }
+              if (pickObject.primitive) {
+                _this.popupUtility.getDataFromPrimitive(pickObject)
+                  .then((data) => {
+                    if (!data.position) {
+                      data.position = cartesianToLonlat(position)
+                    }
+                    _this.renderPopup(position, data)
+                  })
+                  .catch((err) => {
+                    _this.hidePopup()
+                    console.error(err)
+                  })
+              }
+            } else {
+              let imgLayers = window.s3d.getAllLayers(x => x.type === 'SMIMG' && x.show)
+              if (imgLayers.length > 0) {
+                // let position = window.s3d.viewer.scene.pickPosition(e.position)
+                // let lonlat = cartesianToLonlat(position)
+                // imgLayers.map(l => {
+                // })
 
-            if (pickObject.primitive) {
-              _this.popupUtility.getDataFromPrimitive(pickObject)
-                .then((data) => {
-                  if (!data.position) {
-                    data.position = cartesianToLonlat(position)
-                  }
-                  _this.renderPopup(position, data)
-                })
-                .catch((err) => {
-                  _this.hidePopup()
-                  console.error(err)
-                })
-            }
-          } else {
-            let imgLayers = window.s3d.getAllLayers(x => x.type === 'SMIMG' && x.show)
-            if (imgLayers.length > 0) {
-              // let position = window.s3d.viewer.scene.pickPosition(e.position)
-              // let lonlat = cartesianToLonlat(position)
-              // imgLayers.map(l => {
+                // let cartographic = Cesium.Cartographic.fromCartesian(position)
+                // dobj.position.longitude = Cesium.Math.toDegrees(cartographic.longitude)
+                // dobj.position.latitude = Cesium.Math.toDegrees(cartographic.latitude)
+                // dobj.position.height = cartographic.height
 
-              // })
-
-              // let cartographic = Cesium.Cartographic.fromCartesian(position)
-              // dobj.position.longitude = Cesium.Math.toDegrees(cartographic.longitude)
-              // dobj.position.latitude = Cesium.Math.toDegrees(cartographic.latitude)
-              // dobj.position.height = cartographic.height
-
-              // _this.renderPopup(position, dobj)
-            }
-            else {
-              _this.hidePopup()
+                // _this.renderPopup(position, dobj)
+              }
+              else {
+                _this.hidePopup()
+              }
             }
           }
         } else {
@@ -117,33 +121,22 @@ export default {
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
     },
     initIQueryForMVT () {
+      let _this = this
       window.s3d.viewer.selectedEntityChanged.addEventListener(function (entity) {
-
-        if (!Cesium.defined(entity) || !Cesium.defined(entity.pickResult)) {
-          return;
+        if (window.s3d.toolWorking) {
+          _this.mvtData = null
+          return
         }
 
-        let pickResult = entity.pickResult;
-        let properties = null;
-
-        let labelOrBillboardClicked = Cesium.defined(pickResult.position);
-        if (labelOrBillboardClicked) {
-          properties = {};
-          for (let obj in pickResult) {
-            properties[obj] = pickResult[obj];
-          }
-        } else {
-          for (let obj in pickResult) {
-            let pickFeature = pickResult[obj][0].feature;
-            properties = pickFeature.properties;
-            break;
-          }
+        if (entity && entity.pickResult) {
+          let layerName = entity.pickResult.mapName
+          let features = entity.pickResult[entity.pickResult['layerID']]
+          let fItem = features.find(x => x.feature.id === entity.pickResult.featureID)
+          _this.mvtData = _this.popupUtility.convertMvtFeatureToDataObject(layerName, fItem.feature)
         }
-        if (!properties) {
-          return;
+        else {
+          _this.mvtData = null
         }
-
-        console.log(properties)
       });
     },
     renderPopup (worldPosition, data) {

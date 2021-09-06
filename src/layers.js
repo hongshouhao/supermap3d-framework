@@ -33,6 +33,7 @@ export const layers = [
           enableFillAndWireFrame: true,
           url: `${baseUrl}iserver/services/3D-XCFCFH/rest/realspace/datas/FC/config`,
           popupTemplate: popupTemplateWithDefaultUI,
+          outFields: ['*'],
         },
       },
       {
@@ -44,6 +45,7 @@ export const layers = [
           enableFillAndWireFrame: true,
           url: `${baseUrl}iserver/services/3D-XCFCFH/rest/realspace/datas/FH/config`,
           popupTemplate: popupTemplateWithCustomUI,
+          outFields: ['*'],
         },
       },
     ],
@@ -73,6 +75,15 @@ export const layers = [
       type: 'SMIMG',
       visible: false,
       url: `${baseUrl}iserver/services/map-PiCiZhiTu/rest/maps/批次`,
+    },
+  },
+  {
+    id: '6',
+    name: 'TESTMVT',
+    layer: {
+      type: 'MVT',
+      visible: false,
+      url: `${baseUrl}iserver/services/map-mvt-FanWei2/restjsr/v1/vectortile/maps/范围_2`,
     },
   },
   {

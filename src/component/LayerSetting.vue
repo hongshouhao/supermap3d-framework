@@ -32,7 +32,6 @@ export default {
   },
   props: ["conf"],
   mounted () {
-
   },
   methods: {
     setOpacity_ (opacity) {

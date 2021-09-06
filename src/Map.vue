@@ -66,6 +66,7 @@ export default {
       viewerOptions.terrainProvider = new Cesium.CesiumTerrainProvider({
         url: window.s3d.config.DEM,
       })
+      viewerOptions.terrainProvider.isCreateSkirt = false;
     }
 
     Object.assign(viewerOptions, window.s3d.config.viewerOptions)
@@ -75,6 +76,14 @@ export default {
 
     viewer.scene.hdrEnabled = true;
     viewer.scene.debugShowFramesPerSecond = false;
+
+    if (window.s3d.config.undergroundMode) {
+      viewer.scene.undergroundMode = window.s3d.config.undergroundMode;
+    }
+    if (window.s3d.config.minimumZoomDistance) {
+      viewer.scene.screenSpaceCameraController.minimumZoomDistance = window.s3d.config.minimumZoomDistance;
+    }
+
     // viewer.scene.logarithmicDepthBuffer = false;
     viewer.scene.screenSpaceCameraController.tiltEventTypes = [
       Cesium.CameraEventType.RIGHT_DRAG,

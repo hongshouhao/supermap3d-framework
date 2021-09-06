@@ -129,7 +129,7 @@ export default {
             lyNode.dem = new Cesium.CesiumTerrainProvider({
               url: lyNode.layer.url,
             })
-
+            lyNode.dem.isCreateSkirt = false;
             if (lyNode.layer.visible) {
               window.s3d.viewer.terrainProvider = lyNode.dem
             }
@@ -227,7 +227,6 @@ export default {
         }
       }
     },
-
   }
 }
 </script>

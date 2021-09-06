@@ -173,6 +173,7 @@ class S3d {
 
   emptyDEM() {
     this.viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider({})
+    this.viewer.terrainProvider.isCreateSkirt = false
   }
 
   /*
@@ -187,32 +188,38 @@ class S3d {
     if (!lconfig.datasetName) {
       throw `图层(${params.layer})配置错误: "datasetName"为空`
     }
-
     let dataURL = ''
     if (lconfig.dataURL) {
       dataURL = lconfig.dataURL
     } else {
       let layer = this.getLayer(params.layer)
-      let url = `${layer._baseUri.scheme}://${layer._baseUri.authority}${layer._baseUri.path}`
-      let parts = url.split('/rest/realspace/')
-      url = parts[0] + '/rest/data/featureResults.json?returnContent=true'
-      dataURL = url.replace('/iserver/services/3D-', '/iserver/services/data-')
+      dataURL = this._getDefaultDataUrl(layer)
     }
+    return this._query(dataURL, lconfig.datasetName, params.sql, params.ids)
+  }
 
+  _getDefaultDataUrl(layer) {
+    let url = `${layer._baseUri.scheme}://${layer._baseUri.authority}${layer._baseUri.path}`
+    let parts = url.split('/rest/realspace/')
+    url = parts[0] + '/rest/data/featureResults.json?returnContent=true'
+    return url.replace('/iserver/services/3D-', '/iserver/services/data-')
+  }
+
+  _query(dataURL, datasetName, sql, ids) {
     let queryParameter = null
-    if (params.sql && params.sql.length > 0) {
+    if (sql && sql.length > 0) {
       queryParameter = {
-        datasetNames: [lconfig.datasetName],
+        datasetNames: [datasetName],
         getFeatureMode: 'SQL',
         queryParameter: {
-          attributeFilter: params.sql,
+          attributeFilter: sql,
         },
       }
-    } else if (params.ids instanceof Array && params.ids.length > 0) {
+    } else if (ids instanceof Array && ids.length > 0) {
       queryParameter = {
-        datasetNames: [lconfig.datasetName],
+        datasetNames: [datasetName],
         getFeatureMode: 'ID',
-        ids: params.ids,
+        ids: ids,
       }
     } else {
       throw '暂不支持此查询'

@@ -1,11 +1,19 @@
 import axios from 'axios'
 
 export default class PopupUtility {
-  constructor() {}
+  constructor(viewer) {
+    this.viewer = viewer
+  }
 
   getDataFromPrimitive(object) {
     let lyName = object.primitive.name
     let oid = object.id
+
+    // let idx = lyName.indexOf('-s3mrender')
+    // if (idx > -1) {
+    //   lyName = lyName.substr(0, idx)
+    // }
+
     let ly = window.s3d.getLayer(lyName)
     if (ly.config.datasetName) {
       return window.s3d
@@ -87,10 +95,28 @@ export default class PopupUtility {
     return data
   }
 
+  convertMvtFeatureToDataObject(layerName, feature) {
+    let data = {
+      object: {
+        id: feature.id,
+        layer: layerName,
+      },
+    }
+
+    data.position = {
+      longitude: 1,
+      latitude: 1,
+      height: 1,
+    }
+
+    data.object.attributes = {}
+    return data
+  }
+
   queryOverImageLayer(layerName, position) {
     let lconfig = window.s3d.getLayerConfig(layerName)
-    if (lconfig.identityUrl) {
-      return axios.get(lconfig.identityUrl, {
+    if (lconfig.dataURL) {
+      return axios.get(lconfig.dataURL, {
         params: {
           lon: position.longitude,
           lat: position.latitude,
