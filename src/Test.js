@@ -4,6 +4,7 @@ export default class Test {
   }
 
   doTest() {
+    window.s3d.debugUtility.drawCameraDirection()
     // window.s3d.debugUtility.labelPoint(
     //   Cesium.Cartesian3.fromDegrees(120.777, 31.6024, 12.964)
     // )
@@ -14,9 +15,9 @@ export default class Test {
     // window.s3d
     //   .query({ layer: '交通信号', sql: 'SMID =1' })
     //   .then((response) => console.log(response))
-    window.s3d.openPopup({
-      object: { layer: '有线电视', sql: '元素id = 66736' },
-    })
+    // window.s3d.openPopup({
+    //   object: { layer: '有线电视', sql: '元素id = 66736' },
+    // })
     // if (this.count === 1) {
     //   debugger
     // window.s3d.openPopup({

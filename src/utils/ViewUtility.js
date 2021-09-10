@@ -1,4 +1,4 @@
-import { rotateVector } from '../utils/CesiumMath'
+import { rotateVector, rayEarthIntersection } from '../utils/CesiumMath'
 import DebugUtility from '../utils/DebugUtility'
 export default class ViewUtility {
   constructor(viewer) {
@@ -8,13 +8,7 @@ export default class ViewUtility {
   }
 
   getViewCenter() {
-    let ray = new Cesium.Ray(this.camera.position, this.camera.direction)
-    let intersection = Cesium.IntersectionTests.rayEllipsoid(
-      ray,
-      Cesium.Ellipsoid.WGS84
-    )
-    let point = Cesium.Ray.getPoint(ray, intersection.start)
-    return point
+    return rayEarthIntersection(this.camera.position, this.camera.direction)
   }
 
   rotateZ(offset, duration) {

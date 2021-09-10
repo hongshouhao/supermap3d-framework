@@ -23,17 +23,17 @@ export const config = {
       default: false,
     },
     earth: {
-      // type: 'bing',
-      // params: {
-      //   url: 'https://dev.virtualearth.net',
-      //   mapStyle: Cesium.BingMapsStyle.AERIAL,
-      //   key: URL_CONFIG.BING_MAP_KEY,
-      // },
-      type: 'arcgis',
+      type: 'bing',
       params: {
-        url:
-          'http://36.153.213.20/GeoCMS/v1/cf/rest/services/MapService/ESRI/0f3f5490-5616-44d2-a1e4-5c664ad907fa?token=k9rELZ%2BePwRhalPbO%2FJyZWglMmTQ2x6upsVUTLlZA6KK7glHdYwd5PBbyHXLB1fMvlHXQ7yWycDBRTfq2FqaHZPdNX868fGMUsBHgINxW6fqLd4eWoGztA%3D%3D',
+        url: 'https://dev.virtualearth.net',
+        mapStyle: Cesium.BingMapsStyle.AERIAL,
+        key: URL_CONFIG.BING_MAP_KEY,
       },
+      // type: 'arcgis',
+      // params: {
+      //   url:
+      //     'http://36.153.213.20/GeoCMS/v1/cf/rest/services/MapService/ESRI/0f3f5490-5616-44d2-a1e4-5c664ad907fa?token=k9rELZ%2BePwRhalPbO%2FJyZWglMmTQ2x6upsVUTLlZA6KK7glHdYwd5PBbyHXLB1fMvlHXQ7yWycDBRTfq2FqaHZPdNX868fGMUsBHgINxW6fqLd4eWoGztA%3D%3D',
+      // },
     },
     normal: {
       default: true,

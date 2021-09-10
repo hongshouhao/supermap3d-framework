@@ -1,9 +1,26 @@
 <template>
   <div class="model-ob-setting">
+
     <div class='compass-container'>
+      <round-slider v-model="heading"
+                    :change="headingChange"
+                    :update="headingUpdate"
+                    pathColor="#6699FF"
+                    animation="false"
+                    min="0"
+                    max="360"
+                    start-angle="270"
+                    end-angle="+360"
+                    line-cap="round"
+                    radius="50"
+                    handle-size="+10"
+                    handle-shape="dot"
+                    show-tooltip="false"
+                    width="7" />
     </div>
     <div ref='buttonContainer'
-         class="button-sight-container">
+         class="
+                    button-sight-container">
       <div class="button-sight button-left-sight"
            @click="lookAtLeft">
         左
@@ -28,52 +45,34 @@
   </div>
 </template>
 <script>
+import $ from 'jquery'
+import RoundSlider from 'vue-round-slider'
+import { boundingSphereFromFeature } from '../../utils/CesiumUtility'
 export default {
   components: {
+    RoundSlider
   },
   data () {
     return {
       tool: null,
-      slideValueChangedByUser: false,
+      heading: 0,
+      headingChangedBySlider: false,
+      scale: 1
     }
   },
   mounted () {
     let _this = this
-    let dom = $(".compass-container")
-    dom.roundSlider({
-      radius: 50,
-      width: 8,
-      startAngle: 270,
-      endAngle: "+360",
-      handleSize: "+10",
-      handleShape: "dot",
-      sliderType: "min-range",
-      showTooltip: false,
-      max: 360,
-      min: 0,
-      update: function (e) {
-        if (!_this.tool) {
-          return
-        }
-
-        _this.slideValueChangedByUser = true
-        let rotation = e.value
-        _this.lookAt(Cesium.Math.toRadians(rotation))
-        _this.$refs.buttonContainer.style = `transform: rotateZ(${rotation}deg);`
-      },
-      change: function () {
-        _this.slideValueChangedByUser = false
-      }
-    });
-
     window.s3d.viewer.camera.changed.addEventListener(function () {
-      if (_this.slideValueChangedByUser) {
+      if (_this.headingChangedBySlider) {
         return
       }
       let val = Cesium.Math.toDegrees(window.s3d.viewer.camera.heading)
-
+      _this.heading = val
       _this.$refs.buttonContainer.style = `transform: rotateZ(${val}deg);`
-      dom.data("roundSlider").option("value", val);
+    })
+
+    $('.compass-container .rs-handle').mousedown(function () {
+      _this.caculateScale()
     })
   },
   methods: {
@@ -82,7 +81,7 @@ export default {
       console.log(this.tool)
     },
     lookAt (angle) {
-      this.tool.lookAt(angle)
+      this.tool.lookAt(angle, this.scale)
     },
     lookAtFront () {
       this.tool.lookAtFront()
@@ -99,6 +98,34 @@ export default {
     lookAtTop () {
       this.tool.lookAtTop()
     },
+    headingUpdate (e) {
+      if (!this.tool) {
+        return
+      }
+
+      this.headingChangedBySlider = true
+      let rotation = e.value
+      this.lookAt(Cesium.Math.toRadians(rotation))
+      this.$refs.buttonContainer.style = `transform: rotateZ(${rotation}deg);`
+    },
+    headingChange () {
+      this.headingChangedBySlider = false
+    },
+    caculateScale () {
+      if (!this.tool?.feature) {
+        return
+      }
+      let boundingSphere = boundingSphereFromFeature(this.tool.feature)
+      let dis = Cesium.Cartesian3.distance(
+        boundingSphere.center,
+        window.s3d.viewer.camera.position
+      )
+
+      //1.9807740244477263(常数) = 完整定位时相机位置与球体中心点的距离/球体的半径
+      let radius = dis / 1.9807740244477263
+      this.scale = radius / boundingSphere.radius
+      console.log(this.scale)
+    },
   }
 }
 </script>
@@ -107,7 +134,7 @@ export default {
   position: relative;
 
   .compass-container {
-    transform: perspective(0px) translateZ(1px);
+    position: relative;
     .rs-path-color {
       background-color: #53b9de;
     }
@@ -119,10 +146,8 @@ export default {
     height: 72px;
     margin: 14px;
     top: 0px;
-    transform: perspective(0px) translateZ(0px);
 
     .button-sight {
-      transform: perspective(0px) translateZ(2px);
       position: absolute;
       &:hover {
         font-weight: bold;

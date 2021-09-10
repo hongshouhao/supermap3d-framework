@@ -196,3 +196,13 @@ export function pointRotateAroundPoint(center, point, normal, angle) {
   let p = Cesium.Cartesian3.add(vNew, center, new Cesium.Cartesian3())
   return p
 }
+
+export function rayEarthIntersection(position, direction) {
+  let ray = new Cesium.Ray(position, direction)
+  let intersection = Cesium.IntersectionTests.rayEllipsoid(
+    ray,
+    Cesium.Ellipsoid.WGS84
+  )
+  let point = Cesium.Ray.getPoint(ray, intersection.start)
+  return point
+}

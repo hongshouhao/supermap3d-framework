@@ -1,4 +1,5 @@
 import { rotateVector } from '../utils/CesiumMath'
+import { boxCornersFromFeature } from '../utils/CesiumUtility'
 export default class CameraUtility {
   constructor(viewer) {
     this.viewer = viewer
@@ -14,7 +15,7 @@ export default class CameraUtility {
   flyToS3mFeatures(features) {
     let pts = []
     for (let feature of features) {
-      let box = this._boxCornersFromFeature(feature)
+      let box = boxCornersFromFeature(feature)
       pts.push(box[0])
       pts.push(box[1])
     }
@@ -22,11 +23,6 @@ export default class CameraUtility {
   }
 
   lookAtFeature(feature, direction, options) {
-    let pts = []
-    let box = this._boxCornersFromFeature(feature)
-    pts.push(box[0])
-    pts.push(box[1])
-
     let pitch = -0.25
     let offset = null
     if (typeof direction === 'string') {
@@ -63,37 +59,12 @@ export default class CameraUtility {
       }
     }
 
-    return this.flyToPoints(pts, {
+    let box = boxCornersFromFeature(feature)
+    return this.flyToPoints(box, {
       offset: offset,
       scale: options?.scale,
       duration: options?.duration,
     })
-  }
-
-  rotateZAroundFeature(feature, heading, fitView) {
-    if (fitView) {
-      this.lookAtFeature(feature, heading, {
-        duration: 0,
-      })
-    } else {
-      let pts = []
-      let box = this._boxCornersFromFeature(feature)
-      pts.push(box[0])
-      pts.push(box[1])
-      let boundingSphere = Cesium.BoundingSphere.fromPoints(pts)
-      let dis = Cesium.Cartesian3.distance(
-        boundingSphere.center,
-        this.camera.position
-      )
-      //3.431927296(常数) = 完整定位时相机位置与球体中心点的具体/球体的半径
-      let radius = dis / 3.431927296
-      let ratio = radius / boundingSphere.radius
-
-      this.lookAtFeature(feature, heading, {
-        scale: ratio,
-        duration: 0,
-      })
-    }
   }
 
   flyToPoints(points, options) {
@@ -105,10 +76,10 @@ export default class CameraUtility {
         boundingSphere.radius = boundingSphere.radius * options.scale
       }
 
-      // window.s3d.debugUtility.drawBoundingSphereAndPoints(
-      //   boundingSphere,
-      //   points
-      // )
+      window.s3d.debugUtility.drawBoundingSphereAndPoints(
+        boundingSphere,
+        points
+      )
 
       _this.viewer.camera.flyToBoundingSphere(boundingSphere, {
         duration: options?.duration ?? 2,
@@ -151,24 +122,5 @@ export default class CameraUtility {
     }
 
     this.camera.flyTo(tar)
-  }
-
-  _boxCornersFromFeature(feature) {
-    let pts = []
-    pts.push(
-      Cesium.Cartesian3.fromDegrees(
-        feature.geometry.boundingBox.lower.x,
-        feature.geometry.boundingBox.lower.y,
-        feature.geometry.boundingBox.lower.z + feature.geometry.position.z
-      )
-    )
-    pts.push(
-      Cesium.Cartesian3.fromDegrees(
-        feature.geometry.boundingBox.upper.x,
-        feature.geometry.boundingBox.upper.y,
-        feature.geometry.boundingBox.upper.z + feature.geometry.position.z
-      )
-    )
-    return pts
   }
 }

@@ -1,3 +1,4 @@
+import { rayEarthIntersection } from './CesiumMath'
 export default class DebugUtility {
   constructor(viewer) {
     this.viewer = viewer
@@ -35,6 +36,7 @@ export default class DebugUtility {
     for (let p of pts) {
       this.labelPoint(p)
     }
+    this.labelPoint(boundingSphere.center)
 
     this.viewer.entities.add({
       name: 'bounding-sphere',
@@ -58,6 +60,23 @@ export default class DebugUtility {
       heading: window.s3d.viewer.camera.heading,
       pitch: window.s3d.viewer.camera.pitch,
       roll: window.s3d.viewer.camera.roll,
+    })
+  }
+
+  drawCameraDirection() {
+    let ptOnEarth = rayEarthIntersection(
+      this.viewer.camera.position,
+      this.viewer.camera.direction
+    )
+
+    this.viewer.entities.add({
+      name: 'camera_direction',
+      polyline: {
+        positions: [ptOnEarth, this.viewer.camera.position.clone()],
+        material: Cesium.Color.fromCssColorString('#fe8001'),
+        width: 1.0,
+        clampToGround: false,
+      },
     })
   }
 }

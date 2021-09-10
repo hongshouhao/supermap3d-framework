@@ -8,8 +8,7 @@
               cell-class-name="property-cell"
               :show-header="false">
       <el-table-column prop="key"
-                       label="属性名"
-                       width="180"> </el-table-column>
+                       label="属性名"> </el-table-column>
       <el-table-column prop="value"
                        label="属性值"
                        width="180"> </el-table-column>

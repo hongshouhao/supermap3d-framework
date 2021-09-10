@@ -115,8 +115,8 @@ export default class PopupUtility {
 
   queryOverImageLayer(layerName, position) {
     let lconfig = window.s3d.getLayerConfig(layerName)
-    if (lconfig.dataURL) {
-      return axios.get(lconfig.dataURL, {
+    if (lconfig.dataUrl) {
+      return axios.get(lconfig.dataUrl, {
         params: {
           lon: position.longitude,
           lat: position.latitude,

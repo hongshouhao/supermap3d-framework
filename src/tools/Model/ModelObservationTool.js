@@ -30,11 +30,16 @@ export default class ModelObservationTool {
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
   }
-  lookAt(angle) {
+
+  lookAt(angle, scale) {
     if (!this.feature) {
       return
     }
-    window.s3d.cameraUtility.rotateZAroundFeature(this.feature, angle)
+
+    window.s3d.cameraUtility.lookAtFeature(this.feature, angle, {
+      scale: scale,
+      duration: 0,
+    })
   }
   lookAtFront() {
     if (!this.feature) {

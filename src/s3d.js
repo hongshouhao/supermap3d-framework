@@ -183,14 +183,14 @@ class S3d {
     if (!lconfig.datasetName) {
       throw `图层(${params.layer})配置错误: "datasetName"为空`
     }
-    let dataURL = ''
-    if (lconfig.dataURL) {
-      dataURL = lconfig.dataURL
+    let dataUrl = ''
+    if (lconfig.dataUrl) {
+      dataUrl = lconfig.dataUrl
     } else {
       let layer = this.getLayer(params.layer)
-      dataURL = this._getDefaultDataUrl(layer)
+      dataUrl = this._getDefaultDataUrl(layer)
     }
-    return this._query(dataURL, lconfig.datasetName, params.sql, params.ids)
+    return this._query(dataUrl, lconfig.datasetName, params.sql, params.ids)
   }
 
   _getDefaultDataUrl(layer) {
@@ -200,7 +200,7 @@ class S3d {
     return url.replace('/iserver/services/3D-', '/iserver/services/data-')
   }
 
-  _query(dataURL, datasetName, sql, ids) {
+  _query(dataUrl, datasetName, sql, ids) {
     let queryParameter = null
     if (sql && sql.length > 0) {
       queryParameter = {
@@ -219,7 +219,7 @@ class S3d {
     } else {
       throw '暂不支持此查询'
     }
-    return axios.post(dataURL, queryParameter)
+    return axios.post(dataUrl, queryParameter)
   }
 
   /* 
