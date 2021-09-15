@@ -20,6 +20,7 @@ import TopLeftBar from './component/TopLeftBar.vue'
 import TopRightBar from './component/TopRightBar.vue'
 import Popup from './component/Popup.vue'
 import { createImageryProvider } from './utils/ImageryProvider'
+import { enableCursorStyle } from './utils/CursorUtility'
 
 export default {
   components: {
@@ -62,9 +63,9 @@ export default {
       // })
     }
 
-    if (window.s3d.config.DEM) {
+    if (window.s3d.config.dem) {
       viewerOptions.terrainProvider = new Cesium.CesiumTerrainProvider({
-        url: window.s3d.config.DEM,
+        url: window.s3d.config.dem,
       })
       viewerOptions.terrainProvider.isCreateSkirt = false;
     }
@@ -84,6 +85,7 @@ export default {
       viewer.scene.screenSpaceCameraController.minimumZoomDistance = window.s3d.config.minimumZoomDistance;
     }
 
+    // viewer.scene.globe.depthTestAgainstTerrain = true
     // viewer.scene.logarithmicDepthBuffer = false;
     viewer.scene.screenSpaceCameraController.tiltEventTypes = [
       Cesium.CameraEventType.RIGHT_DRAG,
@@ -111,6 +113,7 @@ export default {
     this.$refs.cesiumContainer.appendChild(this.sceneContainer.children[0])
     window.s3d.viewer.cesiumWidget.container.appendChild(this.$refs.popup.$el)
     window.s3d.popup = this.$refs.popup
+    enableCursorStyle(window.s3d.viewer)
     window.s3d.eventBus.dispatch("framework-initialized");
   }
 }

@@ -4,7 +4,8 @@ export default class Test {
   }
 
   doTest() {
-    window.s3d.debugUtility.drawCameraDirection()
+    this.load3dTiles()
+    // window.s3d.debugUtility.drawCameraDirection()
     // window.s3d.debugUtility.labelPoint(
     //   Cesium.Cartesian3.fromDegrees(120.777, 31.6024, 12.964)
     // )
@@ -46,5 +47,28 @@ export default class Test {
     // console.log(window.s3d.getAllLayers((x) => x.type === 'S3M' && x.visible))
     // console.log(window.s3d.getLayer('供电'))
     // console.log(window.s3d.getLayer((x) => x.name === '供电'))
+  }
+
+  load3dTiles() {
+    var tileset = window.s3d.scene.primitives.add(
+      new Cesium.Cesium3DTileset({
+        url: './3dtiles/tileset.json',
+      })
+    )
+
+    tileset.readyPromise.then(function(tileset) {
+      // window.s3d.viewer.zoomTo(
+      //   tileset,
+      //   new Cesium.HeadingPitchRange(
+      //     0.5,
+      //     -0.2,
+      //     tileset.boundingSphere.radius * 1.0
+      //   )
+      // )
+      window.s3d.viewer.camera.viewBoundingSphere(
+        tileset.boundingSphere
+        // new Cesium.HeadingPitchRange(0, -0.5, 0)
+      )
+    })
   }
 }

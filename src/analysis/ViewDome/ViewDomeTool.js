@@ -1,4 +1,3 @@
-import { setCursor, resetCursor } from '../../utils/CursorUtility'
 export default class ViewDomeTool {
   constructor(viewer) {
     this.viewer = viewer
@@ -21,11 +20,11 @@ export default class ViewDomeTool {
   }
 
   start() {
-    setCursor(this.viewer, 'cursor-crosshair')
+    window.s3d.setCursor('cursor-crosshair')
 
     let _this = this
     this.handler.setInputAction(function(e) {
-      resetCursor(_this.viewer, 'cursor-crosshair')
+      window.s3d.resetCursor()
 
       let position = _this.viewer.scene.pickPosition(e.position)
       let cartographic = Cesium.Cartographic.fromCartesian(position)

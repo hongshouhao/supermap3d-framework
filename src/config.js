@@ -2,10 +2,14 @@ import { layers } from './layers'
 
 export const config = {
   iServerBaseURL: process.env.VUE_APP_ISERVER_BASE_URL,
-  DEM: URL_CONFIG.SiChuan_TERRAIN,
+  dem: URL_CONFIG.SiChuan_TERRAIN,
   undergroundMode: true,
   minimumZoomDistance: -1000,
-  // DEM:
+  drillPick: {
+    enable: true,
+    depth: 100,
+  },
+  // dem:
   //   'http://106.14.242.98:8090/iserver/services/3D-DEM/rest/realspace/datas/DEM缓存',
   layers: layers,
   defaultCamera: {

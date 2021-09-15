@@ -1,5 +1,3 @@
-import { setCursor, resetCursor } from '../../utils/CursorUtility'
-
 export default class MeasureTool {
   constructor(viewer) {
     let _this = this
@@ -26,9 +24,9 @@ export default class MeasureTool {
 
     _this.handlerDis.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
-        setCursor(viewer, 'cursor-crosshair')
+        window.s3d.setCursor('cursor-crosshair')
       } else {
-        resetCursor(viewer, 'cursor-crosshair')
+        window.s3d.resetCursor()
       }
     })
 
@@ -48,9 +46,9 @@ export default class MeasureTool {
     })
     _this.handlerArea.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
-        setCursor(viewer, 'cursor-crosshair')
+        window.s3d.setCursor('cursor-crosshair')
       } else {
-        resetCursor(viewer, 'cursor-crosshair')
+        window.s3d.resetCursor()
       }
     })
 
@@ -80,9 +78,9 @@ export default class MeasureTool {
     })
     _this.handlerHeight.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
-        setCursor(viewer, 'cursor-crosshair')
+        window.s3d.setCursor('cursor-crosshair')
       } else {
-        resetCursor(viewer, 'cursor-crosshair')
+        window.s3d.resetCursor()
       }
     })
   }

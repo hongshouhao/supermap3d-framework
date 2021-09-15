@@ -1,4 +1,3 @@
-import { setCursor, resetCursor } from '../../utils/CursorUtility'
 export default class ViewshedTool {
   constructor(viewer) {
     this.viewer = viewer
@@ -59,10 +58,10 @@ export default class ViewshedTool {
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
-    setCursor(_this.viewer, 'cursor-crosshair')
+    window.s3d.setCursor('cursor-crosshair')
     _this.drawHandler.setInputAction(function() {
       //鼠标右键事件回调，不再执行鼠标移动事件中对可视域的操作
-      resetCursor(_this.viewer, 'cursor-crosshair')
+      window.s3d.resetCursor()
       _this.viewshedFlag = true
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
 

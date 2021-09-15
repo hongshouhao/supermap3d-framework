@@ -76,10 +76,10 @@ export default class CameraUtility {
         boundingSphere.radius = boundingSphere.radius * options.scale
       }
 
-      window.s3d.debugUtility.drawBoundingSphereAndPoints(
-        boundingSphere,
-        points
-      )
+      // window.s3d.debugUtility.drawBoundingSphereAndPoints(
+      //   boundingSphere,
+      //   points
+      // )
 
       _this.viewer.camera.flyToBoundingSphere(boundingSphere, {
         duration: options?.duration ?? 2,

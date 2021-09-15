@@ -89,7 +89,7 @@ export default {
           }
           else if (lyNode.layer.type === "S3M") {
             if (lyNode.layer.url) {
-              let promise = window.s3d.viewer.scene.addS3MTilesLayerByScp(lyNode.layer.url,
+              let promise = window.s3d.scene.addS3MTilesLayerByScp(lyNode.layer.url,
                 {
                   name: lyNode.name,
                 })
@@ -207,11 +207,11 @@ export default {
     },
     toggleViewportMode () {
       if (this.multiViewport) {
-        window.s3d.viewer.scene.multiViewportMode = Cesium.MultiViewportMode.NONE
+        window.s3d.scene.multiViewportMode = Cesium.MultiViewportMode.NONE
         this.multiViewport = false
       }
       else {
-        window.s3d.viewer.scene.multiViewportMode = Cesium.MultiViewportMode.HORIZONTAL
+        window.s3d.scene.multiViewportMode = Cesium.MultiViewportMode.HORIZONTAL
         this.multiViewport = true
       }
     },

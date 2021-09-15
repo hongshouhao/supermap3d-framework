@@ -116,6 +116,17 @@ export const layers = [
         },
       },
       {
+        id: '311',
+        name: '电信',
+        layer: {
+          type: 'S3M',
+          visible: true,
+          url: `${baseUrl}iserver/services/3D-DianXin/rest/realspace/datas/电信_1@电信/config`,
+          datasetName: '电信:电信_1',
+          outFields: ['*'],
+        },
+      },
+      {
         id: '32',
         name: '污水',
         layer: {

@@ -1,3 +1,11 @@
+div {
+  -moz-user-select: unset;
+  -webkit-user-select: unset;
+  -ms-user-select: unset;
+  -khtml-user-select: unset;
+  user-select: unset;
+}
+
 .esri-component {
   margin-bottom: 10px;
 

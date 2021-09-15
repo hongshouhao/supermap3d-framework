@@ -1,24 +1,28 @@
-import Element from 'element-ui'
+import ElementUI from 'element-ui'
 import VueiClient from '@supermap/vue-iclient3d-webgl'
 import axios from 'axios'
 
 import 'element-ui/lib/theme-chalk/index.css'
 import '@supermap/vue-iclient3d-webgl/dist/styles/vue-iclient3d-webgl.min.css'
-import './assets/themes/light/main.css'
+import './css/arcgis/themes/light/main.css'
 import './css/index.scss'
 
-import { lonLatToCartesian } from './utils/CesiumMath'
 import Toolbar from './tools/Toolbar'
+
 import EventBus from 'eventbusjs'
 import ViewUtility from './utils/ViewUtility'
+import PickingUtility from './utils/PickingUtility'
 import CameraUtility from './utils/CameraUtility'
 import DebugUtility from './utils/DebugUtility'
+
+import { lonLatToCartesian } from './utils/CesiumMath'
 import { setVisible } from './utils/LayerUtility'
 import { isS3mFeature, isCartesian3 } from './utils/IfUtility'
-import './materials'
+import { setCursorStyle, resetCursorStyle } from './utils/CursorUtility'
+// import './materials'
 
 export function setup(vue) {
-  vue.use(Element)
+  vue.use(ElementUI, { size: 'small' })
   vue.use(VueiClient)
 }
 
@@ -50,6 +54,17 @@ class S3d {
     this.viewUtility = new ViewUtility(viewer)
     this.cameraUtility = new CameraUtility(viewer)
     this.debugUtility = new DebugUtility(viewer)
+    this.pickingUtility = new PickingUtility(viewer.scene)
+  }
+
+  setCursor(className) {
+    this.viewer.enableCursorStyle = false
+    setCursorStyle(className)
+  }
+
+  resetCursor() {
+    this.viewer.enableCursorStyle = true
+    resetCursorStyle()
   }
 
   _loadCustomMaterials() {
@@ -337,5 +352,22 @@ class S3d {
     } else if (params.layer && params.features) {
       return fly(params.features)
     }
+  }
+
+  pick(mousePosition) {
+    let pickedObjects = []
+    if (this.config.drillPick?.enable) {
+      pickedObjects = this.pickingUtility.drillPick(
+        mousePosition,
+        this.config.drillPick.depth ?? 0.5
+      )
+    } else {
+      let pobj = this.scene.pick(mousePosition, 3)
+      if (pobj && pobj.primitive && typeof pobj.id === 'string') {
+        pickedObjects.push(pobj)
+      }
+    }
+
+    return pickedObjects
   }
 }

@@ -7,7 +7,6 @@ import {
   cartesianToLonlat,
   reCalculateCartesian,
 } from '../../utils/CesiumMath'
-import { setCursor, resetCursor } from '../../utils/CursorUtility'
 
 export default class SliceTool {
   constructor(viewer) {
@@ -321,7 +320,7 @@ export default class SliceTool {
             false
           )
 
-          setCursor(_this.viewer, 'cursor-crosshair')
+          window.s3d.setCursor('cursor-crosshair')
         } else {
           _this.clippingRectangleOutline.polyline.width = new Cesium.CallbackProperty(
             function() {
@@ -329,7 +328,7 @@ export default class SliceTool {
             },
             false
           )
-          resetCursor(_this.viewer, 'cursor-crosshair')
+          window.s3d.resetCursor()
         }
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)

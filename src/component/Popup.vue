@@ -4,7 +4,20 @@
        class="my-popup esri-component esri-popup esri-popup--aligned-top-center esri-popup--shadow">
     <div class="esri-popup__main-container esri-widget esri-popup--is-collapsible">
       <header class="esri-popup__header">
-        <h2 class="esri-widget__heading esri-popup__header-title">{{title}}</h2>
+        <div class="multi-header">
+          <el-select v-show="multiable"
+                     v-model="objIndex"
+                     @change="_reRenderPopup"
+                     placeholder="请选择">
+            <el-option v-for="(title,idx) in objTitles"
+                       :key="idx"
+                       :label="title"
+                       :value="idx">
+            </el-option>
+          </el-select>
+        </div>
+        <h2 v-show="!multiable"
+            class="esri-widget__heading esri-popup__header-title">{{title}}</h2>
         <div class="esri-popup__header-buttons">
           <div title="停靠"
                class="esri-popup__button esri-popup__button--dock"
@@ -35,6 +48,8 @@
 </template>
 
 <script>
+import $ from 'jquery';
+import Enumerable from 'linq';
 import { cartesianToLonlat } from '../utils/CesiumMath'
 import PropertyGrid from './PropertyGrid.vue'
 import PopupUtility from './PopupUtility.js'
@@ -43,6 +58,10 @@ export default {
     return {
       propArray: [],
       title: "",
+      multiable: false,
+      objIndex: null,
+      objTitles: [],
+      dataObjs: [],
       dockered: false,
       mouseEventHandler: null,
       popupTool: null,
@@ -68,51 +87,51 @@ export default {
     },
     initIQuery () {
       let _this = this
-      this.mouseEventHandler = new Cesium.ScreenSpaceEventHandler(window.s3d.viewer.scene.canvas)
+      this.mouseEventHandler = new Cesium.ScreenSpaceEventHandler(window.s3d.scene.canvas)
       this.mouseEventHandler.setInputAction(function (e) {
-        let position = window.s3d.viewer.scene.pickPosition(e.position)
+        let position = window.s3d.scene.pickPosition(e.position)
         if (!window.s3d.toolWorking) {
           if (_this.mvtData) {
             _this.renderPopup(position, _this.mvtData)
           }
           else {
-            let pickObject = window.s3d.viewer.scene.pick(e.position)
-            if (pickObject) {
-              if (typeof pickObject.id !== 'string') {
-                _this.hidePopup()
-                return
-              }
-              if (pickObject.primitive) {
-                _this.popupUtility.getDataFromPrimitive(pickObject)
-                  .then((data) => {
-                    if (!data.position) {
-                      data.position = cartesianToLonlat(position)
-                    }
-                    _this.renderPopup(position, data)
-                  })
-                  .catch((err) => {
-                    _this.hidePopup()
-                    console.error(err)
-                  })
-              }
-            } else {
-              let imgLayers = window.s3d.getAllLayers(x => x.type === 'SMIMG' && x.show)
-              if (imgLayers.length > 0) {
-                // let position = window.s3d.viewer.scene.pickPosition(e.position)
-                // let lonlat = cartesianToLonlat(position)
-                // imgLayers.map(l => {
-                // })
+            let pickedObjects = window.s3d.pick(e.position)
+            if (pickedObjects.length === 0) {
+              _this.hidePopup()
+              return
+              // let imgLayers = window.s3d.getAllLayers(x => x.type === 'SMIMG' && x.show)
+              // if (imgLayers.length > 0) {
+              //   // let position = window.s3d.scene.pickPosition(e.position)
+              //   // let lonlat = cartesianToLonlat(position)
+              //   // imgLayers.map(l => {
+              //   // })
 
-                // let cartographic = Cesium.Cartographic.fromCartesian(position)
-                // dobj.position.longitude = Cesium.Math.toDegrees(cartographic.longitude)
-                // dobj.position.latitude = Cesium.Math.toDegrees(cartographic.latitude)
-                // dobj.position.height = cartographic.height
+              //   // let cartographic = Cesium.Cartographic.fromCartesian(position)
+              //   // dobj.position.longitude = Cesium.Math.toDegrees(cartographic.longitude)
+              //   // dobj.position.latitude = Cesium.Math.toDegrees(cartographic.latitude)
+              //   // dobj.position.height = cartographic.height
 
-                // _this.renderPopup(position, dobj)
-              }
-              else {
+              //   // _this.renderPopup(position, dobj)
+              // }
+              // else {
+              //   _this.hidePopup()
+              // }
+            }
+            else {
+              let calls = pickedObjects.map(x => {
+                return _this.popupUtility.getDataFromPrimitive(x);
+              })
+              Promise.all(calls).then((data) => {
+                for (let dobj of data) {
+                  if (!dobj.position) {
+                    dobj.position = cartesianToLonlat(position)
+                  }
+                }
+                _this.renderPopupMulti(position, data)
+              }).catch((err) => {
                 _this.hidePopup()
-              }
+                console.error(err)
+              })
             }
           }
         } else {
@@ -139,40 +158,55 @@ export default {
         }
       });
     },
+    hidePopup () {
+      if (this.removePostRenderHandler) {
+        this.removePostRenderHandler()
+        this.removePostRenderHandler = null
+      }
+      this.popupVisible = false
+    },
+    renderPopupMulti (worldPosition, data) {
+      this.multiable = data.length > 1
+      this.dataObjs = data
+      this.objTitles = data.map(x => this._getPopupHeader(x))
+      this.objIndex = 0
+      this._reRenderPopup()
+      this._showPopup(worldPosition)
+    },
     renderPopup (worldPosition, data) {
-      let lconfig = window.s3d.getLayerConfig(data.object.layer)
-      if (lconfig && lconfig.popupTemplate) {
-        if (!lconfig.popupTemplate.getHeader) {
-          throw `配置错误: 图层${data.object.layer}相关配置丢失, 函数popupTemplate.getHeader丢失`
-        }
-        if (!lconfig.popupTemplate.getContent) {
-          throw `配置错误: 图层${data.object.layer}相关配置丢失, 函数popupTemplate.getContent丢失`
-        }
-
-        this.setHeader(lconfig.popupTemplate.getHeader(data))
-        this.setContent(lconfig.popupTemplate.getContent(data))
-      }
-      else {
-        this.setHeader(this.getPopupHeader(data))
-        this.setContent(this.getPopupContent(data))
-      }
-
+      this.multiable = false
+      this._setHeader(this._getPopupHeader(data))
+      this._setContent(this._getPopupContent(data))
+      this._showPopup(worldPosition)
+    },
+    _showPopup (worldPosition) {
       this.popupPosition = worldPosition
       this.popupVisible = true
-
       if (!this.dockered) {
-        this.enableStickRender()
+        this._enableStickRender()
       }
     },
-    enableStickRender () {
+    _reRenderPopup () {
+      let obj = this.dataObjs[this.objIndex]
+      let header = this._getPopupHeader(obj)
+      this._setHeader(header)
+      this._setContent(this._getPopupContent(obj))
+      let grps = Enumerable.from(this.dataObjs).groupBy(x => x.object.layer).toArray();
+      for (let g of grps) {
+        window.s3d.getLayer(g.key()).setSelection([])
+      }
+      window.s3d.getLayer(obj.object.layer).setSelection([obj.object.id])
+      $('.my-popup .multi-header input').css('width', this._textWidth(header))
+    },
+    _enableStickRender () {
       let _this = this
       if (this.removePostRenderHandler) {
         return
       }
-      this.removePostRenderHandler = window.s3d.viewer.scene.postRender.addEventListener(
+      this.removePostRenderHandler = window.s3d.scene.postRender.addEventListener(
         function () {
           let screenPosition = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
-            window.s3d.viewer.scene,
+            window.s3d.scene,
             _this.popupPosition
           )
           let popupDom = _this.$refs.popup
@@ -180,24 +214,24 @@ export default {
           let top = screenPosition.y - popupDom.offsetHeight - 30
 
           if (left < 0
-            || top > window.s3d.viewer.scene.canvas.height - popupDom.offsetHeight
-            || left > window.s3d.viewer.scene.canvas.width - popupDom.offsetWidth) {
-            _this.setPopupStyle(true)
+            || top > window.s3d.scene.canvas.height - popupDom.offsetHeight
+            || left > window.s3d.scene.canvas.width - popupDom.offsetWidth) {
+            _this._setPopupStyle(true)
           }
           else if (top < 0) {
             top = screenPosition.y + 10
 
             if (top - 30 < 0) {
-              _this.setPopupStyle(true)
+              _this._setPopupStyle(true)
             } else {
-              _this.setPopupStyle(false)
+              _this._setPopupStyle(false)
               _this.$refs.popupPointer.style.top = '0'
               popupDom.style.left = left + 'px'
               popupDom.style.top = top + 'px'
             }
           }
           else {
-            _this.setPopupStyle(false)
+            _this._setPopupStyle(false)
             popupDom.style.left = left + 'px'
             popupDom.style.top = top + 'px'
             _this.$refs.popupPointer.style.top = '100%'
@@ -205,20 +239,7 @@ export default {
         }
       )
     },
-    enableDock () {
-      this.setPopupStyle(true)
-      if (this.removePostRenderHandler) {
-        this.removePostRenderHandler()
-        this.removePostRenderHandler = null
-      }
-      this.dockered = true
-    },
-    disableDock () {
-      this.setPopupStyle(false)
-      this.enableStickRender()
-      this.dockered = false
-    },
-    setPopupStyle (enableDockStyle) {
+    _setPopupStyle (enableDockStyle) {
       if (enableDockStyle) {
         this.$refs.popup.style.top = '60px'
         this.$refs.popup.style.right = '15px'
@@ -232,51 +253,62 @@ export default {
         this.$refs.dockIcon.className = "esri-popup__icon--dock-icon esri-icon-dock-right esri-popup__icon"
       }
     },
-    getPopupContent (data) {
-      let arr = []
-      arr.push({
-        key: '对象',
-        value: data.object.layer,
-      })
-      arr.push({
-        key: '标识',
-        value: data.object.id,
-      })
-      arr.push({
-        key: '经度',
-        value: data.position.longitude,
-      })
-      arr.push({
-        key: '纬度',
-        value: data.position.latitude,
-      })
-      arr.push({
-        key: '高度',
-        value: data.position.height,
-      })
-
-      for (let p in data.object.attributes) {
+    _getPopupContent (data) {
+      let lconfig = window.s3d.getLayerConfig(data.object.layer)
+      if (lconfig && lconfig.popupTemplate) {
+        if (!lconfig.popupTemplate.getContent) {
+          throw `配置错误: 图层${data.object.layer}相关配置丢失, 函数popupTemplate.getContent丢失`
+        }
+        return lconfig.popupTemplate.getContent(data)
+      }
+      else {
+        let arr = []
         arr.push({
-          key: p,
-          value: data.object.attributes[p],
+          key: '对象',
+          value: data.object.layer,
         })
+        arr.push({
+          key: '标识',
+          value: data.object.id,
+        })
+        arr.push({
+          key: '经度',
+          value: data.position.longitude,
+        })
+        arr.push({
+          key: '纬度',
+          value: data.position.latitude,
+        })
+        arr.push({
+          key: '高度',
+          value: data.position.height,
+        })
+
+        for (let p in data.object.attributes) {
+          arr.push({
+            key: p,
+            value: data.object.attributes[p],
+          })
+        }
+        return arr
       }
-      return arr
     },
-    getPopupHeader (data) {
-      return data.object.layer + ' - ' + data.object.id
-    },
-    hidePopup () {
-      if (this.removePostRenderHandler) {
-        this.removePostRenderHandler()
-        this.removePostRenderHandler = null
+    _getPopupHeader (data) {
+      let lconfig = window.s3d.getLayerConfig(data.object.layer)
+      if (lconfig && lconfig.popupTemplate) {
+        if (!lconfig.popupTemplate.getHeader) {
+          throw `配置错误: 图层${data.object.layer}相关配置丢失, 函数popupTemplate.getHeader丢失`
+        }
+        return lconfig.popupTemplate.getHeader(data)
       }
-      this.popupVisible = false
+      else {
+        return data.object.layer + ' - ' + data.object.id
+      }
     },
-    setHeader (title) {
+    _setHeader (title) {
       this.title = title
     },
-    setContent (object) {
+    _setContent (object) {
       if (object instanceof HTMLElement) {
         this.showPropGrid = false
         this.$refs.content.innerHTML = "";
@@ -286,6 +318,26 @@ export default {
         this.showPropGrid = true
         this.propArray = object
       }
+    },
+    _textWidth (value) {
+      if (!value) {
+        return '100%'
+      } else {
+        return value.length + 'rem'
+      }
+    },
+    enableDock () {
+      this._setPopupStyle(true)
+      if (this.removePostRenderHandler) {
+        this.removePostRenderHandler()
+        this.removePostRenderHandler = null
+      }
+      this.dockered = true
+    },
+    disableDock () {
+      this._setPopupStyle(false)
+      this._enableStickRender()
+      this.dockered = false
     },
     dock () {
       if (this.dockered) {
@@ -303,7 +355,15 @@ export default {
 .my-popup {
   position: absolute;
   max-width: 500px;
-
+  cursor: auto;
+  .multi-header {
+    margin-top: 4px;
+    input {
+      border: none;
+      font-weight: bold;
+      font-size: 16px;
+    }
+  }
   .esri-popup__main-container {
     max-width: 700px !important;
     max-height: 700px !important;

@@ -78,7 +78,6 @@ export default {
   methods: {
     setTool (tool) {
       this.tool = tool
-      console.log(this.tool)
     },
     lookAt (angle) {
       this.tool.lookAt(angle, this.scale)
@@ -124,7 +123,6 @@ export default {
       //1.9807740244477263(常数) = 完整定位时相机位置与球体中心点的距离/球体的半径
       let radius = dis / 1.9807740244477263
       this.scale = radius / boundingSphere.radius
-      console.log(this.scale)
     },
   }
 }

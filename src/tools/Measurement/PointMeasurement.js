@@ -1,4 +1,3 @@
-import { setCursor, resetCursor } from '../../utils/CursorUtility'
 export default class PointMeasurement {
   constructor(viewer) {
     this.viewer = viewer
@@ -30,7 +29,7 @@ export default class PointMeasurement {
 
     let _this = this
     window.s3d.toolWorking = true
-    setCursor(_this.viewer, 'cursor-crosshair')
+    window.s3d.setCursor('cursor-crosshair')
     _this.createHandler.setInputAction(function(e) {
       if (_this.status === 'none') {
         _this.status = 'moving'
@@ -41,7 +40,7 @@ export default class PointMeasurement {
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     _this.createHandler.setInputAction(function() {
-      resetCursor(_this.viewer, 'cursor-crosshair')
+      window.s3d.resetCursor()
       _this.createHandler.removeInputAction(
         Cesium.ScreenSpaceEventType.MOUSE_MOVE
       )

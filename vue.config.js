@@ -8,4 +8,11 @@ module.exports = {
       .loader('url-loader')
       .end()
   },
+  css: {
+    loaderOptions: {
+      sass: {
+        implementation: require('sass'),
+      },
+    },
+  },
 }

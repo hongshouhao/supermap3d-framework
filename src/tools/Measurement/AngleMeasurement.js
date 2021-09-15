@@ -1,4 +1,3 @@
-import { setCursor, resetCursor } from '../../utils/CursorUtility'
 import {
   extendLine,
   pointOnDirection,
@@ -22,7 +21,7 @@ export default class AngleMeasurement {
     let _this = this
     _this.legLength = 0
 
-    setCursor(_this.viewer, 'cursor-crosshair')
+    window.s3d.setCursor('cursor-crosshair')
 
     _this.anglePositions = []
     _this.angleDrawHandler.setInputAction(function(e) {
@@ -65,7 +64,7 @@ export default class AngleMeasurement {
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     _this.angleDrawHandler.setInputAction(function() {
-      resetCursor(_this.viewer, 'cursor-crosshair')
+      window.s3d.resetCursor()
 
       _this.angleDrawHandler.removeInputAction(
         Cesium.ScreenSpaceEventType.MOUSE_MOVE
@@ -185,7 +184,7 @@ export default class AngleMeasurement {
         polyline: {
           positions: angleAuxiliary,
           material: Cesium.Color.fromCssColorString('#12D035'),
-          width: 1.0,
+          width: 2.0,
           clampToGround: false,
         },
       })

@@ -1,4 +1,3 @@
-import { setCursor, resetCursor } from '../../utils/CursorUtility'
 export default class ShadowQueryTool {
   constructor(viewer) {
     this.viewer = viewer
@@ -16,9 +15,9 @@ export default class ShadowQueryTool {
 
     this.polygonDrawHandler.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
-        setCursor(viewer, 'cursor-crosshair')
+        window.s3d.setCursor('cursor-crosshair')
       } else {
-        resetCursor(viewer, 'cursor-crosshair')
+        window.s3d.resetCursor()
       }
     })
 
