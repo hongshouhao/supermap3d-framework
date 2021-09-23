@@ -3,14 +3,14 @@
     <div ref="viewportSpliter"
          v-show="multiViewport"
          class="viewport-spliter" />
-    <el-tree :data="layersData"
+    <el-tree show-checkbox
              node-key="id"
-             show-checkbox
+             :data="layersData"
              :props="{disabled:disableNode}"
-             @check-change="setLayerVisible1"
-             :render-content="renderExtButton"
              :default-expanded-keys="defaultExpandedKeys"
-             :default-checked-keys="defaultCheckedKeys">
+             :default-checked-keys="defaultCheckedKeys"
+             :render-content="renderExtButton"
+             @check-change="setLayerVisible1">
     </el-tree>
 
     <div v-if="multiViewport"
@@ -19,14 +19,14 @@
     </div>
 
     <el-tree v-if="multiViewport"
-             :data="layersData"
-             node-key="id"
              show-checkbox
+             node-key="id"
+             :data="layersData"
              :props="{disabled:disableNode}"
-             @check-change="setLayerVisible2"
-             :render-content="renderExtButton"
              :default-expanded-keys="defaultExpandedKeys"
-             :default-checked-keys="defaultCheckedKeys">
+             :default-checked-keys="defaultCheckedKeys"
+             :render-content="renderExtButton"
+             @check-change="setLayerVisible2">
     </el-tree>
   </div>
 </template>
@@ -189,6 +189,7 @@ export default {
       if (node.childNodes && node.childNodes.length > 0) {
         return (
           <span class="custom-tree-node">
+            <i class={data.icon ? "layer-node-icon " + data.icon : ""} />
             <span class="toggle-ext-button">{node.label}
             </span>
           </span>
@@ -197,6 +198,7 @@ export default {
       else {
         return (
           <span class="custom-tree-node">
+            <i class={data.icon ? "layer-node-icon " + data.icon : ""} />
             <span class="toggle-ext-button">{node.label}
               <i class={node.checked ? "esri-icon-directions2 my-ext-button" : "esri-icon-directions2 my-ext-button my-ext-button-hidden"}
                 on-click={() => window.s3d.flyToLayer(data.cesiumLayer)} />
@@ -264,6 +266,11 @@ export default {
     display: flex;
     margin-bottom: 5px;
 
+    .layer-node-icon {
+      margin-right: 4px;
+      margin-top: 1px;
+      color: #409eff;
+    }
     // margin-top: 2px;
     // height: 100%;
 

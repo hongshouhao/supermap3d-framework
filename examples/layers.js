@@ -24,6 +24,7 @@ export const layers = [
     id: '2',
     label: '吴中',
     expand: true,
+    icon: 'esri-icon-layers',
     children: [
       {
         id: '21',
