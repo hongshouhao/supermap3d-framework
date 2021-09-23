@@ -1,14 +1,22 @@
 {
-  "name": "supermap3d-framework",
+  "name": "@sipsd/supermap3d-framework",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "main": "./lib/supermap3d-framework.umd.js",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "http://47.98.110.240:8881/repository/npm-hosted/"
+  },
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "copy": "xcopy .\\node_modules\\@supermap\\vue-iclient3d-webgl\\static\\Cesium .\\public\\Cesium /s /e /y && xcopy .\\node_modules\\jquery\\dist\\jquery.min.js .\\public\\jquery.min.js /s /e /y"
+    "serve": "vue-cli-service serve ./examples/main.js",
+    "lib": "vue-cli-service build --target lib --name supermap3d-framework --dest lib ./core/index.js",
+    "publish": "npm publish",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@supermap/iclient3d-webgl": "^10.2.1",
     "@supermap/vue-iclient3d-webgl": "^1.0.9",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
@@ -47,6 +55,7 @@
       "no-debugger": "off"
     }
   },
+  "eslintIgnore": [],
   "browserslist": [
     "> 1%",
     "last 2 versions",

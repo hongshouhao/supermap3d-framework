@@ -2,6 +2,7 @@
 node_modules
 public/Cesium
 /dist
+/lib
 
 
 # local env files

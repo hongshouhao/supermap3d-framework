@@ -2,12 +2,15 @@
 
 ## 开发说明
 此项目为框架部分，业务系统依赖此项目进行开发，因为处于开发阶段，建议使用本地npm包模式，建议更新npm至最新版本
+
+DEMO: http://192.168.84.181:8380/natural-resources/supermap3d-demo.git
 ### 安装依赖项
 ```
-npm install
+npm config set @sipsd:registry "http://47.98.110.240:8881/repository/npm-group/"
+npm install @sipsd/supermap3d-framework
 ```
 ### 引入依赖
-1. 复制node_modules\supermap3d-framework\public\Cesium到当前项目public\Cesium
+1. 复制node_modules\@sipsd/supermap3d-framework\lib\Cesium到当前项目public\Cesium
 2. 修改index.html
 ```
 <link href="Cesium/Widgets/widgets.css" rel="stylesheet" />
@@ -19,10 +22,11 @@ npm install
 ```
 4. 入口初始化(main.js)
 ```
-import { setup, init } from 'supermap3d-framework/src/s3d'
-setup(Vue)
+import '@sipsd/supermap3d-framework/lib/supermap3d-framework.css'
+import supermap3d from '@sipsd/supermap3d-framework'
 import { config } from './config'
-init(config)
+
+Vue.use(supermap3d, config)
 ```
 5. vue配置(vue.config.js)
 ```
@@ -36,6 +40,14 @@ module.exports = {
       .end()
   },
 }
+```
+
+
+### 发布
+```
+npm install nrm -g
+nrm add sipsd "http://47.98.110.240:8881/repository/npm-hosted/"
+nrm use sipsd
 ```
 ### Cesium常用接口
 1. Cesium的笛卡尔三维坐标 new Cesium.Cartesian3(x,y,z)
