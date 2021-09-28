@@ -100,8 +100,6 @@ export default {
             _this.renderPopup(position, _this.mvtData)
           }
           else {
-
-            debugger
             let pickedObjects = window.s3d.pick(e.position)
             if (pickedObjects.length === 0) {
               let imgLayers = window.s3d.getAllLayers(x => x.type === 'SMIMG' && x.show && x.config?.iQuery)
@@ -159,7 +157,6 @@ export default {
           let layerName = entity.pickResult.mapName
           let features = entity.pickResult[entity.pickResult['layerID']]
           let fItem = features.find(x => x.feature.id === entity.pickResult.featureID)
-          debugger
           _this.mvtData = _this.popupUtility.getDataForMVT(layerName, fItem.feature)
         }
         else {
@@ -183,7 +180,6 @@ export default {
       this._showPopup(worldPosition)
     },
     renderPopup (worldPosition, data) {
-      debugger
       this.multiable = false
       this._setHeader(this._getPopupHeader(data))
       this._setContent(this._getPopupContent(data))
@@ -226,9 +222,6 @@ export default {
         ly.setSelection([obj.object.id])
       }
       else if (ly.type === "SMIMG") {
-        //
-        debugger
-
         ly.config.iQuery.renderer
         Cesium.GeoJsonDataSource.load(obj.object.shape, {
           stroke: Cesium.Color.RED,
@@ -236,7 +229,6 @@ export default {
           strokeWidth: 1
         }).then(res => {
           res.name = `iquery_geometries_${ly.name}`
-          debugger
           _this.viewer.dataSources.add(res);
         })
       }

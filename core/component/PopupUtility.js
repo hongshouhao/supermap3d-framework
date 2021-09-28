@@ -97,15 +97,12 @@ export default class PopupUtility {
   }
 
   getDataForMVT(lyName, feature) {
-    debugger
     let oid = feature.id
     let ly = window.s3d.getLayer(lyName)
     if (ly.config.datasetName) {
-      debugger
       return window.s3d
         .query({ layer: lyName, ids: [oid] })
         .then((response) => {
-          debugger
           if (response.data.features.length > 0) {
             let feature = response.data.features[0]
             let data = this.convertS3mFeatureToDataObject(lyName, feature)
@@ -117,7 +114,7 @@ export default class PopupUtility {
         object: {
           id: oid,
           layer: lyName,
-          attributes: {},
+          attributes: feature.properties,
         },
         position: {},
       }
