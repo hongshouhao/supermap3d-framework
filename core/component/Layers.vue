@@ -88,6 +88,7 @@ export default {
             cly.type = lyNode.layer.type
             cly.config = lyNode.layer
             cly.show = lyNode.layer.visible
+            cly.name = lyNode.name
             lyNode.cesiumLayer = cly
           }
           else if (lyNode.layer.type === "S3M") {

@@ -95,7 +95,8 @@ export const layers = [
         layer: {
           type: 'MVT',
           visible: false,
-          url: `${baseUrl}iserver/services/map-mvt-FanWei2/restjsr/v1/vectortile/maps/范围_2`,
+          url: `${baseUrl}iserver/services/map-mvt-CXGHCZXXGHTTaiHuXinChengQiDongQu2/restjsr/v1/vectortile/maps/CXGH_CZXXGH_T太湖新城启动区_2`,
+          // datasetName: '电信:电信_1',
         },
       },
     ],
@@ -111,6 +112,7 @@ export const layers = [
         layer: {
           type: 'S3M',
           visible: true,
+          enableFillAndWireFrame: true,
           url: `${baseUrl}iserver/services/3D-GongDian/rest/realspace/datas/供电_1@供电/config`,
           datasetName: '供电:供电_1',
           outFields: ['*'],
@@ -122,6 +124,7 @@ export const layers = [
         layer: {
           type: 'S3M',
           visible: true,
+          enableFillAndWireFrame: true,
           url: `${baseUrl}iserver/services/3D-DianXin/rest/realspace/datas/电信_1@电信/config`,
           datasetName: '电信:电信_1',
           outFields: ['*'],
@@ -133,6 +136,7 @@ export const layers = [
         layer: {
           type: 'S3M',
           visible: false,
+          enableFillAndWireFrame: true,
           url: `${baseUrl}iserver/services/3D-WuShui/rest/realspace/datas/污水_1@污水/config`,
           datasetName: '污水:污水_1',
           outFields: ['*'],
@@ -185,7 +189,46 @@ export const layers = [
           type: 'SMIMG',
           visible: false,
           url: `${baseUrl}iserver/services/3D-BiaoXian/rest/realspace/datas/标志标线缓存`,
-          outFields: ['*'],
+          iQuery: {
+            renderer: {
+              type: 'SIMPLE',
+            },
+            style: {
+              stroke: Cesium.Color.RED,
+              fill: Cesium.Color.BLUE.withAlpha(0.3),
+              strokeWidth: 1,
+            },
+            getData: function(p) {
+              debugger
+              console.log(p)
+              return {
+                object: {
+                  id: 1,
+                  layer: '红线',
+                  shape: {
+                    type: 'FeatureCollection',
+                    features: [
+                      {
+                        type: 'Feature',
+                        properties: {},
+                        geometry: {
+                          type: 'Polygon',
+                          coordinates: [
+                            [
+                              [120.60305656736594, 31.18123133876843, 1],
+                              [120.60652506219583, 31.18079974839298, 1],
+                              [120.60470257215461, 31.182567293375214, 1],
+                              [120.60305656736594, 31.18123133876843, 1],
+                            ],
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              }
+            },
+          },
         },
       },
     ],

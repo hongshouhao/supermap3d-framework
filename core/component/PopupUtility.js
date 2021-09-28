@@ -1,11 +1,12 @@
 import axios from 'axios'
+import { isPromise } from '../utils/IfUtility'
 
 export default class PopupUtility {
   constructor(viewer) {
     this.viewer = viewer
   }
 
-  getDataFromPrimitive(object) {
+  getDataForPrimitive(object) {
     let lyName = object.primitive.name
     let oid = object.id
 
@@ -95,7 +96,37 @@ export default class PopupUtility {
     return data
   }
 
+  getDataForMVT(lyName, feature) {
+    debugger
+    let oid = feature.id
+    let ly = window.s3d.getLayer(lyName)
+    if (ly.config.datasetName) {
+      debugger
+      return window.s3d
+        .query({ layer: lyName, ids: [oid] })
+        .then((response) => {
+          debugger
+          if (response.data.features.length > 0) {
+            let feature = response.data.features[0]
+            let data = this.convertS3mFeatureToDataObject(lyName, feature)
+            return data
+          }
+        })
+    } else {
+      let data = {
+        object: {
+          id: oid,
+          layer: lyName,
+          attributes: {},
+        },
+        position: {},
+      }
+      return data
+    }
+  }
+
   convertMvtFeatureToDataObject(layerName, feature) {
+    debugger
     let data = {
       object: {
         id: feature.id,
@@ -115,15 +146,32 @@ export default class PopupUtility {
 
   queryOverImageLayer(layerName, position) {
     let lconfig = window.s3d.getLayerConfig(layerName)
-    if (lconfig.dataUrl) {
-      return axios.get(lconfig.dataUrl, {
-        params: {
-          lon: position.longitude,
-          lat: position.latitude,
-          height: position.height,
-        },
-      })
-      // .then
+    if (!lconfig.iQuery) {
+      throw `配置错误: 图层[${layerName}]无法i查询`
+    }
+    if (typeof lconfig.iQuery.getData === 'function') {
+      let res = lconfig.iQuery.getData(position)
+      if (isPromise(res)) {
+        return res
+      } else {
+        return Promise.resolve(res)
+      }
+    } else if (lconfig.iQuery.dataUrl) {
+      return axios
+        .get(lconfig.iQuery.dataUrl, {
+          params: {
+            lon: position.longitude,
+            lat: position.latitude,
+            height: position.height,
+          },
+        })
+        .then((result) => {
+          if (typeof lconfig.iQuery.transform === 'function') {
+            return lconfig.iQuery.transform(result)
+          } else {
+            return result
+          }
+        })
     }
   }
 }

@@ -1,17 +1,15 @@
+import SketchTool from './tools/Sketch/SketchTool'
 export default class Test {
   constructor() {
     this.count = 1
+    this.sketchTool = new SketchTool(window.s3d.viewer)
+    this.sketchTestStep = 0
   }
 
   doTest() {
-    this.load3dTiles()
-    // window.s3d.debugUtility.drawCameraDirection()
-    // window.s3d.debugUtility.labelPoint(
-    //   Cesium.Cartesian3.fromDegrees(120.777, 31.6024, 12.964)
-    // )
-    // window.s3d.debugUtility.labelPoint(
-    //   Cesium.Cartesian3.fromDegrees(120.7769, 31.6024, 11.573)
-    // )
+    // this.entityToGeoJson()
+
+    this.sketchTest()
     // window.s3d.viewUtility.rotateZ(1)
     // window.s3d
     //   .query({ layer: '交通信号', sql: 'SMID =1' })
@@ -70,5 +68,32 @@ export default class Test {
         // new Cesium.HeadingPitchRange(0, -0.5, 0)
       )
     })
+  }
+
+  debug() {
+    window.s3d.debugUtility.labelPoint(
+      Cesium.Cartesian3.fromDegrees(120.7769, 31.6024, 11.573)
+    )
+  }
+
+  sketchTest() {
+    if (this.sketchTestStep === 0) {
+      this.sketchTestStep++
+      this.sketchTool.start('polyline')
+    } else if (this.sketchTestStep === 1) {
+      this.sketchTestStep++
+      this.sketchTool.start('polygon')
+    } else {
+      this.sketchTool.getGeometries().then((result) => {
+        console.log(result)
+      })
+    }
+  }
+  entityToGeoJson() {
+    window.s3d.debugUtility.drawCameraDirection()
+    window.s3d.viewer.entities.toWKT().then((geojson) => console.log(geojson))
+    window.s3d.viewer.entities.values[0]
+      .toWKT()
+      .then((geojson) => console.log(geojson))
   }
 }

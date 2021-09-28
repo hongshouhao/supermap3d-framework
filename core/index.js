@@ -2,6 +2,7 @@ import ElementUI from 'element-ui'
 import VueiClient from '@supermap/vue-iclient3d-webgl'
 import Map from './Map.vue'
 import S3d from './S3d'
+import './utils/EntityUtility'
 
 const components = [Map]
 // 定义 install 方法，接收 Vue 作为参数。如果使用 use 注册插件，则所有的组件都将被注册

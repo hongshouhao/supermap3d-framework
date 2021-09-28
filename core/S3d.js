@@ -60,7 +60,6 @@ export default class S3d {
     setCursorStyle(className)
   }
   resetCursor() {
-    debugger
     this.viewer.enableCursorStyle = true
     resetCursorStyle()
   }

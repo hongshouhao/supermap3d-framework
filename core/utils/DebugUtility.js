@@ -5,7 +5,7 @@ export default class DebugUtility {
   }
 
   labelPoint(point) {
-    this.viewer.entities.add({
+    let ent = this.viewer.entities.add({
       position: point,
       name: 'point_annotation_debugger',
       point: {
@@ -29,6 +29,8 @@ export default class DebugUtility {
         eyeOffset: new Cesium.Cartesian3(0, 0, -10),
       },
     })
+
+    console.log(ent)
   }
 
   drawBoundingSphereAndPoints(boundingSphere, pts) {
@@ -78,5 +80,9 @@ export default class DebugUtility {
         clampToGround: false,
       },
     })
+  }
+
+  flyToPoint(point) {
+    window.s3d.cameraUtility.flyToPoints([point])
   }
 }

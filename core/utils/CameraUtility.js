@@ -4,7 +4,6 @@ export default class CameraUtility {
   constructor(viewer) {
     this.viewer = viewer
     this.camera = this.viewer.camera
-
     Cesium.Camera.prototype.getCameraHeight = () => this.getCameraHeight()
     Cesium.Camera.prototype.flyToS3mFeatures = (features) =>
       this.flyToS3mFeatures(features)
@@ -29,7 +28,7 @@ export default class CameraUtility {
       pts.push(box[0])
       pts.push(box[1])
     }
-    return this.flyToPoints(pts, { scale: 1.5 })
+    return this._flyToPoints(pts, { scale: 1.5 })
   }
 
   lookAtFeature(feature, direction, options) {
@@ -70,7 +69,7 @@ export default class CameraUtility {
     }
 
     let box = boxCornersFromFeature(feature)
-    return this.flyToPoints(box, {
+    return this._flyToPoints(box, {
       offset: offset,
       scale: options?.scale,
       duration: options?.duration,
@@ -78,30 +77,11 @@ export default class CameraUtility {
   }
 
   flyToPoints(points, options) {
-    let _this = this
-    return new Promise(function(resolve, reject) {
-      let boundingSphere = Cesium.BoundingSphere.fromPoints(points)
-
-      if (options?.scale) {
-        boundingSphere.radius = boundingSphere.radius * options.scale
-      }
-
-      // window.s3d.debugUtility.drawBoundingSphereAndPoints(
-      //   boundingSphere,
-      //   points
-      // )
-
-      _this.viewer.camera.flyToBoundingSphere(boundingSphere, {
-        duration: options?.duration ?? 2,
-        complete: function() {
-          resolve()
-        },
-        cancel: function() {
-          reject()
-        },
-        offset: options?.offset,
-      })
-    })
+    let pts = []
+    for (let pt of points) {
+      pts.push(Cesium.Cartesian3.fromDegrees(pt.x, pt.y, pt.z))
+    }
+    this._flyToPoints(points, options)
   }
 
   rotateZAroundPoint(point, heading, duration) {
@@ -132,5 +112,32 @@ export default class CameraUtility {
     }
 
     this.camera.flyTo(tar)
+  }
+
+  _flyToPoints(points, options) {
+    let _this = this
+    return new Promise(function(resolve, reject) {
+      let boundingSphere = Cesium.BoundingSphere.fromPoints(points)
+
+      if (options?.scale) {
+        boundingSphere.radius = boundingSphere.radius * options.scale
+      }
+
+      window.s3d.debugUtility.drawBoundingSphereAndPoints(
+        boundingSphere,
+        points
+      )
+
+      _this.viewer.camera.flyToBoundingSphere(boundingSphere, {
+        duration: options?.duration ?? 2,
+        complete: function() {
+          resolve()
+        },
+        cancel: function() {
+          reject()
+        },
+        offset: options?.offset,
+      })
+    })
   }
 }

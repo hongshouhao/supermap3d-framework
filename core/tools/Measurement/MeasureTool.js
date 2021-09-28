@@ -38,6 +38,7 @@ export default class MeasureTool {
       Cesium.MeasureMode.Area,
       0
     )
+
     _this.handlerArea.measureEvt.addEventListener(function(result) {
       let mj = Number(result.area)
       let area =

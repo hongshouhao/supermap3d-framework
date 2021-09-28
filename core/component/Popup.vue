@@ -100,31 +100,34 @@ export default {
             _this.renderPopup(position, _this.mvtData)
           }
           else {
+
+            debugger
             let pickedObjects = window.s3d.pick(e.position)
             if (pickedObjects.length === 0) {
-              _this.hidePopup()
-              return
-              // let imgLayers = window.s3d.getAllLayers(x => x.type === 'SMIMG' && x.show)
-              // if (imgLayers.length > 0) {
-              //   // let position = _this.viewer.scene.pickPosition(e.position)
-              //   // let lonlat = cartesianToLonlat(position)
-              //   // imgLayers.map(l => {
-              //   // })
+              let imgLayers = window.s3d.getAllLayers(x => x.type === 'SMIMG' && x.show && x.config?.iQuery)
+              if (imgLayers.length > 0) {
+                let position = _this.viewer.scene.pickPosition(e.position)
+                let lonlat = cartesianToLonlat(position)
+                let promises = imgLayers.map(l => {
+                  return _this.popupUtility.queryOverImageLayer(l.name, lonlat)
+                })
 
-              //   // let cartographic = Cesium.Cartographic.fromCartesian(position)
-              //   // dobj.position.longitude = Cesium.Math.toDegrees(cartographic.longitude)
-              //   // dobj.position.latitude = Cesium.Math.toDegrees(cartographic.latitude)
-              //   // dobj.position.height = cartographic.height
-
-              //   // _this.renderPopup(position, dobj)
-              // }
-              // else {
-              //   _this.hidePopup()
-              // }
+                Promise.all(promises).then(data => {
+                  for (let dobj of data) {
+                    if (!dobj.position) {
+                      dobj.position = lonlat
+                    }
+                  }
+                  _this.renderPopupMulti(position, data)
+                })
+              }
+              else {
+                _this.hidePopup()
+              }
             }
             else {
               let calls = pickedObjects.map(x => {
-                return _this.popupUtility.getDataFromPrimitive(x);
+                return _this.popupUtility.getDataForPrimitive(x);
               })
               Promise.all(calls).then((data) => {
                 for (let dobj of data) {
@@ -156,7 +159,8 @@ export default {
           let layerName = entity.pickResult.mapName
           let features = entity.pickResult[entity.pickResult['layerID']]
           let fItem = features.find(x => x.feature.id === entity.pickResult.featureID)
-          _this.mvtData = _this.popupUtility.convertMvtFeatureToDataObject(layerName, fItem.feature)
+          debugger
+          _this.mvtData = _this.popupUtility.getDataForMVT(layerName, fItem.feature)
         }
         else {
           _this.mvtData = null
@@ -179,6 +183,7 @@ export default {
       this._showPopup(worldPosition)
     },
     renderPopup (worldPosition, data) {
+      debugger
       this.multiable = false
       this._setHeader(this._getPopupHeader(data))
       this._setContent(this._getPopupContent(data))
@@ -196,12 +201,45 @@ export default {
       let header = this._getPopupHeader(obj)
       this._setHeader(header)
       this._setContent(this._getPopupContent(obj))
+      this._highlight(obj)
+      $('.my-popup .multi-header input').css('width', this._textWidth(header))
+    },
+    _highlight (obj) {
+      let _this = this
       let grps = Enumerable.from(this.dataObjs).groupBy(x => x.object.layer).toArray();
       for (let g of grps) {
-        window.s3d.getLayer(g.key()).setSelection([])
+        let ly = window.s3d.getLayer(g.key())
+        if (ly.type === "S3M") {
+          ly.setSelection([])
+        }
+        else if (ly.type === "SMIMG") {
+          let dses = _this.viewer.dataSources.getByName(`iquery_geometries_${ly.name}`)
+          for (let ds of dses) {
+            _this.viewer.dataSources.remove(ds, true)
+          }
+        }
       }
-      window.s3d.getLayer(obj.object.layer).setSelection([obj.object.id])
-      $('.my-popup .multi-header input').css('width', this._textWidth(header))
+      //目前采用全部清空
+      // _this.viewer.entities.removeAll()
+      let ly = window.s3d.getLayer(obj.object.layer)
+      if (ly.type === "S3M") {
+        ly.setSelection([obj.object.id])
+      }
+      else if (ly.type === "SMIMG") {
+        //
+        debugger
+
+        ly.config.iQuery.renderer
+        Cesium.GeoJsonDataSource.load(obj.object.shape, {
+          stroke: Cesium.Color.RED,
+          fill: Cesium.Color.BLUE.withAlpha(0.3),
+          strokeWidth: 1
+        }).then(res => {
+          res.name = `iquery_geometries_${ly.name}`
+          debugger
+          _this.viewer.dataSources.add(res);
+        })
+      }
     },
     _enableStickRender () {
       let _this = this

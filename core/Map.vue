@@ -77,6 +77,8 @@ export default {
     this.sceneContainer = document.createElement("div")
     let viewer = new Cesium.Viewer(this.sceneContainer, viewerOptions)
 
+    viewer.scene.fxaa = false;
+    viewer.scene.postProcessStages.fxaa.enabled = false;
     viewer.scene.hdrEnabled = true;
     viewer.scene.debugShowFramesPerSecond = false;
     viewer.scene.globe.depthTestAgainstTerrain = true

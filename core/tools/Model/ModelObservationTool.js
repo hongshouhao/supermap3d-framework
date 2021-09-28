@@ -43,7 +43,6 @@ export default class ModelObservationTool {
     })
   }
   lookAtFront() {
-    debugger
     if (!this.feature) {
       return
     }
