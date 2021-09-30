@@ -14,20 +14,15 @@ import ViewUtility from './utils/ViewUtility'
 import PickingUtility from './utils/PickingUtility'
 import CameraUtility from './utils/CameraUtility'
 import DebugUtility from './utils/DebugUtility'
-
 import { lonLatToCartesian } from './utils/CesiumMath'
 import { isS3mFeature, isCartesian3 } from './utils/IfUtility'
 import { setCursorStyle, resetCursorStyle } from './utils/CursorUtility'
+import { isImageryLayer } from './utils/ImageryUtility'
+
+import SketchTool from './tools/Sketch/SketchTool'
+
 // import './materials'
 
-// export function setup(vue) {
-//   vue.use(ElementUI, { size: 'small' })
-//   vue.use(VueiClient)
-// }
-
-// export function init(config) {
-//   window.s3d = new S3d(config)
-// }
 export default class S3d {
   constructor(config) {
     if (!config.iServerBaseURL) throw '参数不能为空: iServerBaseURL'
@@ -53,6 +48,7 @@ export default class S3d {
     this.cameraUtility = new CameraUtility(viewer)
     this.debugUtility = new DebugUtility(viewer)
     this.pickingUtility = new PickingUtility(viewer.scene)
+    this.sketchTool = new SketchTool(viewer)
   }
 
   setCursor(className) {
@@ -131,17 +127,16 @@ export default class S3d {
         }
       }
     }
-
     if (typeof params === 'function') {
       return getLayerNode(this.config.layers, params)
     } else if (typeof params === 'string') {
       return getLayerNode(this.config.layers, (x) => x.name === params)
     } else {
-      throw '暂不支持'
+      throw '不支持的参数类型'
     }
   }
   _setLayerVisible(layer, visible) {
-    if (layer.type === 'SMIMG' || layer.type === 'MVT') {
+    if (isImageryLayer(layer.type) || layer.type === 'MVT') {
       layer.show = visible
     } else if (layer.type === 'S3M') {
       layer.visible = visible
@@ -212,7 +207,7 @@ export default class S3d {
     this._setLayerVisible(ly, visible)
   }
   setLayerOpacity(layer, opacity) {
-    if (layer && layer.type === 'SMIMG') {
+    if (layer && isImageryLayer(layer.type)) {
       layer.alpha = opacity / 100
     } else if (layer && layer.type === 'S3M') {
       layer.style3D.fillForeColor = new Cesium.Color(

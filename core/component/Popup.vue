@@ -53,6 +53,8 @@ import Enumerable from 'linq';
 import { cartesianToLonlat } from '../utils/CesiumMath'
 import PropertyGrid from './PropertyGrid.vue'
 import PopupUtility from './PopupUtility.js'
+import { isImageryLayer } from '../utils/ImageryUtility'
+
 export default {
   data () {
     return {
@@ -83,13 +85,10 @@ export default {
   },
   props: [],
   mounted () {
-    this.init()
+    this.initIQuery()
+    this.initIQueryForMVT()
   },
   methods: {
-    init () {
-      this.initIQuery()
-      this.initIQueryForMVT()
-    },
     initIQuery () {
       let _this = this
       this.mouseEventHandler = new Cesium.ScreenSpaceEventHandler(_this.viewer.scene.canvas)
@@ -102,24 +101,27 @@ export default {
           else {
             let pickedObjects = window.s3d.pick(e.position)
             if (pickedObjects.length === 0) {
-              let imgLayers = window.s3d.getAllLayers(x => x.type === 'SMIMG' && x.show && x.config?.iQuery)
+              let imgLayers = window.s3d.getAllLayers(x => isImageryLayer(x.type) && x.show && x.config?.iQuery)
               if (imgLayers.length > 0) {
                 let position = _this.viewer.scene.pickPosition(e.position)
                 let lonlat = cartesianToLonlat(position)
                 let promises = imgLayers.map(l => {
                   return _this.popupUtility.queryOverImageLayer(l.name, lonlat)
+                    .then(dobj => {
+                      dobj.object.layer = l.name
+                      if (!dobj.position) {
+                        dobj.position = lonlat
+                      }
+                      return dobj
+                    })
                 })
 
                 Promise.all(promises).then(data => {
-                  for (let dobj of data) {
-                    if (!dobj.position) {
-                      dobj.position = lonlat
-                    }
-                  }
                   _this.renderPopupMulti(position, data)
                 })
               }
               else {
+                _this._clearTempDataSources()
                 _this.hidePopup()
               }
             }
@@ -208,29 +210,31 @@ export default {
         if (ly.type === "S3M") {
           ly.setSelection([])
         }
-        else if (ly.type === "SMIMG") {
-          let dses = _this.viewer.dataSources.getByName(`iquery_geometries_${ly.name}`)
-          for (let ds of dses) {
-            _this.viewer.dataSources.remove(ds, true)
-          }
-        }
       }
-      //目前采用全部清空
-      // _this.viewer.entities.removeAll()
+      this._clearTempDataSources()
+
       let ly = window.s3d.getLayer(obj.object.layer)
       if (ly.type === "S3M") {
         ly.setSelection([obj.object.id])
       }
-      else if (ly.type === "SMIMG") {
-        ly.config.iQuery.renderer
-        Cesium.GeoJsonDataSource.load(obj.object.shape, {
+      else if (isImageryLayer(ly.type)) {
+        let symbol = ly.config.iQuery.symbol ?? {
           stroke: Cesium.Color.RED,
           fill: Cesium.Color.BLUE.withAlpha(0.3),
           strokeWidth: 1
-        }).then(res => {
+        }
+        Cesium.GeoJsonDataSource.load(obj.object.shape, symbol).then(res => {
           res.name = `iquery_geometries_${ly.name}`
           _this.viewer.dataSources.add(res);
         })
+      }
+    },
+    _clearTempDataSources () {
+      for (let i = 0; i < this.viewer.dataSources.length; i++) {
+        let ds = this.viewer.dataSources.get(i)
+        if (ds.name.startsWith('iquery_geometries_')) {
+          this.viewer.dataSources.remove(ds, true)
+        }
       }
     },
     _enableStickRender () {
@@ -308,15 +312,15 @@ export default {
         })
         arr.push({
           key: '经度',
-          value: data.position.longitude,
+          value: data.position?.longitude,
         })
         arr.push({
           key: '纬度',
-          value: data.position.latitude,
+          value: data.position?.latitude,
         })
         arr.push({
           key: '高度',
-          value: data.position.height,
+          value: data.position?.height,
         })
 
         for (let p in data.object.attributes) {

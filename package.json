@@ -1,10 +1,16 @@
 {
   "name": "@sipsd/supermap3d-framework",
-  "version": "0.1.2",
+  "version": "0.1.6",
   "private": false,
-  "main": "./lib/supermap3d-framework.umd.js",
+  "main": "./lib/supermap3d-framework.umd.min.js",
   "files": [
-    "lib"
+    "lib/README.md",
+    "lib/Cesium",
+    "lib/fonts",
+    "lib/img",
+    "lib/supermap3d-framework.css",
+    "lib/supermap3d-framework.umd.min.js",
+    "lib/supermap3d-framework.umd.min.js.map"
   ],
   "publishConfig": {
     "registry": "http://47.98.110.240:8881/repository/npm-hosted/"

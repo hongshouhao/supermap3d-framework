@@ -19,7 +19,7 @@
 import TopLeftBar from './component/TopLeftBar.vue'
 import TopRightBar from './component/TopRightBar.vue'
 import Popup from './component/Popup.vue'
-import { createImageryProvider } from './utils/ImageryProvider'
+import { createImageryProvider } from './utils/ImageryUtility'
 import { enableCursorStyle } from './utils/CursorUtility'
 
 export default {

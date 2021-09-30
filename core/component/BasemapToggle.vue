@@ -22,7 +22,7 @@
   </ul>
 </template>
 <script>
-import { createImageryProvider } from '../utils/ImageryProvider'
+import { createImageryProvider } from '../utils/ImageryUtility'
 
 export default {
   data () {

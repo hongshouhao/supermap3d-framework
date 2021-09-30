@@ -6,7 +6,7 @@
 DEMO: http://192.168.84.181:8380/natural-resources/supermap3d-demo.git
 ### 安装依赖项
 ```
-npm config set @sipsd:registry "http://47.98.110.240:8881/repository/npm-group/"
+npm config set registry "http://47.98.110.240:8881/repository/npm-group/"
 npm install @sipsd/supermap3d-framework
 ```
 ### 引入依赖
@@ -46,7 +46,7 @@ module.exports = {
 ### 发布
 ```
 npm install nrm -g
-nrm add sipsd "http://47.98.110.240:8881/repository/npm-hosted/"
+nrm add sipsd "http://47.98.110.240:8881/repository/npm-group/"
 nrm use sipsd
 ```
 ### Cesium常用接口

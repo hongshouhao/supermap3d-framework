@@ -1,13 +1,13 @@
 <template>
   <div class="top-left-bar">
-    <div class="esri-component esri-widget">
+    <!-- <div class="esri-component esri-widget">
       <div class="esri-widget--button esri-widget esri-interactive"
            style="border-top:none"
            title="收起">
         <span aria-hidden="true"
               class="esri-icon esri-icon-collapse"></span>
       </div>
-    </div>
+    </div> -->
 
     <div class="esri-component esri-widget">
       <div class="esri-widget--button esri-widget esri-interactive"
@@ -64,7 +64,7 @@
               class="esri-icon my-icon-mea-angle"></span>
       </div>
       <div class="esri-widget--button esri-widget"
-           title="观察"
+           title="模型观察"
            @click="startModelObservation">
         <span aria-hidden="true"
               class="esri-icon my-icon-model-rotate"></span>
@@ -102,13 +102,13 @@
                  title="开敞度分析"
                  @click="startViewDome">
               <span aria-hidden="true"
-                    class="esri-icon esri-icon-visible"></span>
+                    class="esri-icon my-icon-kaichangdu"></span>
             </div>
             <div class="esri-widget--button esri-widget"
                  title="天际线分析"
                  @click="startSkyline">
               <span aria-hidden="true"
-                    class="esri-icon esri-icon-urban-model"></span>
+                    class="esri-icon my-icon-skyline"></span>
             </div>
             <div class="esri-widget--button esri-widget "
                  title="视域分析"

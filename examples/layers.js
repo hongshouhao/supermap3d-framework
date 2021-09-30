@@ -60,6 +60,7 @@ export const layers = [
           dataUrl: `${baseUrl}iserver/services/data-MoXing1_1/rest/data/featureResults.json?returnContent=true`,
           outFields: ['*'],
           datasetName: '模型1:BackUp_TarDataset_1',
+          selectColorType: Cesium.SelectColorType.REPLACE,
         },
       },
       {
@@ -96,7 +97,6 @@ export const layers = [
           type: 'MVT',
           visible: false,
           url: `${baseUrl}iserver/services/map-mvt-CXGHCZXXGHTTaiHuXinChengQiDongQu2/restjsr/v1/vectortile/maps/CXGH_CZXXGH_T太湖新城启动区_2`,
-          // datasetName: '电信:电信_1',
         },
       },
     ],
@@ -190,21 +190,16 @@ export const layers = [
           visible: false,
           url: `${baseUrl}iserver/services/3D-BiaoXian/rest/realspace/datas/标志标线缓存`,
           iQuery: {
-            renderer: {
-              type: 'SIMPLE',
+            symbol: {
+              stroke: Cesium.Color.fromCssColorString('#FF0000'),
+              fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
+              strokeWidth: 2,
             },
-            style: {
-              stroke: Cesium.Color.RED,
-              fill: Cesium.Color.BLUE.withAlpha(0.3),
-              strokeWidth: 1,
-            },
-            getData: function(p) {
-              debugger
-              console.log(p)
+            dataUrl: 'http://localhost:9864/cad-connect-test',
+            transform: function(data) {
               return {
                 object: {
                   id: 1,
-                  layer: '红线',
                   shape: {
                     type: 'FeatureCollection',
                     features: [
@@ -225,9 +220,45 @@ export const layers = [
                       },
                     ],
                   },
+                  attributes: {
+                    a: data,
+                    b: 2,
+                  },
                 },
               }
             },
+            // getData: function(p) {
+            //   console.log(p)
+            //   return {
+            //     object: {
+            //       id: 1,
+            //       shape: {
+            //         type: 'FeatureCollection',
+            //         features: [
+            //           {
+            //             type: 'Feature',
+            //             properties: {},
+            //             geometry: {
+            //               type: 'Polygon',
+            //               coordinates: [
+            //                 [
+            //                   [120.60305656736594, 31.18123133876843, 1],
+            //                   [120.60652506219583, 31.18079974839298, 1],
+            //                   [120.60470257215461, 31.182567293375214, 1],
+            //                   [120.60305656736594, 31.18123133876843, 1],
+            //                 ],
+            //               ],
+            //             },
+            //           },
+            //         ],
+            //       },
+            //       attributes: {
+            //         a: 1,
+            //         b: 2,
+            //       },
+            //     },
+            //   }
+            // },
           },
         },
       },

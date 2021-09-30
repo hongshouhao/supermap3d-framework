@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import App from './App.vue'
 import supermap3d from '../core/index'
+import '../core/css/index.scss'
 // import supermap3d from '../lib/supermap3d-framework.umd'
-import '../lib/supermap3d-framework.css'
+// import '../lib/supermap3d-framework.css'
 import { config } from './config'
-
 Vue.use(supermap3d, config)
 Vue.config.productionTip = false
 

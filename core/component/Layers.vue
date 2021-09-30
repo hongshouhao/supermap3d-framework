@@ -33,6 +33,8 @@
 
 <script> 
 import LayerSetting from './LayerSetting.vue'
+import { isImageryLayer } from '../utils/ImageryUtility'
+
 export default {
   components: {
     // eslint-disable-next-line vue/no-unused-components
@@ -80,10 +82,9 @@ export default {
           if (lyNode.layer.visible) {
             _this.defaultCheckedKeys.push(lyNode.id)
           }
-          if (lyNode.layer.type === "SMIMG") {
-            let imgl = new Cesium.SuperMapImageryProvider({
-              url: lyNode.layer.url
-            });
+
+          if (isImageryLayer(lyNode.layer.type)) {
+            let imgl = this._createImageryProvider(lyNode.layer)
             let cly = _this.viewer.imageryLayers.addImageryProvider(imgl)
             cly.type = lyNode.layer.type
             cly.config = lyNode.layer
@@ -102,7 +103,9 @@ export default {
                 cly.config = lyNode.layer
                 cly.visible = lyNode.layer.visible
                 cly.indexedDBSetting.isAttributesSave = true;
-                cly.selectColorType = Cesium.SelectColorType.REPLACE
+                if (lyNode.layer.selectColorType) {
+                  cly.selectColorType = lyNode.layer.selectColorType
+                }
                 // cly.selectedColor = Cesium.Color.RED
                 // cly.selectedLineColor = Cesium.Color.BLUE
                 // cly.silhouetteColor = Cesium.Color.RED
@@ -138,9 +141,14 @@ export default {
             lyNode.dem = new Cesium.CesiumTerrainProvider({
               url: lyNode.layer.url,
             })
-            lyNode.dem0 = new Cesium.CesiumTerrainProvider({
-              url: lyNode.layer.url0,
-            })
+            if (lyNode.layer.url0) {
+              lyNode.dem0 = new Cesium.CesiumTerrainProvider({
+                url: lyNode.layer.url0,
+              })
+            } else {
+              lyNode.dem0 = new Cesium.EllipsoidTerrainProvider()
+            }
+
             lyNode.dem.isCreateSkirt = false;
             lyNode.dem0.isCreateSkirt = false;
             if (lyNode.layer.visible) {
@@ -240,6 +248,18 @@ export default {
         }
       }
     },
+    _createImageryProvider (options) {
+      switch (options.type) {
+        case 'ARCGISEXIMG':
+          return new Cesium.CGCS2000MapServerImageryProvider(options)
+        case 'ARCGISIMG':
+          return new Cesium.ArcGisMapServerImageryProvider(options)
+        case 'SMIMG':
+          return new Cesium.SuperMapImageryProvider(options)
+        default:
+          throw `暂不支持类型为${type}的栅格图层`
+      }
+    }
   }
 }
 </script>

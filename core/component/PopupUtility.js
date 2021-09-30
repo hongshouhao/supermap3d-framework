@@ -122,25 +122,6 @@ export default class PopupUtility {
     }
   }
 
-  convertMvtFeatureToDataObject(layerName, feature) {
-    debugger
-    let data = {
-      object: {
-        id: feature.id,
-        layer: layerName,
-      },
-    }
-
-    data.position = {
-      longitude: 1,
-      latitude: 1,
-      height: 1,
-    }
-
-    data.object.attributes = {}
-    return data
-  }
-
   queryOverImageLayer(layerName, position) {
     let lconfig = window.s3d.getLayerConfig(layerName)
     if (!lconfig.iQuery) {
@@ -162,11 +143,11 @@ export default class PopupUtility {
             height: position.height,
           },
         })
-        .then((result) => {
+        .then((response) => {
           if (typeof lconfig.iQuery.transform === 'function') {
-            return lconfig.iQuery.transform(result)
+            return lconfig.iQuery.transform(response.data)
           } else {
-            return result
+            return response.data
           }
         })
     }
