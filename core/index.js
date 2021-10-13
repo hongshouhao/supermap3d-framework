@@ -2,6 +2,8 @@ import ElementUI from 'element-ui'
 import VueiClient from '@supermap/vue-iclient3d-webgl'
 import Map from './Map.vue'
 import S3d from './S3d'
+import { addMessageListener } from './IframeMessage'
+import * as CesiumMath from './utils/CesiumMath'
 import './utils/EntityUtility'
 
 const components = [Map]
@@ -25,8 +27,8 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 export default {
-  // 导出的对象必须具有 install，才能被 Vue.use() 方法安装
   install,
-  // 以下是具体的组件列表
   Map,
+  CesiumMath,
+  addMessageListener,
 }

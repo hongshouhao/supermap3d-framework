@@ -28,8 +28,8 @@ export default class S3d {
     if (!config.iServerBaseURL) throw '参数不能为空: iServerBaseURL'
     if (!config.layers) throw '参数不能为空: layers'
     if (!config.defaultCamera) throw '参数不能为空: defaultCamera'
-    if (!config.baseMaps.earth) throw '参数不能为空: baseMaps.earth'
-    if (!config.baseMaps.normal) throw '参数不能为空: baseMaps.normal'
+    // if (!config.baseMaps.earth) throw '参数不能为空: baseMaps.earth'
+    // if (!config.baseMaps.normal) throw '参数不能为空: baseMaps.normal'
 
     this.config = config
     this.toolbar = new Toolbar()

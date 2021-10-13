@@ -33,6 +33,7 @@
 
 <script> 
 import LayerSetting from './LayerSetting.vue'
+import LayerFactory from '../utils/LayerFactory'
 import { isImageryLayer } from '../utils/ImageryUtility'
 
 export default {
@@ -46,6 +47,8 @@ export default {
       defaultExpandedKeys: [],
       defaultCheckedKeys: [],
       multiViewport: false,
+      layerFactory: null
+
     }
   },
   computed: {
@@ -57,8 +60,10 @@ export default {
   mounted () {
     window.s3d.layerTree = this
     let _this = this
+    _this.layerFactory = new LayerFactory(_this.viewer)
     window.s3d.eventBus.addEventListener("framework-initialized", () => {
       console.debug("framework-initialized")
+      _this._checkLayersConfig()
       _this.init()
     });
   },
@@ -75,90 +80,26 @@ export default {
     addLayers (layersData) {
       let _this = this
       for (let lyNode of layersData) {
-        if (lyNode.layer) {
-          if (!lyNode.layer.opacity) {
-            lyNode.layer.opacity = 100
+        let lyOptions = lyNode.layer
+        if (lyOptions) {
+          if (!lyOptions.opacity) {
+            lyOptions.opacity = 100
           }
-          if (lyNode.layer.visible) {
+          if (lyOptions.visible) {
             _this.defaultCheckedKeys.push(lyNode.id)
           }
 
-          if (isImageryLayer(lyNode.layer.type)) {
-            let imgl = this._createImageryProvider(lyNode.layer)
-            let cly = _this.viewer.imageryLayers.addImageryProvider(imgl)
-            cly.type = lyNode.layer.type
-            cly.config = lyNode.layer
-            cly.show = lyNode.layer.visible
-            cly.name = lyNode.name
-            lyNode.cesiumLayer = cly
-          }
-          else if (lyNode.layer.type === "S3M") {
-            if (lyNode.layer.url) {
-              let promise = _this.viewer.scene.addS3MTilesLayerByScp(lyNode.layer.url,
-                {
-                  name: lyNode.name,
-                })
-              promise.then((cly) => {
-                cly.type = lyNode.layer.type
-                cly.config = lyNode.layer
-                cly.visible = lyNode.layer.visible
-                cly.indexedDBSetting.isAttributesSave = true;
-                if (lyNode.layer.selectColorType) {
-                  cly.selectColorType = lyNode.layer.selectColorType
-                }
-                // cly.selectedColor = Cesium.Color.RED
-                // cly.selectedLineColor = Cesium.Color.BLUE
-                // cly.silhouetteColor = Cesium.Color.RED
-                // cly.silhouetteSize = 10
-                // console.log(cly.silhouetteColor)
-                lyNode.cesiumLayer = cly
-
-                if (lyNode.layer.enableFillAndWireFrame) {
-                  cly.style3D.fillStyle = Cesium.FillStyle.Fill_And_WireFrame;
-                  cly.style3D.lineColor = Cesium.Color.BLACK;
-                  cly.style3D.lineWidth = 1;
-                  cly.wireFrameMode = Cesium.WireFrameType.EffectOutline
-                  // cly.wireFrameMode = Cesium.WireFrameType.Triangle
-                }
-              })
-            }
-            else {
-              throw 'S3M图层配置错误:URL'
-            }
-          }
-          else if (lyNode.layer.type === "MVT") {
-            let cly = _this.viewer.scene.addVectorTilesMap({
-              url: lyNode.layer.url,
-              name: lyNode.name,
-              viewer: _this.viewer
-            });
-            cly.type = lyNode.layer.type
-            cly.config = lyNode.layer
-            cly.show = lyNode.layer.visible
-            lyNode.cesiumLayer = cly
-          }
-          else if (lyNode.layer.type === "DEM") {
-            lyNode.dem = new Cesium.CesiumTerrainProvider({
-              url: lyNode.layer.url,
+          if (isImageryLayer(lyOptions.type)) {
+            lyNode.cesiumLayer = _this.layerFactory.createImageLayer(lyOptions)
+          } else if (lyOptions.type === 'S3M') {
+            _this.layerFactory.createS3MLayer(lyOptions).then(ly => {
+              lyNode.cesiumLayer = ly
             })
-            if (lyNode.layer.url0) {
-              lyNode.dem0 = new Cesium.CesiumTerrainProvider({
-                url: lyNode.layer.url0,
-              })
-            } else {
-              lyNode.dem0 = new Cesium.EllipsoidTerrainProvider()
-            }
-
-            lyNode.dem.isCreateSkirt = false;
-            lyNode.dem0.isCreateSkirt = false;
-            if (lyNode.layer.visible) {
-              _this.viewer.terrainProvider = lyNode.dem
-            }
-            else {
-              _this.viewer.terrainProvider = lyNode.dem0
-            }
-          }
-          else {
+          } else if (lyOptions.type === 'MVT') {
+            lyNode.cesiumLayer = _this.layerFactory.createMVTLayer(lyOptions)
+          } else if (lyOptions.type === 'DEM') {
+            Object.assign(lyNode, _this.layerFactory.createDEMLayer(lyOptions))
+          } else {
             throw '图层类型配置错误'
           }
         }
@@ -248,16 +189,44 @@ export default {
         }
       }
     },
-    _createImageryProvider (options) {
-      switch (options.type) {
-        case 'ARCGISEXIMG':
-          return new Cesium.CGCS2000MapServerImageryProvider(options)
-        case 'ARCGISIMG':
-          return new Cesium.ArcGisMapServerImageryProvider(options)
-        case 'SMIMG':
-          return new Cesium.SuperMapImageryProvider(options)
-        default:
-          throw `暂不支持类型为${type}的栅格图层`
+    _checkLayersConfig () {
+      let setLayerName = function (layers, nameList) {
+        for (let ln of layers) {
+          if (ln.layer) {
+            if (!ln.layer.name && !ln.name) {
+              throw `图层配置错误: "name"属性缺失\n错误节点: ${JSON.stringify(
+                ln
+              )}`
+            }
+            else {
+              if (ln.layer.name) {
+                ln.name = ln.layer.name
+              }
+              else {
+                ln.layer.name = ln.name
+              }
+
+              if (nameList[ln.name]) {
+                nameList[ln.name] = nameList[ln.name] + 1
+              } else {
+                nameList[ln.name] = 1
+              }
+              if (!ln.label) {
+                ln.label = ln.name
+              }
+            }
+          } else if (ln.children) {
+            setLayerName(ln.children, nameList)
+          }
+        }
+      }
+      let nameList = {}
+      setLayerName(window.s3d.config.layers, nameList)
+
+      for (let key in nameList) {
+        if (nameList[key] > 1) {
+          throw `图层配置错误: 图层名(${key})重复`
+        }
       }
     }
   }

@@ -21,6 +21,39 @@ export const layers = [
     },
   },
   {
+    id: '111',
+    name: '市局水下',
+    layer: {
+      type: 'SMIMG',
+      visible: true,
+      url: `${baseUrl}iserver/services/3D-local3DCache-dem1tiftest/rest/realspace/datas/dem_1@tif_test`,
+    },
+  },
+  {
+    id: '111222',
+    name: 'test122',
+    layer: {
+      type: 'S3M',
+      visible: true,
+      enableFillAndWireFrame: false,
+      url: `http://106.14.242.98:8090/iserver/services/3D-dsyz/rest/realspace/datas/dsyz_1@1/config`,
+      popupTemplate: popupTemplateWithDefaultUI,
+      outFields: ['*'],
+    },
+  },
+  {
+    id: '111224',
+    name: 'test111224',
+    layer: {
+      type: 'S3M',
+      visible: true,
+      enableFillAndWireFrame: false,
+      url: `http://106.14.242.98:8090/iserver/services/3D-1/rest/realspace/datas/YHXSJZ_1@1/config`,
+      popupTemplate: popupTemplateWithDefaultUI,
+      outFields: ['*'],
+    },
+  },
+  {
     id: '2',
     label: '吴中',
     expand: true,
