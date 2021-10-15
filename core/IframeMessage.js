@@ -1,16 +1,19 @@
 import LayerFactory from './utils/LayerFactory'
 import { isImageryLayer } from './utils/ImageryUtility'
 
-export function addMessageListener() {
+export function addMessageListener(transform) {
   window.addEventListener(
     'message',
     function(event) {
       if (event.origin === location.origin) {
         return
       }
-      debugger
+
       let options = JSON.parse(event.data)
       if (options.api === 'add-layer') {
+        if (transform) {
+          options = transform(event.data)
+        }
         addLayer(options)
       }
     },

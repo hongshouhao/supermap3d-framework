@@ -5,6 +5,7 @@
          class="viewport-spliter" />
     <el-tree show-checkbox
              node-key="id"
+             ref="tree1"
              :data="layersData"
              :props="{disabled:disableNode}"
              :default-expanded-keys="defaultExpandedKeys"
@@ -21,6 +22,7 @@
     <el-tree v-if="multiViewport"
              show-checkbox
              node-key="id"
+             ref="tree2"
              :data="layersData"
              :props="{disabled:disableNode}"
              :default-expanded-keys="defaultExpandedKeys"
@@ -47,8 +49,7 @@ export default {
       defaultExpandedKeys: [],
       defaultCheckedKeys: [],
       multiViewport: false,
-      layerFactory: null
-
+      layerFactory: null,
     }
   },
   computed: {
@@ -62,9 +63,12 @@ export default {
     let _this = this
     _this.layerFactory = new LayerFactory(_this.viewer)
     window.s3d.eventBus.addEventListener("framework-initialized", () => {
-      console.debug("framework-initialized")
       _this._checkLayersConfig()
       _this.init()
+    });
+
+    window.s3d.eventBus.addEventListener("layer-visible-changed", (s3d, ly) => {
+      _this._setLayerNodeChecked(ly)
     });
   },
   methods: {
@@ -91,12 +95,15 @@ export default {
 
           if (isImageryLayer(lyOptions.type)) {
             lyNode.cesiumLayer = _this.layerFactory.createImageLayer(lyOptions)
+            lyNode.cesiumLayer.nodeKey = lyNode.id
           } else if (lyOptions.type === 'S3M') {
             _this.layerFactory.createS3MLayer(lyOptions).then(ly => {
               lyNode.cesiumLayer = ly
+              lyNode.cesiumLayer.nodeKey = lyNode.id
             })
           } else if (lyOptions.type === 'MVT') {
             lyNode.cesiumLayer = _this.layerFactory.createMVTLayer(lyOptions)
+            lyNode.cesiumLayer.nodeKey = lyNode.id
           } else if (lyOptions.type === 'DEM') {
             Object.assign(lyNode, _this.layerFactory.createDEMLayer(lyOptions))
           } else {
@@ -111,7 +118,9 @@ export default {
         }
       }
     },
-    setLayerVisible1 (data, checked) { this.setLayerVisible(0, data, checked) },
+    setLayerVisible1 (data, checked) {
+      this.setLayerVisible(0, data, checked)
+    },
     setLayerVisible2 (data, checked) { this.setLayerVisible(1, data, checked) },
     setLayerVisible (viewport, data, checked) {
       if (data.children && data.children.length > 0) {
@@ -123,7 +132,16 @@ export default {
           data.cesiumLayer.setVisibleInViewport(viewport, checked);
         }
         else {
-          window.s3d._setLayerVisible(data.cesiumLayer, checked)
+          let layer = data.cesiumLayer
+          if (isImageryLayer(layer.type) || layer.type === 'MVT') {
+            if (layer.show !== checked) {
+              layer.show = checked
+            }
+          } else if (layer.type === 'S3M') {
+            if (layer.visible !== checked) {
+              layer.visible = checked
+            }
+          }
         }
       }
       else if (data.dem) {
@@ -228,7 +246,24 @@ export default {
           throw `图层配置错误: 图层名(${key})重复`
         }
       }
-    }
+    },
+    _setLayerNodeChecked (layer) {
+      if (layer.nodeKey) {
+        let keys = this.$refs.tree1.getCheckedKeys()
+        let idx = keys.findIndex((item) => item === layer.nodeKey)
+        if (layer.visible || layer.show) {
+          if (idx == -1) {
+            keys.push(layer.nodeKey)
+          }
+        }
+        else {
+          if (idx != -1) {
+            keys.splice(idx, 1);
+          }
+        }
+        this.$refs.tree1.setCheckedKeys(keys);
+      }
+    },
   }
 }
 </script>

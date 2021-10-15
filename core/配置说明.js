@@ -211,31 +211,40 @@ export default {
     },
     //影响底图
     earth: {
-      //可选类型：bing, tianditu, gaode, arcgis, arcgisex, supermap, custom
-      //具体参数参考超图文档：
-      //bing: BingMapsImageryProvider
-      //tianditu: TiandituImageryProvider
-      //gaode: UrlTemplateImageryProvider
-      //arcgis: ArcGisMapServerImageryProvider
-      //arcgisex: CGCS2000MapServerImageryProvider
-      //supermap: SuperMapImageryProvider
-      //custom: TileMapServiceImageryProvider
-      type: 'bing',
-      params: {
-        url: 'https://dev.virtualearth.net',
-        mapStyle: 'Aerial',
-        key: 'AoYWP4oApRkB0gyraUkMkJ-FNAqTOzNBfwgQYZflN0vDRLnD8KrwEm8lmLdwFYFh',
-      },
+      maps: [
+        {
+          //可选类型：bing, tianditu, gaode, arcgis, arcgisex, supermap, custom
+          //具体参数参考超图文档：
+          //bing: BingMapsImageryProvider
+          //tianditu: TiandituImageryProvider
+          //gaode: UrlTemplateImageryProvider
+          //arcgis: ArcGisMapServerImageryProvider
+          //arcgisex: CGCS2000MapServerImageryProvider
+          //supermap: SuperMapImageryProvider
+          //custom: TileMapServiceImageryProvider
+          type: 'bing',
+          params: {
+            url: 'https://dev.virtualearth.net',
+            mapStyle: 'Aerial',
+            key:
+              'AoYWP4oApRkB0gyraUkMkJ-FNAqTOzNBfwgQYZflN0vDRLnD8KrwEm8lmLdwFYFh',
+          },
+        },
+      ],
     },
     //普通电子底图
     normal: {
       default: true,
-      //高德
-      type: 'gaode',
-      params: {
-        url:
-          'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
-      },
+      maps: [
+        {
+          //高德
+          type: 'gaode',
+          params: {
+            url:
+              'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+          },
+        },
+      ],
     },
   },
 }

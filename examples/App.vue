@@ -9,7 +9,7 @@ export default {
   },
   mounted () {
     addMessageListener()
-    // window.s3d.topLeftBar.highLimitTool.setTargetLayers(['楼幢'])
+    window.s3d.topLeftBar.highLimitTool.setTargetLayers(['楼幢'])
   }
 }
 </script>

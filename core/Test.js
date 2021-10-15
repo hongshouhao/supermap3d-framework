@@ -8,8 +8,8 @@ export default class Test {
 
   doTest() {
     // this.entityToGeoJson()
-
-    this.sketchTest()
+    window.s3d.setLayerVisible('标志标线', true)
+    //this.sketchTest()
     // window.s3d.viewUtility.rotateZ(1)
     // window.s3d
     //   .query({ layer: '交通信号', sql: 'SMID =1' })

@@ -27,30 +27,34 @@ export const config = {
       default: false,
     },
     earth: {
-      type: 'bing',
-      params: {
-        url: 'https://dev.virtualearth.net',
-        mapStyle: Cesium.BingMapsStyle.AERIAL,
-        key: URL_CONFIG.BING_MAP_KEY,
-      },
-      // type: 'arcgis',
-      // params: {
-      //   url:
-      //     'http://36.153.213.20/GeoCMS/v1/cf/rest/services/MapService/ESRI/0f3f5490-5616-44d2-a1e4-5c664ad907fa?token=k9rELZ%2BePwRhalPbO%2FJyZWglMmTQ2x6upsVUTLlZA6KK7glHdYwd5PBbyHXLB1fMvlHXQ7yWycDBRTfq2FqaHZPdNX868fGMUsBHgINxW6fqLd4eWoGztA%3D%3D',
-      // },
+      default: true,
+      maps: [
+        {
+          type: 'arcgisex',
+          params: {
+            url:
+              'http://36.153.213.20/GeoCMS/v1/cf/rest/services/MapService/ESRI/0f3f5490-5616-44d2-a1e4-5c664ad907fa?token=k9rELZ%2BePwRhalPbO%2FJyZWglMmTQ2x6upsVUTLlZA6KK7glHdYwd5PBbyHXLB1fMvlHXQ7yWycDBRTfq2FqaHZPdNX868fGMUsBHgINxW6fqLd4eWoGztA%3D%3D',
+          },
+        },
+        {
+          type: 'arcgisex',
+          params: {
+            url:
+              'http://36.153.213.20/GeoCMS/v1/cf/rest/services/MapService/ESRI/3a7dc564-6c51-6f7d-1785-39fa4673b672?token=k9rELZ%2BePwRhalPbO%2FJyZWglMmTQ2x6upsVUTLlZA6KK7glHdYwd5PBbyHXLB1fMvlHXQ7yWycDBRTfq2FqaHZPdNX868fGMUsBHgINxW6fqLd4eWoGztA%3D%3D',
+          },
+        },
+      ],
     },
     normal: {
-      default: true,
-      type: 'gaode',
-      params: {
-        url:
-          'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
-      },
-      //   type: 'tianditu',
-      //   params: {
-      //     mapStyle: Cesium.TiandituMapsStyle['VEC_W'],
-      //     token: URL_CONFIG.TOKEN_TIANDITU,
-      //   },
+      maps: [
+        {
+          type: 'gaode',
+          params: {
+            url:
+              'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+          },
+        },
+      ],
     },
   },
 }

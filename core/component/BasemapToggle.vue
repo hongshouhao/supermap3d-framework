@@ -67,23 +67,23 @@ export default {
         if (mapKey === "none") {
           continue;
         }
-        let mapOptions = this.baseMapsConfig[mapKey]
-        if (!mapOptions.default) {
+        let mapConfig = this.baseMapsConfig[mapKey]
+        let maps = []
+        for (let mapOptions of mapConfig.maps) {
           let mapProvider = createImageryProvider(mapOptions)
           let map = this.viewer.imageryLayers.addImageryProvider(
             mapProvider
           );
-          map.alpha = 0
-          this.baseMaps[mapKey] = map
+          if (!mapConfig.default) {
+            map.alpha = 0
+          }
+          maps.push(map)
         }
-        else {
-          this.baseMaps[mapKey] = this.viewer.imageryLayers._layers[0]
-        }
+        this.baseMaps[mapKey] = maps
       }
     },
     toggleBasemap (type) {
       this.basemapType = type
-
       if (this.basemapType === 'none') {
         this.viewer.scene.globe.show = false;
         this.viewer.scene.skyBox.show = false;
@@ -98,22 +98,26 @@ export default {
 
         let alpha = 1
         if (this.baseMaps.current) {
-          alpha = this.baseMaps.current.alpha
+          alpha = this.baseMaps.current[0].alpha
         }
 
         for (let mapKey in this.baseMapsConfig) {
-          let map = this.baseMaps[mapKey]
-          if (map) {
+          if (mapKey === 'none') {
+            continue
+          }
+          let maps = this.baseMaps[mapKey]
+          for (let map of maps) {
             if (mapKey === type) {
               map.alpha = alpha
-              this.baseMaps.current = map
-              window.s3d.eventBus.dispatch("baseMap-changed");
             }
             else {
               map.alpha = 0
             }
           }
         }
+
+        this.baseMaps.current = this.baseMaps[mapKey]
+        window.s3d.eventBus.dispatch("baseMap-changed");
       }
     }
   }

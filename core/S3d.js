@@ -138,8 +138,10 @@ export default class S3d {
   _setLayerVisible(layer, visible) {
     if (isImageryLayer(layer.type) || layer.type === 'MVT') {
       layer.show = visible
+      window.s3d.eventBus.dispatch('layer-visible-changed', this, layer)
     } else if (layer.type === 'S3M') {
       layer.visible = visible
+      window.s3d.eventBus.dispatch('layer-visible-changed', this, layer)
     }
   }
   _getDefaultDataUrl(layer) {

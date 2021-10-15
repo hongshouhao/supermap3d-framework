@@ -19,7 +19,7 @@
 import TopLeftBar from './component/TopLeftBar.vue'
 import TopRightBar from './component/TopRightBar.vue'
 import Popup from './component/Popup.vue'
-import { createImageryProvider } from './utils/ImageryUtility'
+// import { createImageryProvider } from './utils/ImageryUtility'
 import { enableCursorStyle } from './utils/CursorUtility'
 
 export default {
@@ -40,16 +40,16 @@ export default {
     }
 
     let gConfig = window.s3d.config
-    let baseMapProvider = null
-    for (let mapKey in gConfig.baseMaps) {
-      let map = gConfig.baseMaps[mapKey]
-      if (map.default) {
-        if (mapKey !== "none") {
-          baseMapProvider = createImageryProvider(map)
-        }
-        break
-      }
-    }
+    // let baseMapProvider = null
+    // for (let mapKey in gConfig.baseMaps) {
+    //   let map = gConfig.baseMaps[mapKey]
+    //   if (map.default) {
+    //     if (mapKey !== "none") {
+    //       baseMapProvider = createImageryProvider(map)
+    //     }
+    //     break
+    //   }
+    // }
 
     let viewerOptions = {
       infoBox: false,
@@ -57,7 +57,7 @@ export default {
       navigation: false,
       baseLayerPicker: false,
       shouldAnimate: true,
-      imageryProvider: baseMapProvider,
+      // imageryProvider: baseMapProvider,
       // imageryProvider: new Cesium.TileMapServiceImageryProvider({
       //   url: 'http://cesium.agi.com/blackmarble',
       //   maximumLevel: 8,

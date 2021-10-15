@@ -37,14 +37,16 @@ export default {
     let _this = this
     window.s3d.eventBus.addEventListener("baseMap-changed", () => {
       if (this.baseMaps.current) {
-        _this.baseMapAlpha = parseInt(this.baseMaps.current.alpha * 100)
+        _this.baseMapAlpha = parseInt(this.baseMaps.current[0].alpha * 100)
       }
     });
   },
   methods: {
     changeBaseMapAlpha (alpha) {
       if (this.baseMaps && this.baseMaps.current)
-        this.baseMaps.current.alpha = alpha / 100;
+        for (let map of this.baseMaps.current) {
+          map.alpha = alpha / 100;
+        }
     },
     toggleRain (enable) {
       if (!this.rainTool) {
