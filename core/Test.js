@@ -8,6 +8,13 @@ export default class Test {
 
   doTest() {
     // this.entityToGeoJson()
+    window.s3d.toolbar.insertButton([2, 0], {
+      title: '测试',
+      icon: 'my-icon-mea-point',
+      click: function() {
+        alert('click')
+      },
+    })
     window.s3d.setLayerVisible('标志标线', true)
     //this.sketchTest()
     // window.s3d.viewUtility.rotateZ(1)

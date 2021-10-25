@@ -116,7 +116,7 @@ export default {
           }
         }
 
-        this.baseMaps.current = this.baseMaps[mapKey]
+        this.baseMaps.current = this.baseMaps[type]
         window.s3d.eventBus.dispatch("baseMap-changed");
       }
     }

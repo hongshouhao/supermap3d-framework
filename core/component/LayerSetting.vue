@@ -19,12 +19,10 @@
 </template>
 
 <script> 
-import LayersRenderer from './LayersRenderer'
 export default {
   data () {
     return {
       enableRenderer: false,
-      layersRenderer: new LayersRenderer(window.s3d.viewer),
     }
   },
   computed: {
@@ -34,6 +32,13 @@ export default {
   },
   props: ["conf"],
   mounted () {
+    let _this = this
+    window.s3d.eventBus.addEventListener("layer-visible-changed-internal", (s3d, ly) => {
+      if (ly.name === _this.conf.layer.name && !ly.visible) {
+        _this.enableRenderer = false
+        _this.toogleRenderer(false)
+      }
+    });
   },
   methods: {
     setOpacity (opacity) {
@@ -41,10 +46,10 @@ export default {
     },
     toogleRenderer (enable) {
       if (enable) {
-        this.layersRenderer.startRender(this.conf.cesiumLayer.name)
+        window.s3d.layersRenderer.startRender(this.conf.cesiumLayer.name)
       }
       else {
-        this.layersRenderer.stopRender(this.conf.cesiumLayer.name)
+        window.s3d.layersRenderer.stopRender(this.conf.cesiumLayer.name)
       }
     }
   }

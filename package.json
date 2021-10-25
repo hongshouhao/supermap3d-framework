@@ -1,6 +1,6 @@
 {
   "name": "@sipsd/supermap3d-framework",
-  "version": "0.1.92",
+  "version": "0.1.931",
   "private": false,
   "main": "./lib/supermap3d-framework.umd.min.js",
   "files": [
@@ -34,6 +34,7 @@
     "eventbusjs": "^0.2.0",
     "jquery": "^3.6.0",
     "linq": "^3.2.4",
+    "mapbox-gl": "^2.5.1",
     "vue": "^2.6.11",
     "vue-round-slider": "^1.0.1"
   },
@@ -65,7 +66,9 @@
       "no-debugger": "off"
     }
   },
-  "eslintIgnore": [],
+  "eslintIgnore": [
+    "mapbox-gl.js"
+  ],
   "browserslist": [
     "> 1%",
     "last 2 versions",

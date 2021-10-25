@@ -136,10 +136,18 @@ export default {
           if (isImageryLayer(layer.type) || layer.type === 'MVT') {
             if (layer.show !== checked) {
               layer.show = checked
+              window.s3d.eventBus.dispatch('layer-visible-changed-internal', this, layer)
             }
           } else if (layer.type === 'S3M') {
             if (layer.visible !== checked) {
               layer.visible = checked
+              window.s3d.eventBus.dispatch('layer-visible-changed-internal', this, layer)
+
+              // if (!checked) {
+              //   if (layer.config.renderer) {
+              //     window.s3d.layersRenderer.stopRender(layer.name)
+              //   }
+              // }
             }
           }
         }

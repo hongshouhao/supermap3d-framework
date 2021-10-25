@@ -40,9 +40,9 @@ const install = function(Vue, config) {
   window.s3d = new S3d(conf)
 }
 
-if (typeof window !== 'undefined' && window.Vue) {
-  install(window.Vue)
-}
+// if (typeof window !== 'undefined' && window.Vue) {
+//   install(window.Vue)
+// }
 
 export default {
   install,

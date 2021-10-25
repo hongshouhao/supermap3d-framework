@@ -97,15 +97,6 @@ export const layers = [
         },
       },
       {
-        id: '26',
-        name: '红线',
-        layer: {
-          type: 'SMIMG',
-          visible: false,
-          url: `${baseUrl}iserver/services/map-PiCiZhiTu/rest/maps/批次`,
-        },
-      },
-      {
         id: '27',
         name: '地下管线',
         layer: {
@@ -205,6 +196,16 @@ export const layers = [
         },
       },
       {
+        id: '34343333',
+        name: 'sdfasdfasdfsf',
+        layer: {
+          type: 'S3M',
+          visible: false,
+          url: `http://192.168.175.70:8090/iserver/services/3D-local3DCache-gusuGuSuQu/rest/realspace/datas/gusu@%E5%A7%91%E8%8B%8F%E5%8C%BA/config`,
+          outFields: ['*'],
+        },
+      },
+      {
         id: '35',
         name: '电通',
         layer: {
@@ -212,6 +213,16 @@ export const layers = [
           visible: false,
           url: `${baseUrl}iserver/services/3D-DianTong/rest/realspace/datas/电通_1@电通/config`,
           datasetName: '电通:电通_1',
+          outFields: ['*'],
+        },
+      },
+      {
+        id: '3aa5',
+        name: 'ARCGISIMG',
+        layer: {
+          type: 'ARCGISIMG',
+          visible: true,
+          url: `http://58.210.9.133/geoserver/rest/services/LS/SLZYNEW/MapServer`,
           outFields: ['*'],
         },
       },

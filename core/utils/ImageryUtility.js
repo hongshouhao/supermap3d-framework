@@ -1,3 +1,7 @@
+// import axios from 'axios'
+import MapBoxMVTImageryProvider from '../providers/MapBoxMVTImageryProvider'
+import { exampleStyle } from '../providers/example-style'
+
 export const createImageryProvider = function(options) {
   switch (options.type) {
     case 'bing':
@@ -14,6 +18,14 @@ export const createImageryProvider = function(options) {
       return new Cesium.UrlTemplateImageryProvider(options.params)
     case 'supermap':
       return new Cesium.SuperMapImageryProvider(options.params)
+    case 'mapbox':
+      return new Cesium.MapboxStyleImageryProvider(options.params)
+    case 'geoserver':
+      debugger
+      return new Cesium.WebMapServiceImageryProvider(options.params)
+    case 'mapbox-mvt':
+      return new MapBoxMVTImageryProvider({ style: exampleStyle })
+
     default:
       throw `暂不支持类型为${options.type}的栅格图层`
   }
@@ -29,3 +41,9 @@ export const isImageryLayer = function(type) {
       return false
   }
 }
+
+// function _getArcGisToken(options) {
+//   if (typeof options.token === 'object') {
+//     axios(options.token)
+//   }
+// }

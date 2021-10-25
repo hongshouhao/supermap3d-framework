@@ -20,7 +20,7 @@ import { setCursorStyle, resetCursorStyle } from './utils/CursorUtility'
 import { isImageryLayer } from './utils/ImageryUtility'
 
 import SketchTool from './tools/Sketch/SketchTool'
-
+import LayersRenderer from './component/LayersRenderer'
 // import './materials'
 
 export default class S3d {
@@ -49,6 +49,7 @@ export default class S3d {
     this.debugUtility = new DebugUtility(viewer)
     this.pickingUtility = new PickingUtility(viewer.scene)
     this.sketchTool = new SketchTool(viewer)
+    this.layersRenderer = new LayersRenderer(viewer)
   }
 
   setCursor(className) {
@@ -138,10 +139,15 @@ export default class S3d {
   _setLayerVisible(layer, visible) {
     if (isImageryLayer(layer.type) || layer.type === 'MVT') {
       layer.show = visible
-      window.s3d.eventBus.dispatch('layer-visible-changed', this, layer)
+      this.eventBus.dispatch('layer-visible-changed', this, layer)
     } else if (layer.type === 'S3M') {
       layer.visible = visible
-      window.s3d.eventBus.dispatch('layer-visible-changed', this, layer)
+      if (!visible) {
+        if (layer.config.renderer) {
+          this.layersRenderer.stopRender(layer.name)
+        }
+      }
+      this.eventBus.dispatch('layer-visible-changed', this, layer)
     }
   }
   _getDefaultDataUrl(layer) {
