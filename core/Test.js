@@ -3,20 +3,15 @@ export default class Test {
   constructor() {
     this.count = 1
     this.sketchTool = new SketchTool(window.s3d.viewer)
+    this.sketchTool.setMultiable(false)
     this.sketchTestStep = 0
   }
 
   doTest() {
+    //this.insertToolButton()
     // this.entityToGeoJson()
-    window.s3d.toolbar.insertButton([2, 0], {
-      title: '测试',
-      icon: 'my-icon-mea-point',
-      click: function() {
-        alert('click')
-      },
-    })
-    window.s3d.setLayerVisible('标志标线', true)
-    //this.sketchTest()
+    // window.s3d.setLayerVisible('标志标线', true)
+    this.sketchTest()
     // window.s3d.viewUtility.rotateZ(1)
     // window.s3d
     //   .query({ layer: '交通信号', sql: 'SMID =1' })
@@ -54,6 +49,15 @@ export default class Test {
     // console.log(window.s3d.getLayer((x) => x.name === '供电'))
   }
 
+  insertToolButton() {
+    window.s3d.toolbar.insertButton([2, 0], {
+      title: '测试',
+      icon: 'my-icon-mea-point',
+      click: function() {
+        alert('click')
+      },
+    })
+  }
   load3dTiles() {
     var tileset = window.s3d.scene.primitives.add(
       new Cesium.Cesium3DTileset({
@@ -98,9 +102,11 @@ export default class Test {
   }
   entityToGeoJson() {
     window.s3d.debugUtility.drawCameraDirection()
-    window.s3d.viewer.entities.toWKT().then((geojson) => console.log(geojson))
+    window.s3d.viewer.entities
+      .toGeoJson()
+      .then((geojson) => console.log(geojson))
     window.s3d.viewer.entities.values[0]
-      .toWKT()
+      .toGeoJson()
       .then((geojson) => console.log(geojson))
   }
 }

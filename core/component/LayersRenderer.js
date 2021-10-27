@@ -5,10 +5,8 @@ export default class LayersRenderer {
 
   startRender(layer) {
     let ly = window.s3d.getLayer(layer)
-    if (ly.config.renderer) {
-      if (ly.config.renderer.type === 'S3MLAYER') {
-        this.addS3MRender(ly)
-      }
+    if (ly.config.renderer?.type === 'S3MLAYER') {
+      this.addS3MRender(ly)
     }
   }
 
@@ -38,7 +36,7 @@ export default class LayersRenderer {
 
   stopRender(layer) {
     let ly = window.s3d.getLayer(layer)
-    if (ly.config.renderer.type === 'S3MLAYER') {
+    if (ly.config.renderer?.type === 'S3MLAYER') {
       let lyName = this._getS3MRenderLayerName(ly.name)
       let renderLayer = this.viewer.scene.layers.find(lyName)
       if (renderLayer) {

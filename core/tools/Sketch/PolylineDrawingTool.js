@@ -6,6 +6,13 @@ export default class PolylineDrawingTool {
     this.multiable = true
     this.clampToGround = true
 
+    this.entityAdded = function(geo) {
+      console.log('entityAdded', geo)
+    }
+    this.drawingFinished = function(geoms) {
+      console.log('drawingFinished', geoms)
+    }
+
     this._drawHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
     this._offsetZ = 0
     this._entityVertexes = []
@@ -44,8 +51,14 @@ export default class PolylineDrawingTool {
       curEntVers.splice(curEntVers.length - 1, 1)
       _this._currentEntity = null
 
+      if (_this.entityAdded) {
+        _this.entities[_this.entities.length - 1].toGeoJson().then((result) => {
+          _this.entityAdded(result)
+        })
+      }
+
       if (!_this.multiable) {
-        _this.stop()
+        _this.finishDrawing()
       }
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
@@ -69,12 +82,21 @@ export default class PolylineDrawingTool {
     this._drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
 
+  finishDrawing() {
+    this.stop()
+    if (this.drawingFinished) {
+      this.getGeometries().then((result) => {
+        this.drawingFinished(result)
+      })
+    }
+  }
+
   getGeometries() {
     let coll = new Cesium.EntityCollection(this.viewer.entities.owner)
     for (let ent of this.entities) {
       coll.add(ent)
     }
-    return coll.toWKT()
+    return coll.toGeoJson()
   }
 
   _createEntity(point) {

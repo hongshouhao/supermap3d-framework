@@ -3,8 +3,6 @@
 
 serialize-javascript
 
-
-
 ```javascript
 /* eslint-disable no-unused-vars */
 

@@ -23,6 +23,21 @@ export default class SketchTool {
     this._polygonDrawingTool.multiable = value
   }
 
+  addEvent(type, callback) {
+    switch (type) {
+      case 'entityAdded':
+        this._lineDrawingTool.entityAdded = callback
+        this._polygonDrawingTool.entityAdded = callback
+        break
+      case 'drawingFinished':
+        this._lineDrawingTool.drawingFinished = callback
+        this._polygonDrawingTool.drawingFinished = callback
+        break
+      default:
+        throw '暂不支持此事件'
+    }
+  }
+
   start(geoType) {
     this.stop()
     if (geoType) {

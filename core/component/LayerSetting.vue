@@ -27,7 +27,7 @@ export default {
   },
   computed: {
     showRenderer () {
-      return this.conf.layer.renderer && this.conf.layer.renderer.type === "S3MLAYER"
+      return this.conf.layer.renderer?.type === "S3MLAYER"
     }
   },
   props: ["conf"],

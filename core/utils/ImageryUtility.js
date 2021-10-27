@@ -21,7 +21,6 @@ export const createImageryProvider = function(options) {
     case 'mapbox':
       return new Cesium.MapboxStyleImageryProvider(options.params)
     case 'geoserver':
-      debugger
       return new Cesium.WebMapServiceImageryProvider(options.params)
     case 'mapbox-mvt':
       return new MapBoxMVTImageryProvider({ style: exampleStyle })

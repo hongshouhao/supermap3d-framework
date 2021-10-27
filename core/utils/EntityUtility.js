@@ -1,14 +1,14 @@
 import { kml } from '@tmcw/togeojson'
 
-Cesium.Entity.prototype.toWKT = function() {
+Cesium.Entity.prototype.toGeoJson = function() {
   let coll = new Cesium.EntityCollection(this.entityCollection.owner)
   coll.add(this)
-  return coll.toWKT().then((result) => {
+  return coll.toGeoJson().then((result) => {
     return result.features[0]
   })
 }
 
-Cesium.EntityCollection.prototype.toWKT = function() {
+Cesium.EntityCollection.prototype.toGeoJson = function() {
   let ents = this
   return new Promise(function(resolve) {
     Cesium.exportKml({
