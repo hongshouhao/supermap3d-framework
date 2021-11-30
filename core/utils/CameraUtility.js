@@ -5,8 +5,8 @@ export default class CameraUtility {
     this.viewer = viewer
     this.camera = this.viewer.camera
     Cesium.Camera.prototype.getCameraHeight = () => this.getCameraHeight()
-    Cesium.Camera.prototype.flyToS3mFeatures = (features) =>
-      this.flyToS3mFeatures(features)
+    Cesium.Camera.prototype.flyToS3mFeatures = (features, options) =>
+      this.flyToS3mFeatures(features, options)
     Cesium.Camera.prototype.lookAtFeature = (feature, direction, options) =>
       this.lookAtFeature(feature, direction, options)
     Cesium.Camera.prototype.flyToPoints = (points, options) =>
@@ -21,14 +21,15 @@ export default class CameraUtility {
     ).height
   }
 
-  flyToS3mFeatures(features) {
+  flyToS3mFeatures(features, options) {
     let pts = []
     for (let feature of features) {
       let box = boxCornersFromFeature(feature)
       pts.push(box[0])
       pts.push(box[1])
     }
-    return this._flyToPoints(pts, { scale: 1.5 })
+
+    return this._flyToPoints(pts, options)
   }
 
   lookAtFeature(feature, direction, options) {

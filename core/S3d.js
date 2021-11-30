@@ -316,7 +316,7 @@ export default class S3d {
        sql
      }
    */
-  flyTo(params) {
+  flyTo(params, options) {
     if (params instanceof Array && params.length > 0) {
       let sample = params[0]
       if (typeof sample === 'number') {
@@ -328,40 +328,48 @@ export default class S3d {
         } else {
           throw '参数错误'
         }
-        return this.cameraUtility.flyToPoints(pts)
+        return this.cameraUtility.flyToPoints(pts, options)
       } else if (isCartesian3(sample)) {
-        return this.cameraUtility.flyToPoints(params)
+        return this.cameraUtility.flyToPoints(params, options)
       } else if (isS3mFeature(sample)) {
-        return this.cameraUtility.flyToS3mFeatures(params)
+        return this.cameraUtility.flyToS3mFeatures(params, options)
       }
     } else if (isCartesian3(params)) {
-      return this.cameraUtility.flyToPoints([params])
+      return this.cameraUtility.flyToPoints([params], options)
     } else if (isS3mFeature(params)) {
-      return this.cameraUtility.flyToS3mFeatures([params])
+      return this.cameraUtility.flyToS3mFeatures([params], options)
     }
   }
-  flyToLayer(layer) {
-    if (layer.type === 'MVT') {
-      let bounds = layer.rectangle
-      this.viewer.camera.flyTo({
-        destination: new Cesium.Cartesian3.fromRadians(
-          (bounds.east + bounds.west) * 0.5,
-          (bounds.north + bounds.south) * 0.5,
-          10000
-        ),
-        orientation: {
+  flyToLayer(layer, options) {
+    if (layer) {
+      if (layer.type === 'MVT') {
+        let duration = options?.duration ?? 2
+        let height = options?.height ?? 10000
+        let orientation = options?.orientation ?? {
           heading: 0,
           roll: 0,
           pitch: -1.57,
-        },
-        duration: 2,
-      })
-    } else {
-      if (layer) {
-        this.viewer.flyTo(layer)
+        }
+        let bounds = layer.rectangle
+        // this._flyTo(layer.rectangle, options)
+        this.viewer.camera.flyTo({
+          destination: new Cesium.Cartesian3.fromRadians(
+            (bounds.east + bounds.west) * 0.5,
+            (bounds.north + bounds.south) * 0.5,
+            height
+          ),
+          orientation: orientation,
+          duration: duration,
+        })
+      } else if (layer.type === 'S3M') {
+        debugger
+        this._flyToBounds(layer.layerBounds, options)
+        // this.viewer.flyTo(layer, options)
       } else {
-        throw '无法定位图层, 图层可能加载失败'
+        this.viewer.flyTo(layer, options)
       }
+    } else {
+      throw '无法定位图层, 图层可能加载失败'
     }
   }
   /*
@@ -372,12 +380,12 @@ export default class S3d {
     features:[] ,(可选)
   }
   */
-  flyToS3mFeatures(params) {
+  flyToS3mFeatures(params, options) {
     let _this = this
     let fly = function(features) {
       let ids = features.map((x) => x.ID)
       _this.getLayer(params.layer).setSelection(ids)
-      return _this.cameraUtility.flyToS3mFeatures(features)
+      return _this.cameraUtility.flyToS3mFeatures(features, options)
     }
     if (params.layer && (params.ids || params.sql)) {
       return this.query(params).then((response) => {
@@ -403,5 +411,31 @@ export default class S3d {
     }
 
     return pickedObjects
+  }
+  // , distance, orientation, duration
+  _flyToBounds(bounds, options) {
+    let rectangle = Cesium.Rectangle.fromRadians(
+      bounds.west,
+      bounds.south,
+      bounds.east,
+      bounds.north
+    )
+
+    const northwest = Cesium.Rectangle.northwest(rectangle) //西北角弧度坐标（左上）
+    const southwest = Cesium.Rectangle.southwest(rectangle) //西南角弧度坐标（左下）
+    const northeast = Cesium.Rectangle.northeast(rectangle) //东北角弧度坐标（右上）
+    const southeast = Cesium.Rectangle.southeast(rectangle) //东南角弧度坐标（右下）
+
+    let pts = Cesium.Cartesian3.fromDegreesArray([
+      Cesium.Math.toDegrees(northwest.longitude),
+      Cesium.Math.toDegrees(northwest.latitude),
+      Cesium.Math.toDegrees(southwest.longitude),
+      Cesium.Math.toDegrees(southwest.latitude),
+      Cesium.Math.toDegrees(northeast.longitude),
+      Cesium.Math.toDegrees(northeast.latitude),
+      Cesium.Math.toDegrees(southeast.longitude),
+      Cesium.Math.toDegrees(southeast.latitude),
+    ])
+    this.flyTo(pts, options)
   }
 }

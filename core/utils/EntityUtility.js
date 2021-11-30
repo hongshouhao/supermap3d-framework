@@ -9,14 +9,32 @@ Cesium.Entity.prototype.toGeoJson = function() {
 }
 
 Cesium.EntityCollection.prototype.toGeoJson = function() {
+  debugger
   let ents = this
   return new Promise(function(resolve) {
     Cesium.exportKml({
       entities: ents,
     }).then(function(result) {
       let dom = new DOMParser().parseFromString(result.kml, 'application/xml')
-      let json = kml(dom)
-      resolve(json)
+      let coll = kml(dom)
+      debugger
+
+      //先简单处理，不考虑复杂图形
+      for (let f of coll.features) {
+        if (f.geometry.type === 'Polygon') {
+          let polyCoords = f.geometry.coordinates[0]
+          let start = polyCoords[0]
+          let end = polyCoords[polyCoords.length - 1]
+          if (
+            start[0] !== end[0] ||
+            start[1] !== end[1] ||
+            start[2] !== end[2]
+          ) {
+            polyCoords.push(Array.from(start))
+          }
+        }
+      }
+      resolve(coll)
     })
   })
 }

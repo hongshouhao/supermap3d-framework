@@ -1,7 +1,7 @@
 import LayerFactory from './utils/LayerFactory'
 import { isImageryLayer } from './utils/ImageryUtility'
 
-export function addMessageListener(transform) {
+export function addMessageListener(transform, callback) {
   window.addEventListener(
     'message',
     function(event) {
@@ -9,20 +9,23 @@ export function addMessageListener(transform) {
         return
       }
 
-      let options = JSON.parse(event.data)
-      if (options.api === 'add-layer') {
+      let pramas = JSON.parse(event.data)
+      if (pramas.api === 'add-layer') {
         if (transform) {
-          options = transform(event.data)
+          pramas = transform(event.data)
         }
-        addLayer(options)
+        let ly = addLayer(pramas)
+        if (callback) {
+          callback(ly)
+        }
       }
     },
     false
   )
 }
 
-function addLayer(options) {
-  if (options.clearTemp) {
+function addLayer(pramas) {
+  if (pramas.clearTemp) {
     let tempLys = []
     for (let ly of window.s3d.scene.layers.layerQueue) {
       if (ly.name.startsWith('temp_')) {
@@ -33,21 +36,24 @@ function addLayer(options) {
       window.s3d.scene.layers.remove(ly.name, true)
     }
   }
-  options.name = 'temp_' + options.name
+  pramas.name = 'temp_' + pramas.name
   let factory = new LayerFactory(window.s3d.viewer)
-  if (isImageryLayer(options.type)) {
-    let ly = factory.createImageLayer(options)
-    window.s3d.flyToLayer(ly)
-  } else if (options.type === 'S3M') {
-    factory.createS3MLayer(options).then((ly) => {
-      window.s3d.flyToLayer(ly)
+  if (isImageryLayer(pramas.type)) {
+    let ly = factory.createImageLayer(pramas)
+    window.s3d.flyToLayer(ly, pramas.options)
+    return ly
+  } else if (pramas.type === 'S3M') {
+    return factory.createS3MLayer(pramas).then((ly) => {
+      window.s3d.flyToLayer(ly, pramas.options)
+      return ly
     })
-  } else if (options.type === 'MVT') {
-    let ly = factory.createMVTLayer(options)
-    window.s3d.flyToLayer(ly)
+  } else if (pramas.type === 'MVT') {
+    let ly = factory.createMVTLayer(pramas)
+    window.s3d.flyToLayer(ly, pramas.options)
+    return ly
   }
-  // else if (options.type === 'DEM') {
-  //   factory.createDEMLayer(options)
+  // else if (pramas.type === 'DEM') {
+  //   factory.createDEMLayer(pramas)
   // }
   else {
     throw '图层类型配置错误'

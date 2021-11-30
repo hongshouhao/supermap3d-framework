@@ -13,6 +13,7 @@ export const layers = [
   {
     id: '1',
     name: 'DEM',
+    display: false,
     layer: {
       type: 'DEM',
       visible: false,
@@ -23,6 +24,7 @@ export const layers = [
   {
     id: '111',
     name: '市局水下',
+    disable: true,
     layer: {
       type: 'SMIMG',
       visible: true,
@@ -30,15 +32,13 @@ export const layers = [
     },
   },
   {
-    id: '111222',
-    name: 'test122',
+    id: 'dachangjing',
+    name: '大场景',
+    disable: false,
     layer: {
       type: 'S3M',
-      visible: true,
-      enableFillAndWireFrame: false,
-      url: `http://106.14.242.98:8090/iserver/services/3D-dsyz/rest/realspace/datas/dsyz_1@1/config`,
-      popupTemplate: popupTemplateWithDefaultUI,
-      outFields: ['*'],
+      visible: false,
+      url: `http://192.168.175.70:8090/iserver/services/3D-local3DCache-szgx4490/rest/realspace/datas/Config_3/config`,
     },
   },
   {
@@ -48,9 +48,17 @@ export const layers = [
       type: 'S3M',
       visible: true,
       enableFillAndWireFrame: false,
-      url: `http://106.14.242.98:8090/iserver/services/3D-1/rest/realspace/datas/YHXSJZ_1@1/config`,
+      url: `${baseUrl}iserver/services/3D-1/rest/realspace/datas/YHXSJZ_1@1/config`,
       popupTemplate: popupTemplateWithDefaultUI,
       outFields: ['*'],
+      defaultCamera: {
+        duration: 2,
+        offset: {
+          heading: 6.087014263548862,
+          pitch: -0.5091484573438768,
+          range: 100,
+        },
+      },
     },
   },
   {
@@ -196,16 +204,6 @@ export const layers = [
         },
       },
       {
-        id: '34343333',
-        name: 'sdfasdfasdfsf',
-        layer: {
-          type: 'S3M',
-          visible: false,
-          url: `http://192.168.175.70:8090/iserver/services/3D-local3DCache-gusuGuSuQu/rest/realspace/datas/gusu@%E5%A7%91%E8%8B%8F%E5%8C%BA/config`,
-          outFields: ['*'],
-        },
-      },
-      {
         id: '35',
         name: '电通',
         layer: {
@@ -213,16 +211,6 @@ export const layers = [
           visible: false,
           url: `${baseUrl}iserver/services/3D-DianTong/rest/realspace/datas/电通_1@电通/config`,
           datasetName: '电通:电通_1',
-          outFields: ['*'],
-        },
-      },
-      {
-        id: '3aa5',
-        name: 'ARCGISIMG',
-        layer: {
-          type: 'ARCGISIMG',
-          visible: true,
-          url: `http://58.210.9.133/geoserver/rest/services/LS/SLZYNEW/MapServer`,
           outFields: ['*'],
         },
       },

@@ -1,5 +1,7 @@
 import { layers } from './layers'
 
+console.log(URL_CONFIG)
+
 export const config = {
   iServerBaseURL: process.env.VUE_APP_ISERVER_BASE_URL,
   dem: URL_CONFIG.SiChuan_TERRAIN,
@@ -72,12 +74,18 @@ export const config = {
         //   },
         // },
         {
-          type: 'tianditu',
+          type: 'supermap',
           params: {
-            mapStyle: Cesium.TiandituMapsStyle['VEC_W'],
-            token: URL_CONFIG.TOKEN_TIANDITU,
+            url: URL_CONFIG.SUPERMAP_IMG_MEC,
           },
         },
+        // {
+        //   type: 'tianditu',
+        //   params: {
+        //     mapStyle: Cesium.TiandituMapsStyle['VEC_W'],
+        //     token: URL_CONFIG.TOKEN_TIANDITU,
+        //   },
+        // },
       ],
     },
   },

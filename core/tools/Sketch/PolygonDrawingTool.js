@@ -16,9 +16,9 @@ export default class PolygonDrawingTool {
 
     this._drawHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
     this._offsetZ = 0
-    this._entitiesFill = []
+    this._entitiesOutline = []
     this._entityVertexes = []
-    this._currentEntity = null
+    this._currentEntityOutline = null
     this._currentEntityFill = null
   }
 
@@ -31,7 +31,7 @@ export default class PolygonDrawingTool {
     _this._drawHandler.setInputAction(function(e) {
       let point = window.s3d.viewUtility.screenPositionToCartesian(e.position)
       point.z = point.z + _this._offsetZ
-      if (!_this._currentEntity) {
+      if (!_this._currentEntityOutline) {
         _this._createEntity(point)
       } else {
         let curEntVers = _this._getCurrentEntityVertexes()
@@ -40,7 +40,7 @@ export default class PolygonDrawingTool {
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
     _this._drawHandler.setInputAction(function(e) {
-      if (_this._currentEntity) {
+      if (_this._currentEntityOutline) {
         let point = window.s3d.viewUtility.screenPositionToCartesian(
           e.endPosition
         )
@@ -52,7 +52,7 @@ export default class PolygonDrawingTool {
     _this._drawHandler.setInputAction(function() {
       let curEntVers = _this._getCurrentEntityVertexes()
       curEntVers.splice(curEntVers.length - 2, 1)
-      _this._currentEntity = null
+      _this._currentEntityOutline = null
       _this._currentEntityFill = null
 
       if (_this.entityAdded) {
@@ -73,13 +73,13 @@ export default class PolygonDrawingTool {
       this.viewer.entities.remove(ent)
     }
 
-    for (let ent of this._entitiesFill) {
+    for (let ent of this._entitiesOutline) {
       this.viewer.entities.remove(ent)
     }
 
     this.entities = []
-    this._entitiesFill = []
-    this._currentEntity = null
+    this._entitiesOutline = []
+    this._currentEntityOutline = null
     this._currentEntityFill = null
     this._entityVertexes = []
   }
@@ -112,8 +112,7 @@ export default class PolygonDrawingTool {
   _createEntity(point) {
     let curEntVers = [point, point.clone(), point.clone()]
     this._entityVertexes.push(curEntVers)
-
-    this._currentEntity = this.viewer.entities.add({
+    this._currentEntityOutline = this.viewer.entities.add({
       name: 'sketch_polygon_outline',
       polyline: {
         positions: curEntVers,
@@ -138,18 +137,18 @@ export default class PolygonDrawingTool {
       },
     })
 
-    this.entities.push(this._currentEntity)
-    this._entitiesFill.push(this._currentEntityFill)
+    this.entities.push(this._currentEntityFill)
+    this._entitiesOutline.push(this._currentEntityOutline)
   }
 
   _updateEntity(point) {
-    if (!this._currentEntity) {
+    if (!this._currentEntityOutline) {
       return
     }
 
     let curEntVers = this._getCurrentEntityVertexes()
     curEntVers[curEntVers.length - 2] = point
-    this._currentEntity.polyline.positions = new Cesium.CallbackProperty(
+    this._currentEntityOutline.polyline.positions = new Cesium.CallbackProperty(
       () => curEntVers,
       false
     )

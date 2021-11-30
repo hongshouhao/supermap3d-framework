@@ -106,6 +106,15 @@ export default {
           'http://localhost/iserver/services/3D-管线/rest/realspace/datas/管线/config',
         datasetName: '污水:污水_1',
         outFields: ['*'],
+        //定位时默认的相机参数
+        defaultCamera: {
+          duration: 2,
+          offset: {
+            heading: 6.087014263548862,
+            pitch: -0.5091484573438768,
+            range: 100,
+          },
+        },
         //渲染方式，目前只有管线流向
         renderer: {
           //渲染类型，使用S3M图层作为另一个图层的渲染
@@ -123,6 +132,10 @@ export default {
     {
       id: '36',
       name: '测试栅格图层',
+      //隐藏图层节点，图层数据正常加载，但是在图层树中隐藏节点
+      display: false,
+      //禁用图层节点
+      disable: true,
       layer: {
         //栅格图层类型，另外还有"ARCGISEXIMG"和"ARCGISIMG"
         //ARCGISEXIMG：坐标系为4490或3857的arcgis图层

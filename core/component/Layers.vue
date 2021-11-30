@@ -1,39 +1,44 @@
 <template>
   <div class="layer-tree">
-    <div ref="viewportSpliter"
-         v-show="multiViewport"
-         class="viewport-spliter" />
-    <el-tree show-checkbox
-             node-key="id"
-             ref="tree1"
-             :data="layersData"
-             :props="{disabled:disableNode}"
-             :default-expanded-keys="defaultExpandedKeys"
-             :default-checked-keys="defaultCheckedKeys"
-             :render-content="renderExtButton"
-             @check-change="setLayerVisible1">
+    <div
+      ref="viewportSpliter"
+      v-show="multiViewport"
+      class="viewport-spliter"
+    />
+    <el-tree
+      show-checkbox
+      node-key="id"
+      ref="tree1"
+      :data="layersData"
+      :props="{ disabled: disableNode }"
+      :default-expanded-keys="defaultExpandedKeys"
+      :default-checked-keys="defaultCheckedKeys"
+      :render-content="renderExtButton"
+      @check-change="setLayerVisible1"
+    >
     </el-tree>
 
-    <div v-if="multiViewport"
-         class="divider">
+    <div v-show="multiViewport" class="divider">
       <el-divider direction="vertical"></el-divider>
     </div>
 
-    <el-tree v-if="multiViewport"
-             show-checkbox
-             node-key="id"
-             ref="tree2"
-             :data="layersData"
-             :props="{disabled:disableNode}"
-             :default-expanded-keys="defaultExpandedKeys"
-             :default-checked-keys="defaultCheckedKeys"
-             :render-content="renderExtButton"
-             @check-change="setLayerVisible2">
+    <el-tree
+      v-show="multiViewport"
+      show-checkbox
+      node-key="id"
+      ref="tree2"
+      :data="layersData"
+      :props="{ disabled: disableNode }"
+      :default-expanded-keys="defaultExpandedKeys"
+      :default-checked-keys="defaultCheckedKeys"
+      :render-content="renderExtButton"
+      @check-change="setLayerVisible2"
+    >
     </el-tree>
   </div>
 </template>
 
-<script> 
+<script>
 import LayerSetting from './LayerSetting.vue'
 import LayerFactory from '../utils/LayerFactory'
 import { isImageryLayer } from '../utils/ImageryUtility'
@@ -41,9 +46,9 @@ import { isImageryLayer } from '../utils/ImageryUtility'
 export default {
   components: {
     // eslint-disable-next-line vue/no-unused-components
-    LayerSetting
+    LayerSetting,
   },
-  data () {
+  data() {
     return {
       layersData: [],
       defaultExpandedKeys: [],
@@ -53,35 +58,42 @@ export default {
     }
   },
   computed: {
-    viewer () {
+    viewer() {
       return window.s3d.viewer
-    }
+    },
   },
   props: [],
-  mounted () {
+  mounted() {
     window.s3d.layerTree = this
     let _this = this
     _this.layerFactory = new LayerFactory(_this.viewer)
-    window.s3d.eventBus.addEventListener("framework-initialized", () => {
+    window.s3d.eventBus.addEventListener('framework-initialized', () => {
       _this._checkLayersConfig()
       _this.init()
-    });
+    })
 
-    window.s3d.eventBus.addEventListener("layer-visible-changed", (s3d, ly) => {
+    window.s3d.eventBus.addEventListener('layer-visible-changed', (s3d, ly) => {
       _this._setLayerNodeChecked(ly)
-    });
+    })
   },
   methods: {
-    init () {
+    init() {
       if (this.viewer) {
         this.addLayers(window.s3d.config.layers, -1)
         this.layersData = window.s3d.config.layers
 
-        this.viewer.camera.flyTo(window.s3d.config.defaultCamera);
+        this.$nextTick(() => {
+          let dom = document.querySelectorAll('.hide-tree-node')
+          dom.forEach((item) => {
+            item.parentNode.parentNode.style.display = 'none'
+          })
+        })
+
+        this.viewer.camera.flyTo(window.s3d.config.defaultCamera)
         this.viewer._element.appendChild(this.$refs.viewportSpliter)
       }
     },
-    addLayers (layersData) {
+    addLayers(layersData) {
       let _this = this
       for (let lyNode of layersData) {
         let lyOptions = lyNode.layer
@@ -97,7 +109,7 @@ export default {
             lyNode.cesiumLayer = _this.layerFactory.createImageLayer(lyOptions)
             lyNode.cesiumLayer.nodeKey = lyNode.id
           } else if (lyOptions.type === 'S3M') {
-            _this.layerFactory.createS3MLayer(lyOptions).then(ly => {
+            _this.layerFactory.createS3MLayer(lyOptions).then((ly) => {
               lyNode.cesiumLayer = ly
               lyNode.cesiumLayer.nodeKey = lyNode.id
             })
@@ -109,8 +121,7 @@ export default {
           } else {
             throw '图层类型配置错误'
           }
-        }
-        else if (lyNode.children) {
+        } else if (lyNode.children) {
           if (lyNode.expand) {
             _this.defaultExpandedKeys.push(lyNode.id)
           }
@@ -118,31 +129,56 @@ export default {
         }
       }
     },
-    setLayerVisible1 (data, checked) {
+    setLayerVisible1(data, checked) {
       this.setLayerVisible(0, data, checked)
     },
-    setLayerVisible2 (data, checked) { this.setLayerVisible(1, data, checked) },
-    setLayerVisible (viewport, data, checked) {
+    setLayerVisible2(data, checked) {
+      this.setLayerVisible(1, data, checked)
+    },
+    setLayerVisible(viewport, data, checked) {
       if (data.children && data.children.length > 0) {
         return
       }
-
       if (data.cesiumLayer) {
+        let layer = data.cesiumLayer
         if (this.multiViewport) {
-          data.cesiumLayer.setVisibleInViewport(viewport, checked);
-        }
-        else {
-          let layer = data.cesiumLayer
+          if (layer.type === 'S3M') {
+            if (!layer.visible) {
+              layer.visible = true
+
+              if (viewport === 0) {
+                layer.setVisibleInViewport(0, checked)
+              } else {
+                layer.setVisibleInViewport(0, false)
+              }
+
+              if (viewport === 1) {
+                layer.setVisibleInViewport(1, checked)
+              } else {
+                layer.setVisibleInViewport(1, false)
+              }
+            } else {
+              layer.setVisibleInViewport(viewport, checked)
+            }
+          }
+        } else {
           if (isImageryLayer(layer.type) || layer.type === 'MVT') {
             if (layer.show !== checked) {
               layer.show = checked
-              window.s3d.eventBus.dispatch('layer-visible-changed-internal', this, layer)
+              window.s3d.eventBus.dispatch(
+                'layer-visible-changed-internal',
+                this,
+                layer
+              )
             }
           } else if (layer.type === 'S3M') {
             if (layer.visible !== checked) {
               layer.visible = checked
-              window.s3d.eventBus.dispatch('layer-visible-changed-internal', this, layer)
-
+              window.s3d.eventBus.dispatch(
+                'layer-visible-changed-internal',
+                this,
+                layer
+              )
               // if (!checked) {
               //   if (layer.config.renderer) {
               //     window.s3d.layersRenderer.stopRender(layer.name)
@@ -151,33 +187,53 @@ export default {
             }
           }
         }
-      }
-      else if (data.dem) {
+      } else if (data.dem) {
         if (checked) {
           this.viewer.terrainProvider = data.dem
-        }
-        else {
+        } else {
           this.viewer.terrainProvider = data.dem0
         }
       }
     },
-    renderExtButton (h, { node, data }) {
+    renderExtButton(h, { node, data }) {
       if (node.childNodes && node.childNodes.length > 0) {
         return (
-          <span class="custom-tree-node">
-            <i class={data.icon ? "layer-node-icon " + data.icon : ""} />
-            <span class="toggle-ext-button">{node.label}
-            </span>
+          <span
+            class={
+              data.display === false
+                ? 'custom-tree-node hide-tree-node'
+                : 'custom-tree-node'
+            }
+          >
+            <i class={data.icon ? 'layer-node-icon ' + data.icon : ''} />
+            <span class="toggle-ext-button">{node.label}</span>
           </span>
         )
-      }
-      else {
+      } else {
         return (
-          <span class="custom-tree-node">
-            <i class={data.icon ? "layer-node-icon " + data.icon : ""} />
-            <span class="toggle-ext-button">{node.label}
-              <i class={node.checked ? "esri-icon-directions2 my-ext-button" : "esri-icon-directions2 my-ext-button my-ext-button-hidden"}
-                on-click={() => window.s3d.flyToLayer(data.cesiumLayer)} />
+          <span
+            class={
+              data.display === false
+                ? 'custom-tree-node hide-tree-node'
+                : 'custom-tree-node'
+            }
+          >
+            <i class={data.icon ? 'layer-node-icon ' + data.icon : ''} />
+            <span class="toggle-ext-button">
+              {node.label}
+              <i
+                class={
+                  node.checked
+                    ? 'esri-icon-directions2 my-ext-button'
+                    : 'esri-icon-directions2 my-ext-button my-ext-button-hidden'
+                }
+                on-click={() =>
+                  window.s3d.flyToLayer(
+                    data.cesiumLayer,
+                    data.layer.defaultCamera
+                  )
+                }
+              />
             </span>
 
             <el-popover
@@ -186,49 +242,53 @@ export default {
               trigger="hover"
             >
               <LayerSetting conf={data} />
-              <i slot="reference" class={node.checked ? "layer-settings my-icon-more" : ""} />
+              <i
+                slot="reference"
+                class={node.checked ? 'layer-settings my-icon-more' : ''}
+              />
             </el-popover>
-          </span >
+          </span>
         )
       }
     },
-    toggleViewportMode () {
+    toggleViewportMode() {
       if (this.multiViewport) {
         this.viewer.scene.multiViewportMode = Cesium.MultiViewportMode.NONE
         this.multiViewport = false
-      }
-      else {
-        this.viewer.scene.multiViewportMode = Cesium.MultiViewportMode.HORIZONTAL
+      } else {
+        this.viewer.scene.multiViewportMode =
+          Cesium.MultiViewportMode.HORIZONTAL
         this.multiViewport = true
+        this.$refs.tree2.setCheckedKeys(this.$refs.tree1.getCheckedKeys())
       }
     },
-    disableNode (data) {
+    disableNode(data) {
+      if (data.disable) {
+        return true
+      }
+
       if (data.children && data.children.length > 0) {
         return false
-      }
-      else {
+      } else {
         if (data.layer && data.layer.url) {
           return false
-        }
-        else {
+        } else {
           return true
         }
       }
     },
-    _checkLayersConfig () {
-      let setLayerName = function (layers, nameList) {
+    _checkLayersConfig() {
+      let setLayerName = function(layers, nameList) {
         for (let ln of layers) {
           if (ln.layer) {
             if (!ln.layer.name && !ln.name) {
               throw `图层配置错误: "name"属性缺失\n错误节点: ${JSON.stringify(
                 ln
               )}`
-            }
-            else {
+            } else {
               if (ln.layer.name) {
                 ln.name = ln.layer.name
-              }
-              else {
+              } else {
                 ln.layer.name = ln.name
               }
 
@@ -255,7 +315,7 @@ export default {
         }
       }
     },
-    _setLayerNodeChecked (layer) {
+    _setLayerNodeChecked(layer) {
       if (layer.nodeKey) {
         let keys = this.$refs.tree1.getCheckedKeys()
         let idx = keys.findIndex((item) => item === layer.nodeKey)
@@ -263,16 +323,15 @@ export default {
           if (idx == -1) {
             keys.push(layer.nodeKey)
           }
-        }
-        else {
+        } else {
           if (idx != -1) {
-            keys.splice(idx, 1);
+            keys.splice(idx, 1)
           }
         }
-        this.$refs.tree1.setCheckedKeys(keys);
+        this.$refs.tree1.setCheckedKeys(keys)
       }
     },
-  }
+  },
 }
 </script>
 <style lang="scss">

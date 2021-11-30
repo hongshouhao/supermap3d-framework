@@ -11,7 +11,7 @@ export default class Test {
     //this.insertToolButton()
     // this.entityToGeoJson()
     // window.s3d.setLayerVisible('标志标线', true)
-    this.sketchTest()
+    // this.sketchTest()
     // window.s3d.viewUtility.rotateZ(1)
     // window.s3d
     //   .query({ layer: '交通信号', sql: 'SMID =1' })
@@ -40,7 +40,10 @@ export default class Test {
     //   })
     //   this.count++
     // }
-    // window.s3d.flyToS3mFeatures({ layer: '供电', sql: 'SMID =  5534 ' })
+    window.s3d.flyToS3mFeatures(
+      { layer: '供电', sql: 'SMID =  5534 ' },
+      { scale: 1.5 }
+    )
     // window.s3d.flyTo([130, 31, 1000])
     // window.s3d.flyTo(Cesium.Cartesian3.fromDegreesArray([130, 31])[0])
     // window.s3d.flyTo(Cesium.Cartesian3.fromDegrees(130, 31))
