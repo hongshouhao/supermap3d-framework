@@ -215,7 +215,7 @@ export default class S3d {
     this._setLayerVisible(ly, visible)
   }
   setLayerOpacity(layer, opacity) {
-    if (layer && isImageryLayer(layer.type)) {
+    if ((layer && isImageryLayer(layer.type)) || layer.type === 'MVT') {
       layer.alpha = opacity / 100
     } else if (layer && layer.type === 'S3M') {
       layer.style3D.fillForeColor = new Cesium.Color(
@@ -362,7 +362,6 @@ export default class S3d {
           duration: duration,
         })
       } else if (layer.type === 'S3M') {
-        debugger
         this._flyToBounds(layer.layerBounds, options)
         // this.viewer.flyTo(layer, options)
       } else {
@@ -438,4 +437,33 @@ export default class S3d {
     ])
     this.flyTo(pts, options)
   }
+
+  /*
+  geojson: 即geojson
+  options：见 GeoJsonDataSource.load(geojson, options)
+  dsName: 用来管理datasource
+   */
+  loadGeoJson(geojson, options, dsName) {
+    let opt = options ?? {
+      stroke: Cesium.Color.RED,
+      fill: Cesium.Color.BLUE.withAlpha(0.3),
+      strokeWidth: 1,
+      clampToGround: true,
+    }
+    return Cesium.GeoJsonDataSource.load(geojson, opt).then((res) => {
+      res.name = dsName ? `temp_${dsName}` : 'temp_ds'
+      this.viewer.dataSources.add(res)
+      return res
+    })
+  }
+  clearGeoJson() {
+    for (let i = 0; i < this.viewer.dataSources.length; i++) {
+      let ds = this.viewer.dataSources.get(i)
+      if (ds.name.startsWith('temp_')) {
+        this.viewer.dataSources.remove(ds, true)
+      }
+    }
+  }
+
+  enableRain() {}
 }

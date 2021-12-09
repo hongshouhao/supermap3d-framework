@@ -10,17 +10,17 @@ import {
 let baseUrl = process.env.VUE_APP_ISERVER_BASE_URL
 
 export const layers = [
-  {
-    id: '1',
-    name: 'DEM',
-    display: false,
-    layer: {
-      type: 'DEM',
-      visible: false,
-      url: `${baseUrl}iserver/services/3D-DEM/rest/realspace/datas/DEM缓存`,
-      url0: `${baseUrl}iserver/services/3D-DEM0/rest/realspace/datas/DEM0`,
-    },
-  },
+  // {
+  //   id: '1',
+  //   name: 'DEM',
+  //   display: false,
+  //   layer: {
+  //     type: 'DEM',
+  //     visible: false,
+  //     url: `${baseUrl}iserver/services/3D-DEM/rest/realspace/datas/DEM缓存`,
+  //     url0: `${baseUrl}iserver/services/3D-DEM0/rest/realspace/datas/DEM0`,
+  //   },
+  // },
   {
     id: '111',
     name: '市局水下',
@@ -43,7 +43,7 @@ export const layers = [
   },
   {
     id: '111224',
-    name: 'test111224',
+    name: 'test111224aaaaaaaaaaaaaaaaaaaaaaaa',
     layer: {
       type: 'S3M',
       visible: true,
@@ -63,19 +63,41 @@ export const layers = [
   },
   {
     id: '2',
-    label: '吴中',
+    label: '吴中aaaaaaaaaaaaaaaaaa',
     expand: true,
     icon: 'esri-icon-layers',
     children: [
       {
         id: '21',
-        name: '分层',
+        name: '分层aaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
         layer: {
           type: 'S3M',
           visible: true,
           enableFillAndWireFrame: true,
           url: `${baseUrl}iserver/services/3D-XCFCFH/rest/realspace/datas/FC/config`,
           popupTemplate: popupTemplateWithDefaultUI,
+          outFields: ['*'],
+        },
+      },
+      {
+        id: '22221',
+        name: 'asd',
+        layer: {
+          type: 'S3M',
+          visible: true,
+          enableFillAndWireFrame: true,
+          url: `http://106.14.242.98:8090/iserver/services/3D-WuShui_FLOW_n/rest/realspace/datas/WS_LINE_4490_3D@污水flow/config`,
+          outFields: ['*'],
+        },
+      },
+      {
+        id: '22ddd221',
+        name: 'asaad',
+        layer: {
+          type: 'S3M',
+          visible: true,
+          enableFillAndWireFrame: true,
+          url: `http://106.14.242.98:8090/iserver/services/3D-WuShui_3d_n/rest/realspace/datas/污水_4490@污水/config`,
           outFields: ['*'],
         },
       },
@@ -169,13 +191,13 @@ export const layers = [
           type: 'S3M',
           visible: false,
           enableFillAndWireFrame: true,
-          url: `${baseUrl}iserver/services/3D-WuShui/rest/realspace/datas/污水_1@污水/config`,
+          url: `http://106.14.242.98:8090/iserver/services/3D-WuShui_3d_n/rest/realspace/datas/污水_4490@污水/config`,
           datasetName: '污水:污水_1',
           outFields: ['*'],
           renderer: {
             type: 'S3MLAYER',
             layer: {
-              url: `${baseUrl}iserver/services/3D-test/rest/realspace/datas/WS_LINE_4_1@污水1/config`,
+              url: `http://106.14.242.98:8090/iserver/services/3D-WuShui_FLOW_n/rest/realspace/datas/WS_LINE_4490_3D@污水flow/config`,
               textureUVSpeed: new Cesium.Cartesian2(-0.5, 0),
             },
           },

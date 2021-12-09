@@ -1,59 +1,66 @@
 <template>
   <div class="layer-settings">
     <span class="layer-settings-item-label">透明度</span>
-    <el-slider :min="10"
-               :max="100"
-               v-model="conf.layer.opacity"
-               @input="setOpacity">
+    <el-slider
+      :min="10"
+      :max="100"
+      v-model="conf.layer.opacity"
+      @input="setOpacity"
+    >
     </el-slider>
     <div v-if="showRenderer">
       <span class="layer-settings-item-label">管线流向</span>
       <br />
-      <el-switch v-model="enableRenderer"
-                 active-text="开"
-                 inactive-text="关"
-                 @change="toogleRenderer">
+      <el-switch
+        v-model="enableRenderer"
+        active-text="开"
+        inactive-text="关"
+        @change="toogleRenderer"
+      >
       </el-switch>
     </div>
   </div>
 </template>
 
-<script> 
+<script>
 export default {
-  data () {
+  data() {
     return {
       enableRenderer: false,
     }
   },
   computed: {
-    showRenderer () {
-      return this.conf.layer.renderer?.type === "S3MLAYER"
-    }
+    showRenderer() {
+      return this.conf.layer.renderer?.type === 'S3MLAYER'
+    },
   },
-  props: ["conf"],
-  mounted () {
+  props: ['conf'],
+  mounted() {
     let _this = this
-    window.s3d.eventBus.addEventListener("layer-visible-changed-internal", (s3d, ly) => {
-      if (ly.name === _this.conf.layer.name && !ly.visible) {
-        _this.enableRenderer = false
-        _this.toogleRenderer(false)
+    window.s3d.eventBus.addEventListener(
+      'layer-visible-changed-internal',
+      (s3d, ly) => {
+        if (ly.name === _this.conf.layer.name && !ly.visible) {
+          _this.enableRenderer = false
+          _this.toogleRenderer(false)
+        }
       }
-    });
+    )
   },
   methods: {
-    setOpacity (opacity) {
-      window.s3d.setLayerOpacity(this.conf.cesiumLayer, opacity)
+    setOpacity(opacity) {
+      if (this.conf.cesiumLayer) {
+        window.s3d.setLayerOpacity(this.conf.cesiumLayer, opacity)
+      }
     },
-    toogleRenderer (enable) {
+    toogleRenderer(enable) {
       if (enable) {
         window.s3d.layersRenderer.startRender(this.conf.cesiumLayer.name)
-      }
-      else {
+      } else {
         window.s3d.layersRenderer.stopRender(this.conf.cesiumLayer.name)
       }
-    }
-  }
-
+    },
+  },
 }
 </script>
 <style lang="scss">

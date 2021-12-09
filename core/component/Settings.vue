@@ -3,64 +3,85 @@
     <!-- <el-divider content-position="left"></el-divider> -->
     <div class="setting-item-container">
       <span class="slider-demonstration">底图透明度</span>
-      <el-slider class="basemap-alpha-settings"
-                 v-model="baseMapAlpha"
-                 @input="changeBaseMapAlpha"></el-slider>
+      <el-slider
+        class="basemap-alpha-settings"
+        v-model="baseMapAlpha"
+        @input="changeBaseMapAlpha"
+      ></el-slider>
     </div>
 
     <div class="setting-item-container">
-      <span class="demonstration">雨水</span>
-      <el-switch v-model="rainEnable"
-                 active-text="开"
-                 inactive-text="关"
-                 @change="toggleRain">
+      <span class="demonstration">雨景</span>
+      <el-switch
+        v-model="rainEnable"
+        active-text="开"
+        inactive-text="关"
+        @change="toggleRain"
+      >
       </el-switch>
+    </div>
 
+    <div class="setting-item-container">
+      <span class="demonstration">雪景</span>
+      <el-switch
+        v-model="snowEnable"
+        active-text="开"
+        inactive-text="关"
+        @change="toggleSnow"
+      >
+      </el-switch>
     </div>
   </div>
 </template>
 <script>
-import RainTool from '../tools/Rain/RainTool'
 export default {
-  data () {
+  data() {
     return {
       baseMapAlpha: 100,
       rainEnable: false,
+      snowEnable: false,
     }
   },
   computed: {
-    baseMaps () {
+    baseMaps() {
       return window.s3d.baseMaps
     },
   },
-  mounted () {
+  mounted() {
     let _this = this
-    window.s3d.eventBus.addEventListener("baseMap-changed", () => {
+    window.s3d.eventBus.addEventListener('baseMap-changed', () => {
       if (this.baseMaps.current) {
         _this.baseMapAlpha = parseInt(this.baseMaps.current[0].alpha * 100)
       }
-    });
+    })
   },
   methods: {
-    changeBaseMapAlpha (alpha) {
+    changeBaseMapAlpha(alpha) {
       if (this.baseMaps && this.baseMaps.current)
         for (let map of this.baseMaps.current) {
-          map.alpha = alpha / 100;
+          map.alpha = alpha / 100
         }
     },
-    toggleRain (enable) {
-      if (!this.rainTool) {
-        this.rainTool = new RainTool(window.s3d.viewer)
-      }
-
+    toggleRain(enable) {
       if (enable) {
-        this.rainTool.start()
+        this.$viewer.scene.postProcessStages.rain.enabled = true
+        this.$viewer.scene.postProcessStages.rain.uniforms.angle = 170
+        this.$viewer.scene.postProcessStages.rain.uniforms.speed = 6
+      } else {
+        this.$viewer.scene.postProcessStages.rain.enabled = false
       }
-      else {
-        this.rainTool.clear()
+    },
+    toggleSnow(enable) {
+      if (enable) {
+        this.$viewer.scene.postProcessStages.snow.enabled = true
+        this.$viewer.scene.postProcessStages.snow.uniforms.density = 15
+        this.$viewer.scene.postProcessStages.snow.uniforms.angle = 0
+        this.$viewer.scene.postProcessStages.snow.uniforms.speed = 6
+      } else {
+        this.$viewer.scene.postProcessStages.snow.enabled = false
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

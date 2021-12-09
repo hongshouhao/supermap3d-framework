@@ -12,7 +12,7 @@ export const config = {
     depth: 20,
   },
   // dem:
-  //   'http://106.14.242.98:8090/iserver/services/3D-DEM/rest/realspace/datas/DEM缓存',
+  //   'http://192.168.175.70:8090/iserver/services/3D-local3DCache-SZDEM4490dx/rest/realspace/datas/SZDEM_4490@dx',
   layers: layers,
   defaultCamera: {
     destination: Cesium.Cartesian3.fromDegrees(120.603, 31.175, 400.0),
@@ -29,6 +29,7 @@ export const config = {
       default: false,
     },
     earth: {
+      default: true,
       maps: [
         {
           type: 'bing',
@@ -56,7 +57,6 @@ export const config = {
       ],
     },
     normal: {
-      default: true,
       maps: [
         //  {
         //    type: 'mapbox',

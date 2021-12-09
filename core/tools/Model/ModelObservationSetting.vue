@@ -1,44 +1,42 @@
 <template>
   <div class="model-ob-setting">
-
-    <div class='compass-container'>
-      <round-slider v-model="heading"
-                    :change="headingChange"
-                    :update="headingUpdate"
-                    pathColor="#6699FF"
-                    animation="false"
-                    min="0"
-                    max="360"
-                    start-angle="270"
-                    end-angle="+360"
-                    line-cap="round"
-                    radius="50"
-                    handle-size="+10"
-                    handle-shape="dot"
-                    show-tooltip="false"
-                    width="7" />
+    <div class="compass-container">
+      <round-slider
+        v-model="heading"
+        :change="headingChange"
+        :update="headingUpdate"
+        pathColor="#6699FF"
+        animation="false"
+        min="0"
+        max="360"
+        start-angle="270"
+        end-angle="+360"
+        line-cap="round"
+        radius="50"
+        handle-size="+10"
+        handle-shape="dot"
+        show-tooltip="false"
+        width="7"
+      />
     </div>
-    <div ref='buttonContainer'
-         class="
-                    button-sight-container">
-      <div class="button-sight button-left-sight"
-           @click="lookAtLeft">
+    <div
+      ref="buttonContainer"
+      class="
+                    button-sight-container"
+    >
+      <div class="button-sight button-left-sight" @click="lookAtLeft">
         左
       </div>
-      <div class="button-sight button-right-sight"
-           @click="lookAtRight">
+      <div class="button-sight button-right-sight" @click="lookAtRight">
         右
       </div>
-      <div class="button-sight button-front-sight"
-           @click="lookAtFront">
+      <div class="button-sight button-front-sight" @click="lookAtFront">
         前
       </div>
-      <div class="button-sight button-behind-sight"
-           @click="lookAtBehind">
+      <div class="button-sight button-behind-sight" @click="lookAtBehind">
         后
       </div>
-      <div class="button-sight button-top-sight"
-           @click="lookAtTop">
+      <div class="button-sight button-top-sight" @click="lookAtTop">
         上
       </div>
     </div>
@@ -50,59 +48,54 @@ import RoundSlider from 'vue-round-slider'
 import { boundingSphereFromFeature } from '../../utils/CesiumUtility'
 export default {
   components: {
-    RoundSlider
+    RoundSlider,
   },
-  data () {
+  data() {
     return {
       tool: null,
       heading: 0,
       headingChangedBySlider: false,
-      scale: 1
+      scale: 1,
     }
   },
-  computed: {
-    viewer () {
-      return window.s3d.viewer
-    }
-  },
-  mounted () {
+  mounted() {
     let _this = this
-    _this.viewer.camera.changed.addEventListener(function () {
+    _this.$viewer.camera.changed.addEventListener(function() {
       if (_this.headingChangedBySlider) {
         return
       }
-      let val = Cesium.Math.toDegrees(_this.viewer.camera.heading)
+      let val = Cesium.Math.toDegrees(_this.$viewer.camera.heading)
       _this.heading = val
       _this.$refs.buttonContainer.style = `transform: rotateZ(${val}deg);`
     })
 
-    $('.compass-container .rs-handle').mousedown(function () {
+    $('.compass-container .rs-handle').mousedown(function() {
       _this.caculateScale()
     })
   },
   methods: {
-    setTool (tool) {
+    setTool(tool) {
       this.tool = tool
     },
-    lookAt (angle) {
+    lookAt(angle) {
       this.tool.lookAt(angle, this.scale)
     },
-    lookAtFront () {
+    lookAtFront() {
       this.tool.lookAtFront()
     },
-    lookAtBehind () {
+    lookAtBehind() {
       this.tool.lookAtBehind()
     },
-    lookAtLeft () {
+    lookAtLeft() {
       this.tool.lookAtLeft()
     },
-    lookAtRight () {
+    lookAtRight() {
       this.tool.lookAtRight()
     },
-    lookAtTop () {
+    lookAtTop() {
       this.tool.lookAtTop()
     },
-    headingUpdate (e) {
+    headingUpdate(e) {
       if (!this.tool) {
         return
       }
@@ -112,24 +105,24 @@ export default {
       this.lookAt(Cesium.Math.toRadians(rotation))
       this.$refs.buttonContainer.style = `transform: rotateZ(${rotation}deg);`
     },
-    headingChange () {
+    headingChange() {
       this.headingChangedBySlider = false
     },
-    caculateScale () {
+    caculateScale() {
       if (!this.tool?.feature) {
         return
       }
       let boundingSphere = boundingSphereFromFeature(this.tool.feature)
       let dis = Cesium.Cartesian3.distance(
         boundingSphere.center,
-        this.viewer.camera.position
+        this.$viewer.camera.position
       )
 
       //1.9807740244477263(常数) = 完整定位时相机位置与球体中心点的距离/球体的半径
       let radius = dis / 1.9807740244477263
       this.scale = radius / boundingSphere.radius
     },
-  }
+  },
 }
 </script>
 <style lang="scss">

@@ -9,6 +9,7 @@
       show-checkbox
       node-key="id"
       ref="tree1"
+      :render-after-expand="false"
       :data="layersData"
       :props="{ disabled: disableNode }"
       :default-expanded-keys="defaultExpandedKeys"
@@ -27,6 +28,7 @@
       show-checkbox
       node-key="id"
       ref="tree2"
+      :render-after-expand="false"
       :data="layersData"
       :props="{ disabled: disableNode }"
       :default-expanded-keys="defaultExpandedKeys"
@@ -44,6 +46,7 @@ import LayerFactory from '../utils/LayerFactory'
 import { isImageryLayer } from '../utils/ImageryUtility'
 
 export default {
+  name: 'layers-tree',
   components: {
     // eslint-disable-next-line vue/no-unused-components
     LayerSetting,
@@ -57,16 +60,11 @@ export default {
       layerFactory: null,
     }
   },
-  computed: {
-    viewer() {
-      return window.s3d.viewer
-    },
-  },
   props: [],
   mounted() {
     window.s3d.layerTree = this
     let _this = this
-    _this.layerFactory = new LayerFactory(_this.viewer)
+    _this.layerFactory = new LayerFactory(_this.$viewer)
     window.s3d.eventBus.addEventListener('framework-initialized', () => {
       _this._checkLayersConfig()
       _this.init()
@@ -78,7 +76,7 @@ export default {
   },
   methods: {
     init() {
-      if (this.viewer) {
+      if (this.$viewer) {
         this.addLayers(window.s3d.config.layers, -1)
         this.layersData = window.s3d.config.layers
 
@@ -89,8 +87,7 @@ export default {
           })
         })
 
-        this.viewer.camera.flyTo(window.s3d.config.defaultCamera)
-        this.viewer._element.appendChild(this.$refs.viewportSpliter)
+        this.$viewer._element.appendChild(this.$refs.viewportSpliter)
       }
     },
     addLayers(layersData) {
@@ -189,12 +186,23 @@ export default {
         }
       } else if (data.dem) {
         if (checked) {
-          this.viewer.terrainProvider = data.dem
+          this.$viewer.terrainProvider = data.dem
         } else {
-          this.viewer.terrainProvider = data.dem0
+          this.$viewer.terrainProvider = data.dem0
         }
       }
     },
+    // <el-tooltip
+    //           content={node.label}
+    //           disabled={false}
+    //           open-delay={300}
+    //           placement="top"
+    //           effect="dark"
+    //         >
+    //           <span class="over-ellipsis" mouseover="mouseOver($event)">
+    //             {node.label}
+    //           </span>
+    //         </el-tooltip>
     renderExtButton(h, { node, data }) {
       if (node.childNodes && node.childNodes.length > 0) {
         return (
@@ -206,7 +214,9 @@ export default {
             }
           >
             <i class={data.icon ? 'layer-node-icon ' + data.icon : ''} />
-            <span class="toggle-ext-button">{node.label}</span>
+            <span class="over-ellipsis">
+              <span title={node.label}>{node.label}</span>
+            </span>
           </span>
         )
       } else {
@@ -219,8 +229,11 @@ export default {
             }
           >
             <i class={data.icon ? 'layer-node-icon ' + data.icon : ''} />
+
             <span class="toggle-ext-button">
-              {node.label}
+              <span class="over-ellipsis">
+                <span title={node.label}>{node.label}</span>
+              </span>
               <i
                 class={
                   node.checked
@@ -253,10 +266,10 @@ export default {
     },
     toggleViewportMode() {
       if (this.multiViewport) {
-        this.viewer.scene.multiViewportMode = Cesium.MultiViewportMode.NONE
+        this.$viewer.scene.multiViewportMode = Cesium.MultiViewportMode.NONE
         this.multiViewport = false
       } else {
-        this.viewer.scene.multiViewportMode =
+        this.$viewer.scene.multiViewportMode =
           Cesium.MultiViewportMode.HORIZONTAL
         this.multiViewport = true
         this.$refs.tree2.setCheckedKeys(this.$refs.tree1.getCheckedKeys())
@@ -357,6 +370,15 @@ export default {
   .custom-tree-node {
     display: flex;
     margin-bottom: 5px;
+
+    .over-ellipsis {
+      display: inline-block;
+      width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      -webkit-line-clamp: 1;
+    }
 
     .layer-node-icon {
       margin-right: 4px;

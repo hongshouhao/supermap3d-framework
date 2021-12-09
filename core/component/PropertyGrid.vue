@@ -1,17 +1,17 @@
 <template>
   <div class="property-grid">
-    <el-table :data="propArray"
-              stripe
-              border
-              style="width: 100%"
-              row-class-name="property-row"
-              cell-class-name="property-cell"
-              :show-header="false">
-      <el-table-column prop="key"
-                       label="属性名"> </el-table-column>
-      <el-table-column prop="value"
-                       label="属性值"
-                       width="180"> </el-table-column>
+    <el-table
+      :data="propArray"
+      stripe
+      border
+      style="width: 100%"
+      row-class-name="property-row"
+      cell-class-name="property-cell"
+      :show-header="false"
+    >
+      <el-table-column prop="key" label="属性名"> </el-table-column>
+      <el-table-column prop="value" label="属性值" width="180">
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -19,14 +19,13 @@
 <script>
 export default {
   components: {},
-  data () {
+  data() {
     return {
       table: [],
     }
   },
   props: ['propArray'],
-  mounted () {
-  },
+  mounted() {},
   methods: {},
 }
 </script>

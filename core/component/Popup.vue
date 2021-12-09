@@ -1,65 +1,75 @@
 <template>
-  <div v-show="popupVisible"
-       ref="popup"
-       class="my-popup esri-component esri-popup esri-popup--aligned-top-center esri-popup--shadow">
-    <div class="esri-popup__main-container esri-widget esri-popup--is-collapsible">
+  <div
+    v-show="popupVisible"
+    ref="popup"
+    class="my-popup esri-component esri-popup esri-popup--aligned-top-center esri-popup--shadow"
+  >
+    <div
+      class="esri-popup__main-container esri-widget esri-popup--is-collapsible"
+    >
       <header class="esri-popup__header">
         <div class="multi-header">
-          <el-select v-show="multiable"
-                     v-model="objIndex"
-                     @change="_reRenderPopup"
-                     placeholder="请选择">
-            <el-option v-for="(title,idx) in objTitles"
-                       :key="idx"
-                       :label="title"
-                       :value="idx">
+          <el-select
+            v-show="multiable"
+            v-model="objIndex"
+            @change="_reRenderPopup"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="(title, idx) in objTitles"
+              :key="idx"
+              :label="title"
+              :value="idx"
+            >
             </el-option>
           </el-select>
         </div>
-        <h2 v-show="!multiable"
-            class="esri-widget__heading esri-popup__header-title">{{title}}</h2>
+        <h2
+          v-show="!multiable"
+          class="esri-widget__heading esri-popup__header-title"
+        >
+          {{ title }}
+        </h2>
         <div class="esri-popup__header-buttons">
-          <div title="停靠"
-               class="esri-popup__button esri-popup__button--dock"
-               @click="dock">
-            <span ref="dockIcon"
-                  class="esri-popup__icon--dock-icon esri-icon-dock-right esri-popup__icon"></span>
+          <div
+            title="停靠"
+            class="esri-popup__button esri-popup__button--dock"
+            @click="dock"
+          >
+            <span
+              ref="dockIcon"
+              class="esri-popup__icon--dock-icon esri-icon-dock-right esri-popup__icon"
+            ></span>
           </div>
-          <div title="关闭"
-               class="esri-popup__button"
-               @click="hidePopup">
-
+          <div title="关闭" class="esri-popup__button" @click="hidePopup">
             <span class="esri-popup__icon esri-icon-close"></span>
           </div>
         </div>
       </header>
       <article class="esri-popup__content">
-        <PropertyGrid v-show="showPropGrid"
-                      :propArray="propArray" />
-        <div v-show="!showPropGrid"
-             ref="content"></div>
+        <PropertyGrid v-show="showPropGrid" :propArray="propArray" />
+        <div v-show="!showPropGrid" ref="content"></div>
       </article>
     </div>
-    <div ref="popupPointer"
-         class="esri-popup__pointer">
+    <div ref="popupPointer" class="esri-popup__pointer">
       <div class="esri-popup__pointer-direction esri-popup--shadow"></div>
     </div>
   </div>
 </template>
 
 <script>
-import $ from 'jquery';
-import Enumerable from 'linq';
+import $ from 'jquery'
+import Enumerable from 'linq'
 import { cartesianToLonlat } from '../utils/CesiumMath'
 import PropertyGrid from './PropertyGrid.vue'
 import PopupUtility from './PopupUtility.js'
 import { isImageryLayer } from '../utils/ImageryUtility'
 
 export default {
-  data () {
+  data() {
     return {
       propArray: [],
-      title: "",
+      title: '',
       multiable: false,
       objIndex: null,
       objTitles: [],
@@ -72,42 +82,41 @@ export default {
       showPropGrid: true,
       mvtData: null,
       removePostRenderHandler: null,
-      popupUtility: new PopupUtility(this.viewer)
+      popupUtility: new PopupUtility(this.$viewer),
     }
   },
   components: {
-    PropertyGrid
-  },
-  computed: {
-    viewer () {
-      return window.s3d.viewer
-    }
+    PropertyGrid,
   },
   props: [],
-  mounted () {
+  mounted() {
     this.initIQuery()
     this.initIQueryForMVT()
   },
   methods: {
-    initIQuery () {
+    initIQuery() {
       let _this = this
-      this.mouseEventHandler = new Cesium.ScreenSpaceEventHandler(_this.viewer.scene.canvas)
-      this.mouseEventHandler.setInputAction(function (e) {
-        let position = _this.viewer.scene.pickPosition(e.position)
+      this.mouseEventHandler = new Cesium.ScreenSpaceEventHandler(
+        _this.$viewer.scene.canvas
+      )
+      this.mouseEventHandler.setInputAction(function(e) {
+        let position = _this.$viewer.scene.pickPosition(e.position)
         if (!window.s3d.toolWorking) {
           if (_this.mvtData) {
             _this.renderPopup(position, _this.mvtData)
-          }
-          else {
+          } else {
             let pickedObjects = window.s3d.pick(e.position)
             if (pickedObjects.length === 0) {
-              let imgLayers = window.s3d.getAllLayers(x => isImageryLayer(x.type) && x.show && x.config?.iQuery)
+              let imgLayers = window.s3d.getAllLayers(
+                (x) => isImageryLayer(x.type) && x.show && x.config?.iQuery
+              )
               if (imgLayers.length > 0) {
-                let position = _this.viewer.scene.pickPosition(e.position)
+                let position = _this.$viewer.scene.pickPosition(e.position)
                 let lonlat = cartesianToLonlat(position)
-                let promises = imgLayers.map(l => {
-                  return _this.popupUtility.queryOverImageLayer(l.name, lonlat)
-                    .then(dobj => {
+                let promises = imgLayers.map((l) => {
+                  return _this.popupUtility
+                    .queryOverImageLayer(l.name, lonlat)
+                    .then((dobj) => {
                       dobj.object.layer = l.name
                       if (!dobj.position) {
                         dobj.position = lonlat
@@ -116,30 +125,30 @@ export default {
                     })
                 })
 
-                Promise.all(promises).then(data => {
+                Promise.all(promises).then((data) => {
                   _this.renderPopupMulti(position, data)
                 })
-              }
-              else {
+              } else {
                 _this._clearTempDataSources()
                 _this.hidePopup()
               }
-            }
-            else {
-              let calls = pickedObjects.map(x => {
-                return _this.popupUtility.getDataForPrimitive(x);
+            } else {
+              let calls = pickedObjects.map((x) => {
+                return _this.popupUtility.getDataForPrimitive(x)
               })
-              Promise.all(calls).then((data) => {
-                for (let dobj of data) {
-                  if (!dobj.position) {
-                    dobj.position = cartesianToLonlat(position)
+              Promise.all(calls)
+                .then((data) => {
+                  for (let dobj of data) {
+                    if (!dobj.position) {
+                      dobj.position = cartesianToLonlat(position)
+                    }
                   }
-                }
-                _this.renderPopupMulti(position, data)
-              }).catch((err) => {
-                _this.hidePopup()
-                console.error(err)
-              })
+                  _this.renderPopupMulti(position, data)
+                })
+                .catch((err) => {
+                  _this.hidePopup()
+                  console.error(err)
+                })
             }
           }
         } else {
@@ -147,9 +156,9 @@ export default {
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
     },
-    initIQueryForMVT () {
+    initIQueryForMVT() {
       let _this = this
-      _this.viewer.selectedEntityChanged.addEventListener(function (entity) {
+      _this.$viewer.selectedEntityChanged.addEventListener(function(entity) {
         if (window.s3d.toolWorking) {
           _this.mvtData = null
           return
@@ -158,43 +167,47 @@ export default {
         if (entity && entity.pickResult) {
           let layerName = entity.pickResult.mapName
           let features = entity.pickResult[entity.pickResult['layerID']]
-          let fItem = features.find(x => x.feature.id === entity.pickResult.featureID)
-          _this.mvtData = _this.popupUtility.getDataForMVT(layerName, fItem.feature)
-        }
-        else {
+          let fItem = features.find(
+            (x) => x.feature.id === entity.pickResult.featureID
+          )
+          _this.mvtData = _this.popupUtility.getDataForMVT(
+            layerName,
+            fItem.feature
+          )
+        } else {
           _this.mvtData = null
         }
-      });
+      })
     },
-    hidePopup () {
+    hidePopup() {
       if (this.removePostRenderHandler) {
         this.removePostRenderHandler()
         this.removePostRenderHandler = null
       }
       this.popupVisible = false
     },
-    renderPopupMulti (worldPosition, data) {
+    renderPopupMulti(worldPosition, data) {
       this.multiable = data.length > 1
       this.dataObjs = data
-      this.objTitles = data.map(x => this._getPopupHeader(x))
+      this.objTitles = data.map((x) => this._getPopupHeader(x))
       this.objIndex = 0
       this._reRenderPopup()
       this._showPopup(worldPosition)
     },
-    renderPopup (worldPosition, data) {
+    renderPopup(worldPosition, data) {
       this.multiable = false
       this._setHeader(this._getPopupHeader(data))
       this._setContent(this._getPopupContent(data))
       this._showPopup(worldPosition)
     },
-    _showPopup (worldPosition) {
+    _showPopup(worldPosition) {
       this.popupPosition = worldPosition
       this.popupVisible = true
       if (!this.dockered) {
         this._enableStickRender()
       }
     },
-    _reRenderPopup () {
+    _reRenderPopup() {
       let obj = this.dataObjs[this.objIndex]
       let header = this._getPopupHeader(obj)
       this._setHeader(header)
@@ -202,62 +215,64 @@ export default {
       this._highlight(obj)
       $('.my-popup .multi-header input').css('width', this._textWidth(header))
     },
-    _highlight (obj) {
+    _highlight(obj) {
       let _this = this
-      let grps = Enumerable.from(this.dataObjs).groupBy(x => x.object.layer).toArray();
+      let grps = Enumerable.from(this.dataObjs)
+        .groupBy((x) => x.object.layer)
+        .toArray()
       for (let g of grps) {
         let ly = window.s3d.getLayer(g.key())
-        if (ly.type === "S3M") {
+        if (ly.type === 'S3M') {
           ly.setSelection([])
         }
       }
       this._clearTempDataSources()
 
       let ly = window.s3d.getLayer(obj.object.layer)
-      if (ly.type === "S3M") {
+      if (ly.type === 'S3M') {
         ly.setSelection([obj.object.id])
-      }
-      else if (isImageryLayer(ly.type)) {
+      } else if (isImageryLayer(ly.type)) {
         let symbol = ly.config.iQuery.symbol ?? {
           stroke: Cesium.Color.RED,
           fill: Cesium.Color.BLUE.withAlpha(0.3),
-          strokeWidth: 1
+          strokeWidth: 1,
         }
-        Cesium.GeoJsonDataSource.load(obj.object.shape, symbol).then(res => {
-          res.name = `iquery_geometries_${ly.name}`
-          _this.viewer.dataSources.add(res);
+        Cesium.GeoJsonDataSource.load(obj.object.shape, symbol).then((res) => {
+          res.name = `temp_iquery_geometries_${ly.name}`
+          _this.$viewer.dataSources.add(res)
         })
       }
     },
-    _clearTempDataSources () {
-      for (let i = 0; i < this.viewer.dataSources.length; i++) {
-        let ds = this.viewer.dataSources.get(i)
-        if (ds.name.startsWith('iquery_geometries_')) {
-          this.viewer.dataSources.remove(ds, true)
+    _clearTempDataSources() {
+      for (let i = 0; i < this.$viewer.dataSources.length; i++) {
+        let ds = this.$viewer.dataSources.get(i)
+        if (ds.name.startsWith('temp_iquery_geometries_')) {
+          this.$viewer.dataSources.remove(ds, true)
         }
       }
     },
-    _enableStickRender () {
+    _enableStickRender() {
       let _this = this
       if (this.removePostRenderHandler) {
         return
       }
-      this.removePostRenderHandler = this.viewer.scene.postRender.addEventListener(
-        function () {
+      this.removePostRenderHandler = this.$viewer.scene.postRender.addEventListener(
+        function() {
           let screenPosition = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
-            _this.viewer.scene,
+            _this.$viewer.scene,
             _this.popupPosition
           )
           let popupDom = _this.$refs.popup
           let left = screenPosition.x - popupDom.offsetWidth / 2
           let top = screenPosition.y - popupDom.offsetHeight - 30
 
-          if (left < 0
-            || top > _this.viewer.scene.canvas.height - popupDom.offsetHeight
-            || left > _this.viewer.scene.canvas.width - popupDom.offsetWidth) {
+          if (
+            left < 0 ||
+            top > _this.$viewer.scene.canvas.height - popupDom.offsetHeight ||
+            left > _this.$viewer.scene.canvas.width - popupDom.offsetWidth
+          ) {
             _this._setPopupStyle(true)
-          }
-          else if (top < 0) {
+          } else if (top < 0) {
             top = screenPosition.y + 10
 
             if (top - 30 < 0) {
@@ -268,8 +283,7 @@ export default {
               popupDom.style.left = left + 'px'
               popupDom.style.top = top + 'px'
             }
-          }
-          else {
+          } else {
             _this._setPopupStyle(false)
             popupDom.style.left = left + 'px'
             popupDom.style.top = top + 'px'
@@ -278,29 +292,28 @@ export default {
         }
       )
     },
-    _setPopupStyle (enableDockStyle) {
+    _setPopupStyle(enableDockStyle) {
       if (enableDockStyle) {
         this.$refs.popup.style.top = '60px'
         this.$refs.popup.style.right = '15px'
         this.$refs.popup.style.left = 'unset'
         this.$refs.popupPointer.style.display = 'none'
-        this.$refs.dockIcon.className = "esri-icon-minimize esri-popup__icon"
-      }
-      else {
+        this.$refs.dockIcon.className = 'esri-icon-minimize esri-popup__icon'
+      } else {
         this.$refs.popup.style.right = 'unset'
         this.$refs.popupPointer.style.display = 'unset'
-        this.$refs.dockIcon.className = "esri-popup__icon--dock-icon esri-icon-dock-right esri-popup__icon"
+        this.$refs.dockIcon.className =
+          'esri-popup__icon--dock-icon esri-icon-dock-right esri-popup__icon'
       }
     },
-    _getPopupContent (data) {
+    _getPopupContent(data) {
       let lconfig = window.s3d.getLayerConfig(data.object.layer)
       if (lconfig && lconfig.popupTemplate) {
         if (!lconfig.popupTemplate.getContent) {
           throw `配置错误: 图层${data.object.layer}相关配置丢失, 函数popupTemplate.getContent丢失`
         }
         return lconfig.popupTemplate.getContent(data)
-      }
-      else {
+      } else {
         let arr = []
         arr.push({
           key: '对象',
@@ -332,40 +345,38 @@ export default {
         return arr
       }
     },
-    _getPopupHeader (data) {
+    _getPopupHeader(data) {
       let lconfig = window.s3d.getLayerConfig(data.object.layer)
       if (lconfig && lconfig.popupTemplate) {
         if (!lconfig.popupTemplate.getHeader) {
           throw `配置错误: 图层${data.object.layer}相关配置丢失, 函数popupTemplate.getHeader丢失`
         }
         return lconfig.popupTemplate.getHeader(data)
-      }
-      else {
+      } else {
         return data.object.layer + ' - ' + data.object.id
       }
     },
-    _setHeader (title) {
+    _setHeader(title) {
       this.title = title
     },
-    _setContent (object) {
+    _setContent(object) {
       if (object instanceof HTMLElement) {
         this.showPropGrid = false
-        this.$refs.content.innerHTML = "";
+        this.$refs.content.innerHTML = ''
         this.$refs.content.appendChild(object)
-      }
-      else if (object instanceof Array) {
+      } else if (object instanceof Array) {
         this.showPropGrid = true
         this.propArray = object
       }
     },
-    _textWidth (value) {
+    _textWidth(value) {
       if (!value) {
         return '100%'
       } else {
         return value.length + 'rem'
       }
     },
-    enableDock () {
+    enableDock() {
       this._setPopupStyle(true)
       if (this.removePostRenderHandler) {
         this.removePostRenderHandler()
@@ -373,20 +384,19 @@ export default {
       }
       this.dockered = true
     },
-    disableDock () {
+    disableDock() {
       this._setPopupStyle(false)
       this._enableStickRender()
       this.dockered = false
     },
-    dock () {
+    dock() {
       if (this.dockered) {
         this.disableDock()
-      }
-      else {
+      } else {
         this.enableDock()
       }
     },
-  }
+  },
 }
 </script>
 

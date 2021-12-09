@@ -8,10 +8,11 @@ export default class Test {
   }
 
   doTest() {
+    this.loadGeoJSON()
     //this.insertToolButton()
     // this.entityToGeoJson()
     // window.s3d.setLayerVisible('标志标线', true)
-    // this.sketchTest()
+    //this.sketchTest()
     // window.s3d.viewUtility.rotateZ(1)
     // window.s3d
     //   .query({ layer: '交通信号', sql: 'SMID =1' })
@@ -40,10 +41,10 @@ export default class Test {
     //   })
     //   this.count++
     // }
-    window.s3d.flyToS3mFeatures(
-      { layer: '供电', sql: 'SMID =  5534 ' },
-      { scale: 1.5 }
-    )
+    // window.s3d.flyToS3mFeatures(
+    //   { layer: '供电', sql: 'SMID =  5534 ' },
+    //   { scale: 1.5 }
+    // )
     // window.s3d.flyTo([130, 31, 1000])
     // window.s3d.flyTo(Cesium.Cartesian3.fromDegreesArray([130, 31])[0])
     // window.s3d.flyTo(Cesium.Cartesian3.fromDegrees(130, 31))
@@ -82,6 +83,37 @@ export default class Test {
         // new Cesium.HeadingPitchRange(0, -0.5, 0)
       )
     })
+  }
+
+  loadGeoJSON() {
+    let geojson = {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [120.6051439576166, 31.182623348967315],
+            [120.60454406195154, 31.18123669097755],
+            [120.60557820129517, 31.180994015265277],
+            [120.60619062354726, 31.18215582423319],
+            [120.60618967226178, 31.182160091113577],
+            [120.61562716969533, 31.187796980711134],
+            [120.60675290392506, 31.18458419309506],
+            [120.60677488993603, 31.184584192869124],
+            [120.6051439576166, 31.182623348967315],
+          ],
+        ],
+      },
+      properties: {
+        name: 'sketch_polygon_fill',
+        styleUrl: '#style-1',
+        styleHash: '-640c9941',
+        'fill-opacity': 0.5019607843137255,
+        fill: '#12d035',
+        visibility: '1',
+      },
+    }
+    window.s3d.loadGeoJson(geojson)
   }
 
   debug() {

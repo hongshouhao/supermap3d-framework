@@ -4,12 +4,12 @@
 <script>
 import { addMessageListener } from '../core/IframeMessage'
 export default {
-  data () {
+  data() {
     return {}
   },
-  mounted () {
+  mounted() {
     addMessageListener()
     window.s3d.topLeftBar.highLimitTool.setTargetLayers(['楼幢'])
-  }
+  },
 }
 </script>
