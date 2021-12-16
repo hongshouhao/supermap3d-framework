@@ -1,11 +1,11 @@
 <template>
-  <div ref="panel" v-show="visible" class="widget-info-panel">
+  <div ref="panel"
+       v-show="visible"
+       class="widget-info-panel">
     <div class="widget-info-title">
       {{ title }}
-      <i
-        class="esri-icon-close widget-info-panel-close"
-        @click="closeInfoPanel"
-      ></i>
+      <i class="esri-icon-close widget-info-panel-close"
+         @click="closeInfoPanel"></i>
     </div>
     <div class="widget-content">
       <slot> </slot>
@@ -17,32 +17,32 @@
 export default {
   components: {},
   props: ['title'],
-  data() {
+  data () {
     return {
       visible: false,
     }
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    drag(el) {
-      el.onmousedown = function(e) {
+    drag (el) {
+      el.onmousedown = function (e) {
         var divx = e.clientX - this.refs.panel.offsetLeft
         var divy = e.clientY - this.refs.panel.offsetTop
-        document.onmousemove = function(e) {
+        document.onmousemove = function (e) {
           var l = e.clientX - divx
           var t = e.clientY - divy
           this.refs.panel.style.left = l + 'px'
           this.refs.panel.style.top = t + 'px'
         }
 
-        document.onmouseup = function() {
+        document.onmouseup = function () {
           document.onmousemove = null
           document.onmouseup = null
         }
       }
     },
 
-    closeInfoPanel() {
+    closeInfoPanel () {
       this.$emit('closed')
     },
   },

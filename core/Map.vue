@@ -22,11 +22,11 @@ export default {
     TopLeftBar,
     TopRightBar,
   },
-  data() {
+  data () {
     return {}
   },
-  beforeMount() {},
-  mounted() {},
+  beforeMount () { },
+  mounted () { },
 }
 </script>
 

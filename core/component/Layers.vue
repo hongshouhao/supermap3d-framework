@@ -1,42 +1,41 @@
 <template>
   <div class="layer-tree">
-    <div
-      ref="viewportSpliter"
-      v-show="multiViewport"
-      class="viewport-spliter"
-    />
-    <el-tree
-      show-checkbox
-      node-key="id"
-      ref="tree1"
-      :render-after-expand="false"
-      :data="layersData"
-      :props="{ disabled: disableNode }"
-      :default-expanded-keys="defaultExpandedKeys"
-      :default-checked-keys="defaultCheckedKeys"
-      :render-content="renderExtButton"
-      @check-change="setLayerVisible1"
-    >
-    </el-tree>
+    <div ref="viewportSpliter"
+         v-show="multiViewport"
+         class="viewport-spliter" />
+    <el-scrollbar style="height:100%">
+      <el-tree show-checkbox
+               node-key="id"
+               ref="tree1"
+               :render-after-expand="false"
+               :data="layersData"
+               :props="{ disabled: disableNode }"
+               :default-expanded-keys="defaultExpandedKeys"
+               :default-checked-keys="defaultCheckedKeys"
+               :render-content="renderExtButton"
+               @check-change="setLayerVisible1">
+      </el-tree>
+    </el-scrollbar>
 
-    <div v-show="multiViewport" class="divider">
+    <div v-show="multiViewport"
+         class="divider">
       <el-divider direction="vertical"></el-divider>
     </div>
 
-    <el-tree
-      v-show="multiViewport"
-      show-checkbox
-      node-key="id"
-      ref="tree2"
-      :render-after-expand="false"
-      :data="layersData"
-      :props="{ disabled: disableNode }"
-      :default-expanded-keys="defaultExpandedKeys"
-      :default-checked-keys="defaultCheckedKeys"
-      :render-content="renderExtButton"
-      @check-change="setLayerVisible2"
-    >
-    </el-tree>
+    <el-scrollbar style="height:100%">
+      <el-tree v-show="multiViewport"
+               show-checkbox
+               node-key="id"
+               ref="tree2"
+               :render-after-expand="false"
+               :data="layersData"
+               :props="{ disabled: disableNode }"
+               :default-expanded-keys="defaultExpandedKeys"
+               :default-checked-keys="defaultCheckedKeys"
+               :render-content="renderExtButton"
+               @check-change="setLayerVisible2">
+      </el-tree>
+    </el-scrollbar>
   </div>
 </template>
 
@@ -51,7 +50,7 @@ export default {
     // eslint-disable-next-line vue/no-unused-components
     LayerSetting,
   },
-  data() {
+  data () {
     return {
       layersData: [],
       defaultExpandedKeys: [],
@@ -61,7 +60,7 @@ export default {
     }
   },
   props: [],
-  mounted() {
+  mounted () {
     window.s3d.layerTree = this
     let _this = this
     _this.layerFactory = new LayerFactory(_this.$viewer)
@@ -75,7 +74,7 @@ export default {
     })
   },
   methods: {
-    init() {
+    init () {
       if (this.$viewer) {
         this.addLayers(window.s3d.config.layers, -1)
         this.layersData = window.s3d.config.layers
@@ -90,7 +89,7 @@ export default {
         this.$viewer._element.appendChild(this.$refs.viewportSpliter)
       }
     },
-    addLayers(layersData) {
+    addLayers (layersData) {
       let _this = this
       for (let lyNode of layersData) {
         let lyOptions = lyNode.layer
@@ -115,7 +114,12 @@ export default {
             lyNode.cesiumLayer.nodeKey = lyNode.id
           } else if (lyOptions.type === 'DEM') {
             Object.assign(lyNode, _this.layerFactory.createDEMLayer(lyOptions))
-          } else {
+          }
+          else if (lyOptions.type === '3DTILES') {
+            debugger
+            lyNode.cesiumLayer = _this.layerFactory.create3DTilesLayer(lyOptions)
+          }
+          else {
             throw '图层类型配置错误'
           }
         } else if (lyNode.children) {
@@ -126,13 +130,13 @@ export default {
         }
       }
     },
-    setLayerVisible1(data, checked) {
+    setLayerVisible1 (data, checked) {
       this.setLayerVisible(0, data, checked)
     },
-    setLayerVisible2(data, checked) {
+    setLayerVisible2 (data, checked) {
       this.setLayerVisible(1, data, checked)
     },
-    setLayerVisible(viewport, data, checked) {
+    setLayerVisible (viewport, data, checked) {
       if (data.children && data.children.length > 0) {
         return
       }
@@ -159,7 +163,7 @@ export default {
             }
           }
         } else {
-          if (isImageryLayer(layer.type) || layer.type === 'MVT') {
+          if ('show' in layer) {
             if (layer.show !== checked) {
               layer.show = checked
               window.s3d.eventBus.dispatch(
@@ -168,7 +172,8 @@ export default {
                 layer
               )
             }
-          } else if (layer.type === 'S3M') {
+          }
+          else if ('visible' in layer) {
             if (layer.visible !== checked) {
               layer.visible = checked
               window.s3d.eventBus.dispatch(
@@ -192,25 +197,14 @@ export default {
         }
       }
     },
-    // <el-tooltip
-    //           content={node.label}
-    //           disabled={false}
-    //           open-delay={300}
-    //           placement="top"
-    //           effect="dark"
-    //         >
-    //           <span class="over-ellipsis" mouseover="mouseOver($event)">
-    //             {node.label}
-    //           </span>
-    //         </el-tooltip>
-    renderExtButton(h, { node, data }) {
+    renderExtButton (h, { node, data }) {
       if (node.childNodes && node.childNodes.length > 0) {
         return (
           <span
             class={
               data.display === false
                 ? 'custom-tree-node hide-tree-node'
-                : 'custom-tree-node'
+                : 'custom-tree-node dir-node'
             }
           >
             <i class={data.icon ? 'layer-node-icon ' + data.icon : ''} />
@@ -228,25 +222,26 @@ export default {
                 : 'custom-tree-node'
             }
           >
-            <i class={data.icon ? 'layer-node-icon ' + data.icon : ''} />
-
-            <span class="toggle-ext-button">
+            <span class="layer-node-content">
+              <i class={data.icon ? 'layer-node-icon ' + data.icon : ''} />
               <span class="over-ellipsis">
                 <span title={node.label}>{node.label}</span>
               </span>
-              <i
-                class={
-                  node.checked
-                    ? 'esri-icon-directions2 my-ext-button'
-                    : 'esri-icon-directions2 my-ext-button my-ext-button-hidden'
-                }
-                on-click={() =>
-                  window.s3d.flyToLayer(
-                    data.cesiumLayer,
-                    data.layer.defaultCamera
-                  )
-                }
-              />
+              <span class="toggle-ext-button">
+                <i
+                  class={
+                    node.checked
+                      ? 'esri-icon-directions2 my-ext-button'
+                      : 'esri-icon-directions2 my-ext-button my-ext-button-hidden'
+                  }
+                  on-click={() =>
+                    window.s3d.flyToLayer(
+                      data.cesiumLayer,
+                      data.layer.defaultCamera
+                    )
+                  }
+                />
+              </span>
             </span>
 
             <el-popover
@@ -264,7 +259,7 @@ export default {
         )
       }
     },
-    toggleViewportMode() {
+    toggleViewportMode () {
       if (this.multiViewport) {
         this.$viewer.scene.multiViewportMode = Cesium.MultiViewportMode.NONE
         this.multiViewport = false
@@ -275,7 +270,7 @@ export default {
         this.$refs.tree2.setCheckedKeys(this.$refs.tree1.getCheckedKeys())
       }
     },
-    disableNode(data) {
+    disableNode (data) {
       if (data.disable) {
         return true
       }
@@ -290,8 +285,8 @@ export default {
         }
       }
     },
-    _checkLayersConfig() {
-      let setLayerName = function(layers, nameList) {
+    _checkLayersConfig () {
+      let setLayerName = function (layers, nameList) {
         for (let ln of layers) {
           if (ln.layer) {
             if (!ln.layer.name && !ln.name) {
@@ -328,7 +323,7 @@ export default {
         }
       }
     },
-    _setLayerNodeChecked(layer) {
+    _setLayerNodeChecked (layer) {
       if (layer.nodeKey) {
         let keys = this.$refs.tree1.getCheckedKeys()
         let idx = keys.findIndex((item) => item === layer.nodeKey)
@@ -350,18 +345,32 @@ export default {
 <style lang="scss">
 .layer-tree {
   display: flex;
-  height: 100%;
   width: 100%;
   background: white;
-  padding: 10px 10px;
+  padding: 10px 5px;
 
-  .tree-div {
-    padding: 10px;
+  .el-scrollbar__wrap {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+    margin: 0 !important;
+    scrollbar-width: none; /* firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+    &::-webkit-scrollbar {
+      display: none; /* Chrome Safari */
+    }
+  }
+
+  .el-tree-node__content {
+    .el-checkbox {
+      margin-bottom: 0px;
+    }
   }
 
   .divider {
     position: relative;
-    margin-left: 4px;
+    width: 10px;
+    // margin-left: 2px;
     .el-divider {
       height: 100%;
     }
@@ -369,11 +378,21 @@ export default {
 
   .custom-tree-node {
     display: flex;
-    margin-bottom: 5px;
+    align-items: center;
+    margin-bottom: 0px;
+    width: 100%;
+    justify-content: space-between;
+    &.dir-node {
+      justify-content: flex-start;
+    }
+
+    .layer-node-content {
+      height: 19px;
+    }
 
     .over-ellipsis {
       display: inline-block;
-      width: 100px;
+      max-width: 100px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -385,15 +404,11 @@ export default {
       margin-top: 1px;
       color: #409eff;
     }
-    // margin-top: 2px;
-    // height: 100%;
 
     .layer-settings {
-      height: 19px;
       width: 13px;
-
-      position: absolute;
-      right: -5px;
+      display: block;
+      margin-right: 8px;
     }
 
     .toggle-ext-button {

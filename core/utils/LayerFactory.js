@@ -79,6 +79,12 @@ export default class LayerFactory {
     ly.name = options.name
     return ly
   }
+  create3DTilesLayer(options) {
+    var tileset = this.viewer.scene.primitives.add(
+      new Cesium.Cesium3DTileset(options)
+    )
+    return tileset
+  }
   _createImageryProvider(options) {
     switch (options.type) {
       case 'ARCGISEXIMG':

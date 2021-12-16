@@ -22,6 +22,16 @@ export const layers = [
   //   },
   // },
   {
+    id: 'test-3dTiles',
+    name: '3dTiles',
+    layer: {
+      type: '3DTILES',
+      visible: true,
+      url: `http://localhost:5500/sm-3dtiles/tileset.json`,
+      show: true,
+    },
+  },
+  {
     id: '111',
     name: '市局水下',
     disable: true,
@@ -29,6 +39,16 @@ export const layers = [
       type: 'SMIMG',
       visible: true,
       url: `${baseUrl}iserver/services/3D-local3DCache-dem1tiftest/rest/realspace/datas/dem_1@tif_test`,
+    },
+  },
+  {
+    id: '太湖新城白模',
+    name: '太湖新城白模',
+    disable: false,
+    layer: {
+      type: 'S3M',
+      visible: false,
+      url: `http://106.14.242.98:8090/iserver/services/3D-local3DCache-thxc4490thxc/rest/realspace/datas/thxc_4490@thxc/config`,
     },
   },
   {

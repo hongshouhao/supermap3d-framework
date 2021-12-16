@@ -1,6 +1,8 @@
 <template>
-  <div class="cesium-container" ref="cesiumContainer">
-    <Popup ref="popup" v-show="false" />
+  <div class="cesium-container"
+       ref="cesiumContainer">
+    <Popup ref="popup"
+           v-show="false" />
   </div>
 </template>
 
@@ -13,12 +15,12 @@ export default {
   components: {
     Popup,
   },
-  data() {
+  data () {
     return {
       sceneContainer: null,
     }
   },
-  beforeMount() {
+  beforeMount () {
     if (!window.s3d || !window.s3d.config) {
       throw '配置未初始化: window.s3d.config'
     }
@@ -105,7 +107,7 @@ export default {
     window.s3d.setViewer(viewer)
     console.log('s3d', window.s3d)
   },
-  mounted() {
+  mounted () {
     this.$refs.cesiumContainer.appendChild(this.sceneContainer.children[0])
     this.$viewer.cesiumWidget.container.appendChild(this.$refs.popup.$el)
 

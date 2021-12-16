@@ -137,17 +137,17 @@ export default class S3d {
     }
   }
   _setLayerVisible(layer, visible) {
-    if (isImageryLayer(layer.type) || layer.type === 'MVT') {
+    if ('show' in layer) {
       layer.show = visible
       this.eventBus.dispatch('layer-visible-changed', this, layer)
-    } else if (layer.type === 'S3M') {
+    } else if ('visible' in layer) {
       layer.visible = visible
+      this.eventBus.dispatch('layer-visible-changed', this, layer)
       if (!visible) {
         if (layer.config.renderer) {
           this.layersRenderer.stopRender(layer.name)
         }
       }
-      this.eventBus.dispatch('layer-visible-changed', this, layer)
     }
   }
   _getDefaultDataUrl(layer) {

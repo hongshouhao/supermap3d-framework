@@ -1,14 +1,15 @@
 <template>
   <div class="top-right-bar">
     <BasemapToggle />
-    <el-popover placement="bottom" trigger="click" popper-class="layer-popup">
+    <el-popover placement="bottom"
+                trigger="click"
+                popper-class="layer-popup">
       <Layers />
 
-      <el-button slot="reference" class="btn-layers">
-        <span style="display:flex"
-          ><i class="esri-icon-layers" style="margin-right:5px"></i
-          ><span>图层</span><i class="el-icon-arrow-down el-icon--right"></i
-        ></span>
+      <el-button slot="reference"
+                 class="btn-layers">
+        <span style="display:flex"><i class="esri-icon-layers"
+             style="margin-right:5px"></i><span>图层</span><i class="el-icon-arrow-down el-icon--right"></i></span>
       </el-button>
     </el-popover>
   </div>
@@ -23,10 +24,10 @@ export default {
     Layers,
     BasemapToggle,
   },
-  data() {
+  data () {
     return {}
   },
-  mounted() {},
+  mounted () { },
   methods: {},
 }
 </script>

@@ -1,22 +1,18 @@
 <template>
   <div class="layer-settings">
     <span class="layer-settings-item-label">透明度</span>
-    <el-slider
-      :min="10"
-      :max="100"
-      v-model="conf.layer.opacity"
-      @input="setOpacity"
-    >
+    <el-slider :min="10"
+               :max="100"
+               v-model="conf.layer.opacity"
+               @input="setOpacity">
     </el-slider>
     <div v-if="showRenderer">
       <span class="layer-settings-item-label">管线流向</span>
       <br />
-      <el-switch
-        v-model="enableRenderer"
-        active-text="开"
-        inactive-text="关"
-        @change="toogleRenderer"
-      >
+      <el-switch v-model="enableRenderer"
+                 active-text="开"
+                 inactive-text="关"
+                 @change="toogleRenderer">
       </el-switch>
     </div>
   </div>
@@ -24,18 +20,18 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       enableRenderer: false,
     }
   },
   computed: {
-    showRenderer() {
+    showRenderer () {
       return this.conf.layer.renderer?.type === 'S3MLAYER'
     },
   },
   props: ['conf'],
-  mounted() {
+  mounted () {
     let _this = this
     window.s3d.eventBus.addEventListener(
       'layer-visible-changed-internal',
@@ -48,12 +44,12 @@ export default {
     )
   },
   methods: {
-    setOpacity(opacity) {
+    setOpacity (opacity) {
       if (this.conf.cesiumLayer) {
         window.s3d.setLayerOpacity(this.conf.cesiumLayer, opacity)
       }
     },
-    toogleRenderer(enable) {
+    toogleRenderer (enable) {
       if (enable) {
         window.s3d.layersRenderer.startRender(this.conf.cesiumLayer.name)
       } else {

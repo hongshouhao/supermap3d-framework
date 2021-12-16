@@ -10,252 +10,204 @@
     </div> -->
 
     <div class="esri-component esri-widget">
-      <div
-        class="esri-widget--button esri-widget esri-interactive"
-        title="2D"
-        @click="toggleView"
-      >
+      <div class="esri-widget--button esri-widget esri-interactive"
+           title="2D"
+           @click="toggleView">
         <span> {{ viewMode === '2D' ? '3D' : '2D' }}</span>
       </div>
 
-      <div
-        class="esri-widget--button esri-widget esri-interactive"
-        title="全图"
-        @click="globeView"
-      >
-        <span aria-hidden="true" class="esri-icon esri-icon-globe"></span>
+      <div class="esri-widget--button esri-widget esri-interactive"
+           title="全图"
+           @click="globeView">
+        <span aria-hidden="true"
+              class="esri-icon esri-icon-globe"></span>
       </div>
 
-      <div
-        class="esri-widget--button esri-widget esri-interactive"
-        title="放大"
-        @click="zoomIn"
-      >
-        <span aria-hidden="true" class="esri-icon esri-icon-plus"></span>
+      <div class="esri-widget--button esri-widget esri-interactive"
+           title="放大"
+           @click="zoomIn">
+        <span aria-hidden="true"
+              class="esri-icon esri-icon-plus"></span>
       </div>
 
-      <div
-        class="esri-widget--button esri-widget esri-interactive"
-        title="缩小"
-        @click="zoomOut"
-      >
-        <span aria-hidden="true" class="esri-icon esri-icon-minus"></span>
+      <div class="esri-widget--button esri-widget esri-interactive"
+           title="缩小"
+           @click="zoomOut">
+        <span aria-hidden="true"
+              class="esri-icon esri-icon-minus"></span>
       </div>
     </div>
 
     <div class="esri-component esri-widget">
-      <div
-        class="esri-widget--button esri-widget"
-        title="点标注"
-        @click="annotatePoint"
-      >
-        <span aria-hidden="true" class="esri-icon my-icon-mea-point"></span>
+      <div class="esri-widget--button esri-widget"
+           title="点标注"
+           @click="annotatePoint">
+        <span aria-hidden="true"
+              class="esri-icon my-icon-mea-point"></span>
       </div>
-      <div
-        class="esri-widget--button esri-widget"
-        title="长度测量"
-        @click="startDistanceMeasure"
-      >
-        <span aria-hidden="true" class="esri-icon esri-icon-measure"></span>
+      <div class="esri-widget--button esri-widget"
+           title="长度测量"
+           @click="startDistanceMeasure">
+        <span aria-hidden="true"
+              class="esri-icon esri-icon-measure"></span>
       </div>
-      <div
-        class="esri-widget--button esri-widget"
-        title="面积测量"
-        @click="startAreaMeasure"
-      >
-        <span
-          aria-hidden="true"
-          class="esri-icon esri-icon-measure-area"
-        ></span>
+      <div class="esri-widget--button esri-widget"
+           title="面积测量"
+           @click="startAreaMeasure">
+        <span aria-hidden="true"
+              class="esri-icon esri-icon-measure-area"></span>
       </div>
-      <div
-        class="esri-widget--button esri-widget"
-        title="角度测量"
-        @click="startAngleMeasure"
-      >
-        <span aria-hidden="true" class="esri-icon my-icon-mea-angle"></span>
+      <div class="esri-widget--button esri-widget"
+           title="角度测量"
+           @click="startAngleMeasure">
+        <span aria-hidden="true"
+              class="esri-icon my-icon-mea-angle"></span>
       </div>
-      <div
-        class="esri-widget--button esri-widget"
-        title="模型观察"
-        @click="startModelObservation"
-      >
-        <span aria-hidden="true" class="esri-icon my-icon-model-rotate"></span>
+      <div class="esri-widget--button esri-widget"
+           title="模型观察"
+           @click="startModelObservation">
+        <span aria-hidden="true"
+              class="esri-icon my-icon-model-rotate"></span>
       </div>
     </div>
 
     <div class="esri-component esri-widget">
-      <el-popover placement="right" trigger="click" popper-class="small-pop">
-        <div
-          slot="reference"
-          class="esri-widget--button esri-widget "
-          style="border-top:none"
-          title="分析"
-        >
-          <span aria-hidden="true" class="esri-icon my-icon-analysis"></span>
+      <el-popover placement="right"
+                  trigger="click"
+                  popper-class="small-pop">
+        <div slot="reference"
+             class="esri-widget--button esri-widget "
+             style="border-top:none"
+             title="分析">
+          <span aria-hidden="true"
+                class="esri-icon my-icon-analysis"></span>
         </div>
 
         <div class="top-left-popover-toolbar">
-          <div class="esri-component esri-widget" style="margin:0;">
-            <div
-              class="esri-widget--button esri-widget"
-              title="剖面分析"
-              @click="startSlice"
-            >
-              <span aria-hidden="true" class="esri-icon esri-icon-slice"></span>
+          <div class="esri-component esri-widget"
+               style="margin:0;">
+            <div class="esri-widget--button esri-widget"
+                 title="剖面分析"
+                 @click="startSlice">
+              <span aria-hidden="true"
+                    class="esri-icon esri-icon-slice"></span>
             </div>
-            <div
-              class="esri-widget--button esri-widget"
-              title="日照分析"
-              @click="startSunlight"
-            >
-              <span
-                aria-hidden="true"
-                class="esri-icon esri-icon-environment-settings"
-              ></span>
+            <div class="esri-widget--button esri-widget"
+                 title="日照分析"
+                 @click="startSunlight">
+              <span aria-hidden="true"
+                    class="esri-icon esri-icon-environment-settings"></span>
             </div>
-            <div
-              class="esri-widget--button esri-widget"
-              title="开敞度分析"
-              @click="startViewDome"
-            >
-              <span
-                aria-hidden="true"
-                class="esri-icon my-icon-kaichangdu"
-              ></span>
+            <div class="esri-widget--button esri-widget"
+                 title="开敞度分析"
+                 @click="startViewDome">
+              <span aria-hidden="true"
+                    class="esri-icon my-icon-kaichangdu"></span>
             </div>
-            <div
-              class="esri-widget--button esri-widget"
-              title="天际线分析"
-              @click="startSkyline"
-            >
-              <span aria-hidden="true" class="esri-icon my-icon-skyline"></span>
+            <div class="esri-widget--button esri-widget"
+                 title="天际线分析"
+                 @click="startSkyline">
+              <span aria-hidden="true"
+                    class="esri-icon my-icon-skyline"></span>
             </div>
-            <div
-              class="esri-widget--button esri-widget "
-              title="视域分析"
-              @click="startViewshed"
-            >
-              <span
-                aria-hidden="true"
-                class="esri-icon esri-icon-line-of-sight"
-              ></span>
+            <div class="esri-widget--button esri-widget "
+                 title="视域分析"
+                 @click="startViewshed">
+              <span aria-hidden="true"
+                    class="esri-icon esri-icon-line-of-sight"></span>
             </div>
-            <div
-              class="esri-widget--button esri-widget "
-              title="限高分析"
-              @click="startHighLimit"
-            >
-              <span
-                aria-hidden="true"
-                class="esri-icon esri-icon-elevation-profile"
-              ></span>
+            <div class="esri-widget--button esri-widget "
+                 title="限高分析"
+                 @click="startHighLimit">
+              <span aria-hidden="true"
+                    class="esri-icon esri-icon-elevation-profile"></span>
             </div>
           </div>
         </div>
       </el-popover>
-      <div
-        class="esri-widget--button esri-widget"
-        title="分屏"
-        @click="multiViewport"
-      >
-        <span aria-hidden="true" class="esri-icon my-icon-split-screen"></span>
+      <div class="esri-widget--button esri-widget"
+           title="分屏"
+           @click="multiViewport">
+        <span aria-hidden="true"
+              class="esri-icon my-icon-split-screen"></span>
       </div>
     </div>
 
     <div class="esri-component esri-widget">
-      <div
-        class="esri-widget--button esri-widget"
-        title="清理"
-        @click="clearEverything"
-      >
-        <span aria-hidden="true" class="esri-icon esri-icon-trash"></span>
+      <div class="esri-widget--button esri-widget"
+           title="清理"
+           @click="clearEverything">
+        <span aria-hidden="true"
+              class="esri-icon esri-icon-trash"></span>
       </div>
-      <div
-        class="esri-widget--button esri-widget"
-        title="设置"
-        @click="settings"
-      >
-        <span aria-hidden="true" class="esri-icon esri-icon-settings"></span>
+      <div class="esri-widget--button esri-widget"
+           title="设置"
+           @click="settings">
+        <span aria-hidden="true"
+              class="esri-icon esri-icon-settings"></span>
       </div>
     </div>
 
     <div class="esri-component esri-widget">
-      <div class="esri-widget--button esri-widget" title="测试" @click="test()">
-        <span
-          aria-hidden="true"
-          class="esri-icon esri-icon-experimental"
-        ></span>
+      <div class="esri-widget--button esri-widget"
+           title="测试"
+           @click="test()">
+        <span aria-hidden="true"
+              class="esri-icon esri-icon-experimental"></span>
       </div>
     </div>
 
-    <div
-      ref="compass"
-      title="罗盘仪"
-      class="esri-component esri-widget esri-widget--button esri-compass"
-    >
-      <span
-        aria-hidden="true"
-        class="esri-compass__icon esri-icon-compass"
-        @click="setViewNorthUp"
-      >
+    <div ref="compass"
+         title="罗盘仪"
+         class="esri-component esri-widget esri-widget--button esri-compass">
+      <span aria-hidden="true"
+            class="esri-compass__icon esri-icon-compass"
+            @click="setViewNorthUp">
       </span>
       <span class="esri-icon-font-fallback-text">重置罗盘仪方向</span>
     </div>
 
-    <WidgetInfoPanel
-      v-show="currentTool == 'ViewshedTool'"
-      title="视域分析参数"
-      ref="viewshedSettingPanel"
-      @closed="stopViewshedTool()"
-    >
+    <WidgetInfoPanel v-show="currentTool == 'ViewshedTool'"
+                     title="视域分析参数"
+                     ref="viewshedSettingPanel"
+                     @closed="stopViewshedTool()">
       <template>
         <ViewshedSetting />
       </template>
     </WidgetInfoPanel>
 
-    <WidgetInfoPanel
-      v-show="currentTool == 'SunlightTool'"
-      title="阴影分析参数"
-      ref="sunlightSettingPanel"
-      @closed="stopSunlight()"
-    >
+    <WidgetInfoPanel v-show="currentTool == 'SunlightTool'"
+                     title="阴影分析参数"
+                     ref="sunlightSettingPanel"
+                     @closed="stopSunlight()">
       <template>
         <SunlightSetting ref="sunlightSetting" />
       </template>
     </WidgetInfoPanel>
 
-    <WidgetInfoPanel
-      v-show="currentTool == 'HighLimitTool'"
-      title="限高分析"
-      ref="highLimitSettingPanel"
-      @closed="stopHighLimitTool()"
-    >
+    <WidgetInfoPanel v-show="currentTool == 'HighLimitTool'"
+                     title="限高分析"
+                     ref="highLimitSettingPanel"
+                     @closed="stopHighLimitTool()">
       <template>
         <HighLimitSetting @height-changed="updateHeight" />
       </template>
     </WidgetInfoPanel>
 
-    <WidgetInfoPanel
-      v-show="currentTool == 'ModelObservationTool'"
-      title="模型"
-      ref="modelObservationPanel"
-      @closed="stopSetting()"
-    >
+    <WidgetInfoPanel v-show="currentTool == 'ModelObservationTool'"
+                     title="模型"
+                     ref="modelObservationPanel"
+                     @closed="stopSetting()">
       <template>
-        <ModelObservationSetting
-          ref="modelObservationSetting"
-          :tool="modelObservationTool"
-        />
+        <ModelObservationSetting ref="modelObservationSetting"
+                                 :tool="modelObservationTool" />
       </template>
     </WidgetInfoPanel>
 
-    <WidgetInfoPanel
-      v-show="currentTool == 'CommonSettings'"
-      title="设置"
-      ref="commonSettingsPanel"
-      @closed="stopSetting()"
-    >
+    <WidgetInfoPanel v-show="currentTool == 'CommonSettings'"
+                     title="设置"
+                     ref="commonSettingsPanel"
+                     @closed="stopSetting()">
       <template>
         <Settings />
       </template>
@@ -295,7 +247,7 @@ export default {
     ModelObservationSetting,
     Settings,
   },
-  data() {
+  data () {
     return {
       viewMode: '',
       currentTool: '',
@@ -314,12 +266,12 @@ export default {
   },
   props: [],
   computed: {
-    developing() {
+    developing () {
       return process.env.VUE_APP_MODE === 'development' ? true : false
     },
   },
-  beforeMount() {},
-  mounted() {
+  beforeMount () { },
+  mounted () {
     window.s3d.topLeftBar = this
     let _viewer = this.$viewer
     _viewer.cesiumWidget.container.appendChild(
@@ -339,7 +291,7 @@ export default {
     )
 
     let _this = this
-    _viewer.camera.changed.addEventListener(function() {
+    _viewer.camera.changed.addEventListener(function () {
       _this.$refs.compass.style = `transform: rotateZ(-${Cesium.Math.toDegrees(
         _viewer.camera.heading
       )}deg);`
@@ -362,123 +314,123 @@ export default {
     })
   },
   methods: {
-    globeView() {
+    globeView () {
       this.$viewer.camera.flyTo(window.s3d.config.defaultCamera)
     },
-    toggleView() {
+    toggleView () {
       this.sceneModeToogleTool.toogle()
       this.viewMode = this.sceneModeToogleTool.mode
     },
-    setViewNorthUp() {
+    setViewNorthUp () {
       window.s3d.viewUtility.rotateZ(this.$viewer.camera.heading)
     },
-    zoomIn() {
+    zoomIn () {
       this.$viewer.camera.zoomIn(100)
     },
-    zoomOut() {
+    zoomOut () {
       this.$viewer.camera.zoomOut(100)
     },
-    startDistanceMeasure() {
+    startDistanceMeasure () {
       this.currentTool = 'MeasureTool'
       this.measureTool.measureDistance()
     },
-    startAreaMeasure() {
+    startAreaMeasure () {
       this.currentTool = 'MeasureTool'
       this.measureTool.measureArea()
     },
-    annotatePoint() {
+    annotatePoint () {
       this.currentTool = 'PointMeasurement'
       this.pointMeasurement.start()
     },
-    startAngleMeasure() {
+    startAngleMeasure () {
       this.currentTool = 'AngleMeasurement'
       this.angleMeasurement.start()
     },
-    startSlice() {
+    startSlice () {
       this.currentTool = 'SliceTool'
       this.sliceTool.start()
     },
-    startViewshed() {
+    startViewshed () {
       this.currentTool = 'ViewshedTool'
       this.viewshedTool.start()
     },
-    startSunlight() {
+    startSunlight () {
       this.currentTool = 'SunlightTool'
       this.$refs.sunlightSetting.init()
     },
-    startSkyline() {
+    startSkyline () {
       this.currentTool = 'SkylineTool'
       this.skylineTool.start()
     },
-    startViewDome() {
+    startViewDome () {
       this.currentTool = 'ViewDomeTool'
       this.viewDomeTool.start()
     },
-    startHighLimit() {
+    startHighLimit () {
       this.currentTool = 'HighLimitTool'
       this.highLimitTool.start()
     },
-    startModelObservation() {
+    startModelObservation () {
       this.currentTool = 'ModelObservationTool'
       this.modelObservationTool.start(() => {
         this.modelObservationTool.lookAtFront()
       })
     },
-    multiViewport() {
+    multiViewport () {
       window.s3d.layerTree.toggleViewportMode()
     },
-    updateHeight(height) {
+    updateHeight (height) {
       if (this.highLimitTool) {
         this.highLimitTool.setHeight(height)
       }
     },
-    settings() {
+    settings () {
       this.currentTool = 'CommonSettings'
     },
-    stopViewshedTool() {
+    stopViewshedTool () {
       this.viewshedTool.clear()
       this.currentTool = ''
     },
-    stopMeasureTool() {
+    stopMeasureTool () {
       this.measureTool.clear()
       this.currentTool = ''
     },
-    stopPointMeasurement() {
+    stopPointMeasurement () {
       this.pointMeasurement.clear()
       this.currentTool = ''
     },
-    stopAngleMeasurement() {
+    stopAngleMeasurement () {
       this.angleMeasurement.clear()
       this.currentTool = ''
     },
-    stopSkylineTool() {
+    stopSkylineTool () {
       this.skylineTool.clear()
       this.currentTool = ''
     },
-    stopViewDomeTool() {
+    stopViewDomeTool () {
       this.viewDomeTool.clear()
       this.currentTool = ''
     },
-    stopHighLimitTool() {
+    stopHighLimitTool () {
       this.highLimitTool.clear()
       this.currentTool = ''
     },
-    stopSliceTool() {
+    stopSliceTool () {
       this.sliceTool.clear()
       this.currentTool = ''
     },
-    stopSunlight() {
+    stopSunlight () {
       this.$refs.sunlightSetting.reset()
       this.currentTool = ''
     },
-    stopModelObservation() {
+    stopModelObservation () {
       this.modelObservationTool.clear()
       this.currentTool = ''
     },
-    stopSetting() {
+    stopSetting () {
       this.currentTool = ''
     },
-    clearEverything() {
+    clearEverything () {
       this.stopMeasureTool()
       this.stopAngleMeasurement()
       this.stopPointMeasurement()
@@ -498,7 +450,7 @@ export default {
       }
     },
 
-    test() {
+    test () {
       this.testTool.doTest()
     },
   },

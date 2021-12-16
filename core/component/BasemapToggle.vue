@@ -1,30 +1,22 @@
 <template>
-  <ul
-    class="change-basemap"
-    :class="{
+  <ul class="change-basemap"
+      :class="{
       'two-children': !enableNone,
       'three-children': enableNone,
-    }"
-  >
-    <li
-      :class="{ active: basemapType === 'normal' }"
-      @click="toggleBasemap('normal')"
-    >
+    }">
+    <li :class="{ active: basemapType === 'normal' }"
+        @click="toggleBasemap('normal')">
       <i class="esri-icon-maps"></i>
       地图
     </li>
-    <li
-      :class="{ active: basemapType === 'earth' }"
-      @click="toggleBasemap('earth')"
-    >
+    <li :class="{ active: basemapType === 'earth' }"
+        @click="toggleBasemap('earth')">
       <i class="esri-icon-globe"></i>
       影像
     </li>
-    <li
-      v-if="enableNone"
-      :class="{ active: basemapType === 'none' }"
-      @click="toggleBasemap('none')"
-    >
+    <li v-if="enableNone"
+        :class="{ active: basemapType === 'none' }"
+        @click="toggleBasemap('none')">
       <i class="esri-icon-default-action"></i>
       全黑
     </li>
@@ -35,7 +27,7 @@ import { createImageryProvider } from '../utils/ImageryUtility'
 
 export default {
   name: 'basemap-toogle',
-  data() {
+  data () {
     return {
       basemapType: '',
       layerNormal: null,
@@ -44,20 +36,20 @@ export default {
     }
   },
   computed: {
-    baseMapsConfig() {
+    baseMapsConfig () {
       return window.s3d.config.baseMaps
     },
-    baseMaps() {
+    baseMaps () {
       if (!window.s3d.baseMaps) {
         window.s3d.baseMaps = {}
       }
       return window.s3d.baseMaps
     },
-    enableNone() {
+    enableNone () {
       return this.baseMapsConfig.none && this.baseMapsConfig.none.enable
     },
   },
-  mounted() {
+  mounted () {
     this.createMaps()
 
     for (let mapKey in this.baseMapsConfig) {
@@ -69,7 +61,7 @@ export default {
     }
   },
   methods: {
-    createMaps() {
+    createMaps () {
       for (let mapKey in this.baseMapsConfig) {
         if (mapKey === 'none') {
           continue
@@ -87,7 +79,7 @@ export default {
         this.baseMaps[mapKey] = maps
       }
     },
-    toggleBasemap(type) {
+    toggleBasemap (type) {
       this.basemapType = type
       if (this.basemapType === 'none') {
         this.$viewer.scene.globe.show = false
@@ -169,7 +161,7 @@ $padding: 6px;
         width: 1px;
         height: 16px;
         background: #dbdee2;
-        content: '';
+        content: "";
         position: absolute;
         left: 66px;
         top: 8px;
@@ -191,7 +183,7 @@ $padding: 6px;
         width: 1px;
         height: 16px;
         background: #dbdee2;
-        content: '';
+        content: "";
         position: absolute;
         left: 66px;
         top: 8px;
@@ -205,7 +197,7 @@ $padding: 6px;
         width: 1px;
         height: 16px;
         background: #dbdee2;
-        content: '';
+        content: "";
         position: absolute;
         left: 126px;
         top: 8px;
