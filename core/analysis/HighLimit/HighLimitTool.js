@@ -4,7 +4,6 @@ import {
   getRectangleCoordinates,
   pointToLineDistance,
   getPointOnPlane2,
-  cartesianToLonlat,
   reCalculateCartesian,
 } from '../../utils/CesiumMath'
 
@@ -29,29 +28,39 @@ export default class HighLimitTool {
 
   start() {
     let _this = this
-    _this.loadLayers()
     _this.resetState()
-    _this.createHandler.setInputAction(function(e) {
-      _this.setCursor('cursor-move')
-      if (!_this.clippingRectangle) {
-        _this.createRectangle(e.endPosition)
-      } else {
-        _this.moveDefaultectangle(e.endPosition)
+    _this.loadLayers().then(() => {
+      if (this._corners) {
+        _this.createRectangle()
         _this.updateClipBox()
+      } else {
+        _this.createHandler.setInputAction(function(e) {
+          _this.setCursor('cursor-move')
+          if (!_this.clippingRectangle) {
+            _this.createRectangleByMouse(e.endPosition)
+          } else {
+            _this.moveDefaultectangle(e.endPosition)
+            _this.updateClipBox()
+          }
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
+
+        _this.createHandler.setInputAction(function() {
+          _this.resetCursor()
+          _this.createHandler.removeInputAction(
+            Cesium.ScreenSpaceEventType.MOUSE_MOVE
+          )
+          _this.createHandler.removeInputAction(
+            Cesium.ScreenSpaceEventType.RIGHT_CLICK
+          )
+          _this.onEditEvent()
+        }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
       }
-    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
+    })
+  }
 
-    _this.createHandler.setInputAction(function() {
-      _this.resetCursor()
-      _this.createHandler.removeInputAction(
-        Cesium.ScreenSpaceEventType.MOUSE_MOVE
-      )
-      _this.createHandler.removeInputAction(
-        Cesium.ScreenSpaceEventType.RIGHT_CLICK
-      )
-
-      _this.onEditEvent()
-    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+  //corners: [x1,y1,x2,y2,x3,y3,x4,y4]
+  setRectangle(corners) {
+    this._corners = corners
   }
 
   setHeight(height) {
@@ -84,11 +93,13 @@ export default class HighLimitTool {
   }
 
   loadLayers() {
+    var promises = []
     for (let lname of this.layers) {
       let newLayerName = lname + '-HighLimit'
       let newLayer = this.scene.layers.find(newLayerName)
       if (newLayer) {
         newLayer.visible = true
+        promises.push(Promise.resolve(newLayer))
       } else {
         let layer = this.scene.layers.find(lname)
         if (layer) {
@@ -97,7 +108,7 @@ export default class HighLimitTool {
           let url = window.s3d.getLayerConfig(lname).url
           //let url = `${layer._baseUri.scheme}://${layer._baseUri.authority}${layer._baseUri.path}`
           //url = url.replace('/data/path/', '/config')
-          this.viewer.scene
+          let pro = this.viewer.scene
             .addS3MTilesLayerByScp(url, { name: newLayerName })
             .then((ly) => {
               ly.visible = true
@@ -107,10 +118,14 @@ export default class HighLimitTool {
               ly.wireFrameMode = layer.wireFrameMode
               ly.clipLineColor = Cesium.Color.RED
               ly.style3D.fillForeColor = Cesium.Color.ORANGERED
+              return ly
             })
+
+          promises.push(pro)
         }
       }
     }
+    return Promise.all(promises)
   }
 
   clear() {
@@ -126,7 +141,7 @@ export default class HighLimitTool {
         ly2.clearCustomClipBox()
       }
     }
-
+    this._corners = null
     this.resetState()
   }
 
@@ -146,7 +161,7 @@ export default class HighLimitTool {
     this.state = ''
   }
 
-  createRectangle(mousePosition) {
+  createRectangleByMouse(mousePosition) {
     let center = this.transformMousePosition(mousePosition)
     this.clippingRectangle = this.viewer.entities.add({
       name: 'clipping_rectangle',
@@ -173,6 +188,49 @@ export default class HighLimitTool {
       this.clipping_halfWidth,
       true
     )
+
+    this.clippingRectangleOutline = this.viewer.entities.add({
+      name: 'clipping_rectangle_outline',
+      polyline: {
+        positions: this.clippingRectangleOutlinePositions,
+        material: Cesium.Color.fromCssColorString('#fe8001'),
+        width: 1.0,
+        clampToGround: false,
+      },
+    })
+  }
+
+  createRectangle() {
+    let vertexes = Cesium.Cartesian3.fromDegreesArray(this._corners)
+    this.clippingRectangle = this.viewer.entities.add({
+      name: 'clipping_rectangle',
+      rectangle: {
+        height: this.clipping_height,
+        coordinates: Cesium.Rectangle.fromCartesianArray(vertexes),
+        material: Cesium.Color.fromAlpha(
+          Cesium.Color.fromCssColorString('#fe8001'),
+          0.2
+        ),
+      },
+    })
+
+    let rect = this.clippingRectangle.rectangle.coordinates.getValue()
+    let southwest = Cesium.Rectangle.southwest(rect)
+    let southeast = Cesium.Rectangle.southeast(rect)
+    let northeast = Cesium.Rectangle.northeast(rect)
+    let northwest = Cesium.Rectangle.northwest(rect)
+    southwest.height = this.clipping_height
+    southeast.height = this.clipping_height
+    northeast.height = this.clipping_height
+    northwest.height = this.clipping_height
+
+    this.clippingRectangleOutlinePositions = [
+      Cesium.Ellipsoid.WGS84.cartographicToCartesian(southwest),
+      Cesium.Ellipsoid.WGS84.cartographicToCartesian(southeast),
+      Cesium.Ellipsoid.WGS84.cartographicToCartesian(northeast),
+      Cesium.Ellipsoid.WGS84.cartographicToCartesian(northwest),
+      Cesium.Ellipsoid.WGS84.cartographicToCartesian(southwest),
+    ]
 
     this.clippingRectangleOutline = this.viewer.entities.add({
       name: 'clipping_rectangle_outline',
@@ -396,28 +454,17 @@ export default class HighLimitTool {
   }
 
   updateClipBox() {
-    let midPt = Cesium.Cartesian3.divideByScalar(
-      Cesium.Cartesian3.add(
-        this.clippingRectangleOutlinePositions[0],
-        this.clippingRectangleOutlinePositions[2],
-        new Cesium.Cartesian3()
-      ),
-      2,
-      new Cesium.Cartesian3()
-    )
-
-    let lonlat = cartesianToLonlat(midPt)
+    let rect = this.clippingRectangle.rectangle.coordinates.getValue()
+    let center = Cesium.Rectangle.center(rect)
     let position = Cesium.Cartesian3.fromDegrees(
-      lonlat.longitude,
-      lonlat.latitude,
+      Cesium.Math.toDegrees(center.longitude),
+      Cesium.Math.toDegrees(center.latitude),
       this.clipping_height / 50 - 1
     )
-
     let width = Cesium.Cartesian3.distance(
       this.clippingRectangleOutlinePositions[0],
       this.clippingRectangleOutlinePositions[1]
     )
-
     let height = Cesium.Cartesian3.distance(
       this.clippingRectangleOutlinePositions[1],
       this.clippingRectangleOutlinePositions[2]

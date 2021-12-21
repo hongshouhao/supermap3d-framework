@@ -4,28 +4,33 @@ console.log(URL_CONFIG)
 
 export const config = {
   iServerBaseURL: process.env.VUE_APP_ISERVER_BASE_URL,
+  useEllipsoid: true,
   dem: URL_CONFIG.SiChuan_TERRAIN,
-  undergroundMode: true,
+  undergroundMode: false,
   minimumZoomDistance: -1000,
   drillPick: {
-    enable: true,
+    enable: false,
     depth: 20,
   },
   // dem:
   //   'http://192.168.175.70:8090/iserver/services/3D-local3DCache-SZDEM4490dx/rest/realspace/datas/SZDEM_4490@dx',
   layers: layers,
   defaultCamera: {
-    destination: Cesium.Cartesian3.fromDegrees(120.603, 31.175, 400.0),
+    destination: {
+      x: -2780779.3515402046,
+      y: 4701313.255898198,
+      z: 3282896.1677609854,
+    },
     orientation: {
-      heading: 0.027587479922354774,
-      pitch: -0.5169824822585825,
-      roll: 6.283185307179586,
+      heading: 0.027588725000345704,
+      pitch: -0.5169348809396417,
+      roll: 6.28318530698979,
     },
     duration: 2,
   },
   baseMaps: {
     none: {
-      enable: true,
+      enable: false,
       default: false,
     },
     earth: {
@@ -66,26 +71,21 @@ export const config = {
         //      styleId: 'aaaaaaaaaaaffffffff',
         //    },
         //  },
-        // {
-        //   type: 'gaode',
-        //   params: {
-        //     url:
-        //       'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
-        //   },
-        // },
+        {
+          type: 'gaode',
+          mode: 'night',
+          params: {
+            url:
+              'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+          },
+        },
         {
           type: 'supermap',
+          mode: 'day',
           params: {
             url: URL_CONFIG.SUPERMAP_IMG_MEC,
           },
         },
-        // {
-        //   type: 'tianditu',
-        //   params: {
-        //     mapStyle: Cesium.TiandituMapsStyle['VEC_W'],
-        //     token: URL_CONFIG.TOKEN_TIANDITU,
-        //   },
-        // },
       ],
     },
   },

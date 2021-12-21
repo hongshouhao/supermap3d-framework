@@ -1,18 +1,46 @@
 import SketchTool from './tools/Sketch/SketchTool'
+import HighLimitTool from './analysis/HighLimit/HighLimitTool'
+import SubmergedTool from './analysis/Submerged/SubmergedTool'
 export default class Test {
   constructor() {
+    this.createSketchTool()
+    this.createSubmergedTool()
+    this.createHighLimitTool()
+  }
+  createSketchTool() {
     this.count = 1
     this.sketchTool = new SketchTool(window.s3d.viewer)
     this.sketchTool.setMultiable(false)
     this.sketchTestStep = 0
   }
-
+  createSubmergedTool() {
+    this.submergedTool = new SubmergedTool(window.s3d.viewer)
+    this.submergedTool.setTargetLayer('大场景')
+  }
+  createHighLimitTool() {
+    this.highLimitTool = new HighLimitTool(window.s3d.viewer)
+    this.highLimitTool.setTargetLayers(['楼幢'])
+    this.highLimitTool.setHeight(60)
+    this.highLimitTool.setRectangle([
+      120.6014997708723,
+      31.180936477517143,
+      120.60515662761527,
+      31.180896259318505,
+      120.60575593261512,
+      31.186082838897974,
+      120.60050207082269,
+      31.186380190938625,
+    ])
+  }
   doTest() {
-    this.loadGeoJSON()
-    //this.insertToolButton()
+    // this.submergedTool.start()
+    // this.highLimitTool.start()
+    this.loadShapefile()
+    // this.loadGeoJSON()
+    // this.insertToolButton()
     // this.entityToGeoJson()
     // window.s3d.setLayerVisible('标志标线', true)
-    //this.sketchTest()
+    // this.sketchTest()
     // window.s3d.viewUtility.rotateZ(1)
     // window.s3d
     //   .query({ layer: '交通信号', sql: 'SMID =1' })
@@ -84,7 +112,15 @@ export default class Test {
       )
     })
   }
-
+  loadShapefile() {
+    // window.s3d.dataUtility.loadShapefile('/test.shp')
+    window.s3d.dataUtility.loadTrailLineFromShapefile('/test.shp', {
+      width: 4,
+      color: new Cesium.Color(0.9765, 0.7647, 0.4667, 1.0),
+      trailLength: 0.5,
+      period: 2,
+    })
+  }
   loadGeoJSON() {
     let geojson = {
       type: 'Feature',
@@ -113,7 +149,7 @@ export default class Test {
         visibility: '1',
       },
     }
-    window.s3d.loadGeoJson(geojson)
+    window.s3d.dataUtility.loadGeoJson(geojson)
   }
 
   debug() {

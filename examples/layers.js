@@ -27,8 +27,48 @@ export const layers = [
     layer: {
       type: '3DTILES',
       visible: true,
-      url: `http://localhost:5500/sm-3dtiles/tileset.json`,
-      show: true,
+      url: `http://127.0.0.1:5501/tileset.json`,
+      zOffset: -19.206,
+      iQuery: {
+        // symbol: {
+        //   stroke: Cesium.Color.fromCssColorString('#FF0000'),
+        //   fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
+        //   strokeWidth: 2,
+        // },
+        getData: function(p) {
+          console.log(p)
+          return {
+            object: {
+              id: 1,
+              shape: {
+                type: 'FeatureCollection',
+                features: [
+                  {
+                    type: 'Feature',
+                    properties: {},
+                    geometry: {
+                      type: 'Polygon',
+                      coordinates: [
+                        [
+                          [115.98874574945314, 29.714681663499647, 8],
+                          [115.98844966578308, 29.714167413496305, 8],
+                          [115.98901889056192, 29.713904099687618, 8],
+                          [115.98925663585524, 29.714367876988298, 8],
+                          [115.98874574945314, 29.714681663499647, 8],
+                        ],
+                      ],
+                    },
+                  },
+                ],
+              },
+              attributes: {
+                a: 1,
+                b: 2,
+              },
+            },
+          }
+        },
+      },
     },
   },
   {
@@ -94,7 +134,7 @@ export const layers = [
           type: 'S3M',
           visible: true,
           enableFillAndWireFrame: true,
-          url: `${baseUrl}iserver/services/3D-XCFCFH/rest/realspace/datas/FC/config`,
+          url: `http://192.168.175.70:8090/iserver/services/3D-local3DCache-thxcqx1wz/rest/realspace/datas/thxc_qx_1@wz/config`,
           popupTemplate: popupTemplateWithDefaultUI,
           outFields: ['*'],
         },
@@ -264,45 +304,13 @@ export const layers = [
           visible: false,
           url: `${baseUrl}iserver/services/3D-BiaoXian/rest/realspace/datas/标志标线缓存`,
           iQuery: {
-            symbol: {
-              stroke: Cesium.Color.fromCssColorString('#FF0000'),
-              fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
-              strokeWidth: 2,
-            },
-            dataUrl: 'http://localhost:9864/cad-connect-test',
-            transform: function(data) {
-              return {
-                object: {
-                  id: 1,
-                  shape: {
-                    type: 'FeatureCollection',
-                    features: [
-                      {
-                        type: 'Feature',
-                        properties: {},
-                        geometry: {
-                          type: 'Polygon',
-                          coordinates: [
-                            [
-                              [120.60305656736594, 31.18123133876843, 1],
-                              [120.60652506219583, 31.18079974839298, 1],
-                              [120.60470257215461, 31.182567293375214, 1],
-                              [120.60305656736594, 31.18123133876843, 1],
-                            ],
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                  attributes: {
-                    a: data,
-                    b: 2,
-                  },
-                },
-              }
-            },
-            // getData: function(p) {
-            //   console.log(p)
+            // symbol: {
+            //   stroke: Cesium.Color.fromCssColorString('#FF0000'),
+            //   fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
+            //   strokeWidth: 2,
+            // },
+            // dataUrl: 'http://localhost:9864/cad-connect-test',
+            // transform: function(data) {
             //   return {
             //     object: {
             //       id: 1,
@@ -327,12 +335,44 @@ export const layers = [
             //         ],
             //       },
             //       attributes: {
-            //         a: 1,
+            //         a: data,
             //         b: 2,
             //       },
             //     },
             //   }
             // },
+            getData: function(p) {
+              console.log(p)
+              return {
+                object: {
+                  id: 1,
+                  shape: {
+                    type: 'FeatureCollection',
+                    features: [
+                      {
+                        type: 'Feature',
+                        properties: {},
+                        geometry: {
+                          type: 'Polygon',
+                          coordinates: [
+                            [
+                              [120.60305656736594, 31.18123133876843, 1],
+                              [120.60652506219583, 31.18079974839298, 1],
+                              [120.60470257215461, 31.182567293375214, 1],
+                              [120.60305656736594, 31.18123133876843, 1],
+                            ],
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                  attributes: {
+                    a: 1,
+                    b: 2,
+                  },
+                },
+              }
+            },
           },
         },
       },

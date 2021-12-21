@@ -14,13 +14,16 @@ import ViewUtility from './utils/ViewUtility'
 import PickingUtility from './utils/PickingUtility'
 import CameraUtility from './utils/CameraUtility'
 import DebugUtility from './utils/DebugUtility'
+import DataUtility from './utils/DataUtility'
+import BasemapUtility from './utils/BasemapUtility'
+
 import { lonLatToCartesian } from './utils/CesiumMath'
 import { isS3mFeature, isCartesian3 } from './utils/IfUtility'
 import { setCursorStyle, resetCursorStyle } from './utils/CursorUtility'
 import { isImageryLayer } from './utils/ImageryUtility'
 
 import SketchTool from './tools/Sketch/SketchTool'
-import LayersRenderer from './component/LayersRenderer'
+import LayersRenderer from './components/LayersRenderer'
 // import './materials'
 
 export default class S3d {
@@ -38,6 +41,16 @@ export default class S3d {
     this.scene = null
 
     this._setLabel()
+
+    if (config.useEllipsoid) {
+      //默认球体为圆球，修改为真实椭球体
+      Cesium.Ellipsoid.WGS84 = new Cesium.Ellipsoid(
+        6378137.0,
+        6378137.0,
+        6356752.3142451793
+      )
+    }
+
     // this._loadCustomMaterials()
   }
 
@@ -48,8 +61,25 @@ export default class S3d {
     this.cameraUtility = new CameraUtility(viewer)
     this.debugUtility = new DebugUtility(viewer)
     this.pickingUtility = new PickingUtility(viewer.scene)
+    this.dataUtility = new DataUtility(viewer)
     this.sketchTool = new SketchTool(viewer)
     this.layersRenderer = new LayersRenderer(viewer)
+    this.basemapUtility = new BasemapUtility(viewer, this)
+
+    this.viewer.scene.globe.enableLighting = true
+    this.viewer.scene.hdrEnabled = true
+
+    // viewer.scene.fxaa = false
+    // viewer.scene.postProcessStages.fxaa.enabled = false
+    this.viewer.scene.debugShowFramesPerSecond = false
+    this.viewer.scene.globe.depthTestAgainstTerrain = true
+    this.viewer.scene.logarithmicDepthBuffer = false
+
+    let currentTime = new Date()
+    currentTime.setHours(12)
+    this.viewer.clock.currentTime = Cesium.JulianDate.fromDate(currentTime)
+    this.viewer.clock.multiplier = 1
+    this.viewer.clock.shouldAnimate = true
   }
 
   setCursor(className) {
@@ -139,10 +169,10 @@ export default class S3d {
   _setLayerVisible(layer, visible) {
     if ('show' in layer) {
       layer.show = visible
-      this.eventBus.dispatch('layer-visible-changed', this, layer)
+      this.eventBus.dispatch('layer-visible-changed', null, layer)
     } else if ('visible' in layer) {
       layer.visible = visible
-      this.eventBus.dispatch('layer-visible-changed', this, layer)
+      this.eventBus.dispatch('layer-visible-changed', null, layer)
       if (!visible) {
         if (layer.config.renderer) {
           this.layersRenderer.stopRender(layer.name)
@@ -396,6 +426,7 @@ export default class S3d {
   }
 
   pick(mousePosition) {
+    debugger
     let pickedObjects = []
     if (this.config.drillPick?.enable) {
       pickedObjects = this.pickingUtility.drillPickByDepth(
@@ -411,6 +442,16 @@ export default class S3d {
 
     return pickedObjects
   }
+
+  enableBloom() {
+    this.viewer.scene.bloomEffect.show = true
+    this.viewer.scene.bloomEffect.threshold = 0.5
+    this.viewer.scene.bloomEffect.bloomIntensity = 3
+  }
+  disableBloom() {
+    this.viewer.scene.bloomEffect.show = false
+  }
+
   // , distance, orientation, duration
   _flyToBounds(bounds, options) {
     let rectangle = Cesium.Rectangle.fromRadians(
@@ -437,33 +478,4 @@ export default class S3d {
     ])
     this.flyTo(pts, options)
   }
-
-  /*
-  geojson: 即geojson
-  options：见 GeoJsonDataSource.load(geojson, options)
-  dsName: 用来管理datasource
-   */
-  loadGeoJson(geojson, options, dsName) {
-    let opt = options ?? {
-      stroke: Cesium.Color.RED,
-      fill: Cesium.Color.BLUE.withAlpha(0.3),
-      strokeWidth: 1,
-      clampToGround: true,
-    }
-    return Cesium.GeoJsonDataSource.load(geojson, opt).then((res) => {
-      res.name = dsName ? `temp_${dsName}` : 'temp_ds'
-      this.viewer.dataSources.add(res)
-      return res
-    })
-  }
-  clearGeoJson() {
-    for (let i = 0; i < this.viewer.dataSources.length; i++) {
-      let ds = this.viewer.dataSources.get(i)
-      if (ds.name.startsWith('temp_')) {
-        this.viewer.dataSources.remove(ds, true)
-      }
-    }
-  }
-
-  enableRain() {}
 }

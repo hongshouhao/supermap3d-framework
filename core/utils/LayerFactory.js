@@ -83,6 +83,10 @@ export default class LayerFactory {
     var tileset = this.viewer.scene.primitives.add(
       new Cesium.Cesium3DTileset(options)
     )
+    tileset.type = options.type
+    tileset.config = options
+    tileset.show = options.visible
+    tileset.name = options.name
     return tileset
   }
   _createImageryProvider(options) {

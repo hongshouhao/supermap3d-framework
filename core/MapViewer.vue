@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import Popup from './component/Popup.vue'
+import Popup from './components/Popup.vue'
 // import { createImageryProvider } from './utils/ImageryUtility'
 import { enableCursorStyle } from './utils/CursorUtility'
 export default {
@@ -63,13 +63,6 @@ export default {
     this.sceneContainer = document.createElement('div')
     let viewer = new Cesium.Viewer(this.sceneContainer, viewerOptions)
 
-    // viewer.scene.fxaa = false
-    // viewer.scene.postProcessStages.fxaa.enabled = false
-    viewer.scene.hdrEnabled = true
-    viewer.scene.debugShowFramesPerSecond = false
-    viewer.scene.globe.depthTestAgainstTerrain = true
-    viewer.scene.logarithmicDepthBuffer = false
-
     if (gConfig.undergroundMode) {
       viewer.scene.undergroundMode = gConfig.undergroundMode
     }
@@ -95,12 +88,6 @@ export default {
       Cesium.CameraEventType.WHEEL,
       Cesium.CameraEventType.PINCH,
     ]
-
-    let currentTime = new Date()
-    currentTime.setHours(12)
-    viewer.clock.currentTime = Cesium.JulianDate.fromDate(currentTime)
-    viewer.clock.multiplier = 1
-    viewer.clock.shouldAnimate = true
 
     viewer.camera.flyTo(gConfig.defaultCamera)
     this.__proto__.__proto__.$viewer = viewer

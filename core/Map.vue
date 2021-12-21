@@ -13,8 +13,8 @@
 
 <script>
 import MapViewer from './MapViewer.vue'
-import TopLeftBar from './component/TopLeftBar.vue'
-import TopRightBar from './component/TopRightBar.vue'
+import TopLeftBar from './components/TopLeftBar.vue'
+import TopRightBar from './components/TopRightBar.vue'
 export default {
   name: 'smmap',
   components: {

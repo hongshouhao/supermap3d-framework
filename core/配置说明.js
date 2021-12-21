@@ -2,6 +2,8 @@
 
 export default {
   iServerBaseURL: 'http://localhost/',
+  //默认球体为圆球，true修改为真实椭球体
+  useEllipsoid: true,
   //DEM地址，可空
   dem: 'http://localhost/realspace/services/3D-dem/rest/realspace/datas/DEM',
   //开启地下模式
@@ -53,17 +55,27 @@ export default {
             //三维模型图层
             type: 'S3M',
             visible: true,
-            //模型是否描边，绘制出轮廓线
+            //模型是否描边，绘制出轮廓线，值作用S3M图层
             enableFillAndWireFrame: true,
             //模型选中颜色，可空
             selectColorType: Cesium.SelectColorType.REPLACE,
             url:
               'http://localhost/iserver/services/3D-S3M/rest/realspace/datas/test/config',
+            //图层定位相机默认设置，同上config
+            defaultCamera: {
+              duration: 2,
+              offset: {
+                heading: 6.087014263548862,
+                pitch: -0.5091484573438768,
+                range: 100,
+              },
+            },
             //数据查询时需要此参数
             datasetName: '模型1:BackUp_TarDataset_1',
             //当数据服务，可空，非默认地址时需要使用此配置
             dataUrl:
               'http://localhost/iserver/services/dataSM/rest/data/featureResults.json?returnContent=true',
+            //i查询弹出框
             popupTemplate: {
               //返回标题
               getHeader: function(data) {
@@ -196,6 +208,20 @@ export default {
         },
       },
     },
+    {
+      id: '37',
+      name: '测试3dtiles图层',
+      layer: {
+        //3DTILES类型
+        type: '3DTILES',
+        visible: true,
+        url: `http://localhost:5500/sm-3dtiles/tileset.json`,
+        //用于调整图层高度，如没有DEM数据又需要将模型贴地时设置此值，具体数值可使用点标注功能获取
+        zOffset: -1,
+        //同影像查询iQuery
+        iQuery: {},
+      },
+    },
   ],
   //默认相机配置
   defaultCamera: {
@@ -236,6 +262,7 @@ export default {
           //supermap: SuperMapImageryProvider
           //custom: TileMapServiceImageryProvider
           type: 'bing',
+          mode: 'night', //设置底图模式，用于切换夜晚和白天
           params: {
             url: 'https://dev.virtualearth.net',
             mapStyle: 'Aerial',

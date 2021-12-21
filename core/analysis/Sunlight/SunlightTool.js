@@ -1,12 +1,11 @@
 export default class SunlightTool {
   constructor(viewer) {
     this.viewer = viewer
-    viewer.scene.shadowMap.darkness = 0.3
-    viewer.scene.sun.show = true
     for (let ly of viewer.scene.layers._layerQueue) {
       ly.shadowType = 2
     }
 
+    this.updateInterval = 20
     this.state = 'none'
   }
 
@@ -15,8 +14,8 @@ export default class SunlightTool {
     this.endTime = null
 
     if (date instanceof Date) {
-      this.startTime = new Date(this.date.valueOf())
-      this.endTime = new Date(this.date.valueOf())
+      this.startTime = new Date(date.valueOf())
+      this.endTime = new Date(date.valueOf())
     } else {
       this.startTime = new Date(date)
       this.endTime = new Date(date)
@@ -27,6 +26,9 @@ export default class SunlightTool {
   }
 
   start(intercepor, completedCallback) {
+    this.viewer.scene.shadowMap.darkness = 0.3
+    this.viewer.scene.sun.show = true
+
     if (this.state === 'none') {
       if (this.startTime > this.endTime) {
         return
@@ -64,7 +66,7 @@ export default class SunlightTool {
         }
         this.state = 'none'
       }
-    }, 20)
+    }, _this.updateInterval)
   }
 
   pause() {
