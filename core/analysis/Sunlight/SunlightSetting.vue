@@ -46,8 +46,6 @@ export default {
       marks: {},
       startHour: 8,
       endHour: 18,
-      sunlightTool: null,
-      shadowQueryTool: null,
     }
   },
   beforeMount () {

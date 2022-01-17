@@ -42,7 +42,7 @@
 <script>
 import LayerSetting from './LayerSetting.vue'
 import LayerFactory from '../utils/LayerFactory'
-import { isImageryLayer } from '../utils/ImageryUtility'
+import { isPromise } from '../utils/IfUtility'
 
 export default {
   name: 'layers-tree',
@@ -56,7 +56,6 @@ export default {
       defaultExpandedKeys: [],
       defaultCheckedKeys: [],
       multiViewport: false,
-      layerFactory: null,
     }
   },
   props: [],
@@ -68,7 +67,6 @@ export default {
       _this._checkLayersConfig()
       _this.init()
     })
-
     window.s3d.eventBus.addEventListener('layer-visible-changed', (caller, ly) => {
       _this._setLayerNodeChecked(ly)
     })
@@ -91,66 +89,22 @@ export default {
     },
     addLayers (layersData) {
       let _this = this
-      for (let lyNode of layersData) {
-        let lyOptions = lyNode.layer
+      for (let lyElModel of layersData) {
+        let lyOptions = lyElModel.layer
         if (lyOptions) {
           if (!lyOptions.opacity) {
-            lyOptions.opacity = 100
+            lyOptions.opacity = 1
           }
+          lyElModel.cesiumLayerLoaded = false
           if (lyOptions.visible) {
-            _this.defaultCheckedKeys.push(lyNode.id)
+            _this.defaultCheckedKeys.push(lyElModel.id)
+            _this._createLayer(lyElModel)
           }
-
-          if (isImageryLayer(lyOptions.type)) {
-            lyNode.cesiumLayer = _this.layerFactory.createImageLayer(lyOptions)
-            lyNode.cesiumLayer.nodeKey = lyNode.id
-          } else if (lyOptions.type === 'S3M') {
-            _this.layerFactory.createS3MLayer(lyOptions).then((ly) => {
-              lyNode.cesiumLayer = ly
-              lyNode.cesiumLayer.nodeKey = lyNode.id
-            })
-          } else if (lyOptions.type === 'MVT') {
-            lyNode.cesiumLayer = _this.layerFactory.createMVTLayer(lyOptions)
-            lyNode.cesiumLayer.nodeKey = lyNode.id
-          } else if (lyOptions.type === 'DEM') {
-            Object.assign(lyNode, _this.layerFactory.createDEMLayer(lyOptions))
+        } else if (lyElModel.children) {
+          if (lyElModel.expand) {
+            _this.defaultExpandedKeys.push(lyElModel.id)
           }
-          else if (lyOptions.type === '3DTILES') {
-            lyNode.cesiumLayer = _this.layerFactory.create3DTilesLayer(lyOptions)
-            if (lyOptions.zOffset) {
-              lyNode.cesiumLayer.readyPromise
-                .then(tileset => {
-                  debugger
-                  let cartographic = Cesium.Cartographic.fromCartesian(
-                    tileset.boundingSphere.center
-                  );
-                  let surface = Cesium.Cartesian3.fromRadians(
-                    cartographic.longitude,
-                    cartographic.latitude,
-                    0.0
-                  );
-                  let offset = Cesium.Cartesian3.fromRadians(
-                    cartographic.longitude,
-                    cartographic.latitude,
-                    lyOptions.zOffset
-                  );
-                  let translation = Cesium.Cartesian3.subtract(
-                    offset,
-                    surface,
-                    new Cesium.Cartesian3()
-                  );
-                  lyNode.cesiumLayer.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
-                })
-            }
-          }
-          else {
-            throw '图层类型配置错误'
-          }
-        } else if (lyNode.children) {
-          if (lyNode.expand) {
-            _this.defaultExpandedKeys.push(lyNode.id)
-          }
-          this.addLayers(lyNode.children)
+          this.addLayers(lyElModel.children)
         }
       }
     },
@@ -165,52 +119,20 @@ export default {
         return
       }
       if (data.cesiumLayer) {
-        let layer = data.cesiumLayer
         if (this.multiViewport) {
-          if (layer.type === 'S3M') {
-            if (!layer.visible) {
-              layer.visible = true
-
-              if (viewport === 0) {
-                layer.setVisibleInViewport(0, checked)
-              } else {
-                layer.setVisibleInViewport(0, false)
-              }
-
-              if (viewport === 1) {
-                layer.setVisibleInViewport(1, checked)
-              } else {
-                layer.setVisibleInViewport(1, false)
-              }
-            } else {
-              layer.setVisibleInViewport(viewport, checked)
-            }
-          }
+          this.setVisibleInViewport(data.cesiumLayer, viewport, checked)
         } else {
-          if ('show' in layer) {
-            if (layer.show !== checked) {
-              layer.show = checked
-              window.s3d.eventBus.dispatch(
-                'layer-visible-changed-internal',
-                null,
-                layer
-              )
-            }
+          if (checked) {
+            this._createLayer(data)
           }
-          else if ('visible' in layer) {
-            if (layer.visible !== checked) {
-              layer.visible = checked
-              window.s3d.eventBus.dispatch(
-                'layer-visible-changed-internal',
-                null,
-                layer
-              )
-              // if (!checked) {
-              //   if (layer.config.renderer) {
-              //     window.s3d.layersRenderer.stopRender(layer.name)
-              //   }
-              // }
-            }
+          else {
+            let lyName = data.cesiumLayer.name
+            this._removeLayer(data)
+            window.s3d.eventBus.dispatch(
+              'layer-invisible-internal',
+              null,
+              lyName
+            )
           }
         }
       } else if (data.dem) {
@@ -220,67 +142,118 @@ export default {
           this.$viewer.terrainProvider = data.dem0
         }
       }
+      else {
+        if (checked) {
+          data.layer.visible = true
+          let cly = this._createLayer(data)
+          if (this.multiViewport) {
+            if (isPromise(cly)) {
+              cly.then((_ly) => {
+                this.setVisibleInViewport(_ly, viewport, true)
+                this.setVisibleInViewport(_ly, viewport == 0 ? 1 : 0, false)
+              })
+            }
+            else {
+              this.setVisibleInViewport(cly, viewport, true)
+              this.setVisibleInViewport(cly, viewport == 0 ? 1 : 0, false)
+            }
+          }
+        }
+      }
     },
-    renderExtButton (h, { node, data }) {
+    setVisibleInViewport (cesiumLayer, viewport, checked) {
+      if (cesiumLayer["setVisibleInViewport"]) {
+        if (!cesiumLayer.visible) {
+          cesiumLayer.visible = true
+          if (viewport === 0) {
+            cesiumLayer.setVisibleInViewport(0, checked)
+          } else {
+            cesiumLayer.setVisibleInViewport(0, false)
+          }
+
+          if (viewport === 1) {
+            cesiumLayer.setVisibleInViewport(1, checked)
+          } else {
+            cesiumLayer.setVisibleInViewport(1, false)
+          }
+        } else {
+          cesiumLayer.setVisibleInViewport(viewport, checked)
+        }
+      }
+    },
+    renderExtButton (h, { node }) {
+      let lyElModel = node.data
       if (node.childNodes && node.childNodes.length > 0) {
         return (
           <span
             class={
-              data.display === false
+              lyElModel.display === false
                 ? 'custom-tree-node hide-tree-node'
                 : 'custom-tree-node dir-node'
             }
           >
-            <i class={data.icon ? 'layer-node-icon ' + data.icon : ''} />
+            <i class={lyElModel.icon ? 'layer-node-icon ' + lyElModel.icon : ''} />
             <span class="over-ellipsis">
               <span title={node.label}>{node.label}</span>
             </span>
           </span>
         )
       } else {
-        return (
-          <span
-            class={
-              data.display === false
-                ? 'custom-tree-node hide-tree-node'
-                : 'custom-tree-node'
-            }
-          >
-            <span class="layer-node-content">
-              <i class={data.icon ? 'layer-node-icon ' + data.icon : ''} />
-              <span class="over-ellipsis">
-                <span title={node.label}>{node.label}</span>
+        if (node.checked) {
+          return (
+            <span
+              class={
+                lyElModel.display === false
+                  ? 'custom-tree-node hide-tree-node'
+                  : 'custom-tree-node'
+              }
+            >
+              <span class="layer-node-content">
+                <i class={lyElModel.icon ? 'layer-node-icon ' + lyElModel.icon : ''} />
+                <span class="over-ellipsis">
+                  <span on-dblclick={() => {
+                    if (lyElModel.cesiumLayer) {
+                      window.s3d.flyToLayer(
+                        lyElModel.cesiumLayer,
+                        lyElModel.layer.defaultCamera
+                      )
+                    }
+                  }} title={node.label}>{node.label}</span>
+                </span>
               </span>
-              <span class="toggle-ext-button">
+
+              <el-popover
+                placement="bottom"
+                popper-class="layer-setting-popup"
+                trigger="hover"
+              >
+                <LayerSetting lyElModel={lyElModel} />
                 <i
-                  class={
-                    node.checked
-                      ? 'esri-icon-directions2 my-ext-button'
-                      : 'esri-icon-directions2 my-ext-button my-ext-button-hidden'
-                  }
-                  on-click={() =>
-                    window.s3d.flyToLayer(
-                      data.cesiumLayer,
-                      data.layer.defaultCamera
-                    )
-                  }
+                  slot="reference"
+                  class={node.checked ? 'layer-settings my-icon-more' : ''}
                 />
+              </el-popover>
+            </span>
+          )
+        }
+        else {
+          return (
+            <span
+              class={
+                lyElModel.display === false
+                  ? 'custom-tree-node hide-tree-node'
+                  : 'custom-tree-node'
+              }
+            >
+              <span class="layer-node-content">
+                <i class={lyElModel.icon ? 'layer-node-icon ' + lyElModel.icon : ''} />
+                <span class="over-ellipsis">
+                  <span title={node.label}>{node.label}</span>
+                </span>
               </span>
             </span>
-
-            <el-popover
-              placement="bottom"
-              popper-class="layer-setting-popup"
-              trigger="hover"
-            >
-              <LayerSetting conf={data} />
-              <i
-                slot="reference"
-                class={node.checked ? 'layer-settings my-icon-more' : ''}
-              />
-            </el-popover>
-          </span>
-        )
+          )
+        }
       }
     },
     toggleViewportMode () {
@@ -294,15 +267,15 @@ export default {
         this.$refs.tree2.setCheckedKeys(this.$refs.tree1.getCheckedKeys())
       }
     },
-    disableNode (data) {
-      if (data.disable) {
+    disableNode (lyElModel) {
+      if (lyElModel.disable) {
         return true
       }
 
-      if (data.children && data.children.length > 0) {
+      if (lyElModel.children && lyElModel.children.length > 0) {
         return false
       } else {
-        if (data.layer && data.layer.url) {
+        if (lyElModel.layer && lyElModel.layer.url) {
           return false
         } else {
           return true
@@ -363,6 +336,33 @@ export default {
         this.$refs.tree1.setCheckedKeys(keys)
       }
     },
+    _createLayer (lyElModel) {
+      let result = this.layerFactory.createLayer(lyElModel.layer)
+      if (isPromise(result)) {
+        return result.then(ly => {
+          lyElModel.cesiumLayer = ly
+          lyElModel.cesiumLayerLoaded = true
+          lyElModel.cesiumLayer.nodeKey = lyElModel.id
+        })
+      }
+      else if (lyElModel.layer.type === 'DEM') {
+        Object.assign(lyElModel, result)
+      }
+      else {
+        lyElModel.cesiumLayer = result
+        lyElModel.cesiumLayerLoaded = true
+        lyElModel.cesiumLayer.nodeKey = lyElModel.id
+      }
+      return lyElModel.cesiumLayer
+    },
+    _removeLayer (lyElModel) {
+      this.layerFactory.removeLayer(lyElModel.cesiumLayer)
+      if (lyElModel.layer.renderer) {
+        window.s3d.layersRenderer.stopRender(lyElModel.cesiumLayer.name)
+      }
+      lyElModel.cesiumLayer = null
+      lyElModel.cesiumLayerLoaded = false
+    }
   },
 }
 </script>
@@ -371,7 +371,7 @@ export default {
   display: flex;
   width: 100%;
   background: white;
-  padding: 10px 5px;
+  padding: 10px 0px 10px 5px;
 
   .el-scrollbar__wrap {
     overflow-x: hidden;
@@ -385,6 +385,12 @@ export default {
     }
   }
 
+  .el-scrollbar__view {
+    .el-tree {
+      margin-right: 5px;
+      min-width: 190px;
+    }
+  }
   .el-tree-node__content {
     .el-checkbox {
       margin-bottom: 0px;
@@ -421,6 +427,7 @@ export default {
       text-overflow: ellipsis;
       white-space: nowrap;
       -webkit-line-clamp: 1;
+      user-select: none;
     }
 
     .layer-node-icon {
@@ -432,26 +439,7 @@ export default {
     .layer-settings {
       width: 13px;
       display: block;
-      margin-right: 8px;
-    }
-
-    .toggle-ext-button {
-      i {
-        opacity: 0;
-      }
-      &:hover i {
-        opacity: 1;
-      }
-    }
-
-    .my-ext-button {
-      margin-left: 4px;
-      margin-top: 1px;
-      float: right;
-    }
-
-    .my-ext-button-hidden {
-      visibility: hidden;
+      margin-right: 5px;
     }
   }
 }

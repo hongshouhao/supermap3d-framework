@@ -118,6 +118,37 @@ export default {
           'http://localhost/iserver/services/3D-管线/rest/realspace/datas/管线/config',
         datasetName: '污水:污水_1',
         outFields: ['*'],
+        //压平某个区域
+        flattenRegions: [
+          [
+            120.60176437339629,
+            31.184432532743152,
+            0,
+            120.60203936867242,
+            31.181754094638176,
+            0,
+            120.60324403847666,
+            31.181772259112677,
+            0,
+            120.60323994862907,
+            31.184236800529675,
+            0,
+            120.60176437339629,
+            31.184432532743152,
+            0,
+          ],
+        ],
+        //图层颜色校正
+        colorCorrection: {
+          //亮度
+          brightness: 1.5,
+          //色调
+          hue: 0.05,
+          //饱和度
+          saturation: 1.1,
+          //对比度
+          contrast: 1.05,
+        },
         //定位时默认的相机参数
         defaultCamera: {
           duration: 2,
@@ -223,6 +254,17 @@ export default {
       },
     },
   ],
+  //场景颜色校正
+  colorCorrection: {
+    //亮度
+    brightness: 2,
+    //色调
+    hue: 0.05,
+    //饱和度
+    saturation: 1.1,
+    //对比度
+    contrast: 1.05,
+  },
   //默认相机配置
   defaultCamera: {
     //相机位置

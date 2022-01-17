@@ -1,6 +1,7 @@
 import SketchTool from './tools/Sketch/SketchTool'
 import HighLimitTool from './analysis/HighLimit/HighLimitTool'
 import SubmergedTool from './analysis/Submerged/SubmergedTool'
+import SceneRouteTool from './tools/Scene/SceneRouteTool'
 export default class Test {
   constructor() {
     this.createSketchTool()
@@ -15,32 +16,49 @@ export default class Test {
   }
   createSubmergedTool() {
     this.submergedTool = new SubmergedTool(window.s3d.viewer)
-    this.submergedTool.setTargetLayer('大场景')
+    this.submergedTool
+      .setTargetLayers(['大场景'])
+      .includingGlobe([
+        120.6014997708723,
+        31.180936477517143,
+        0,
+        120.60515662761527,
+        31.180896259318505,
+        0,
+        120.60575593261512,
+        31.186082838897974,
+        0,
+        120.60050207082269,
+        31.186380190938625,
+        0,
+      ])
   }
   createHighLimitTool() {
     this.highLimitTool = new HighLimitTool(window.s3d.viewer)
-    this.highLimitTool.setTargetLayers(['楼幢'])
-    this.highLimitTool.setHeight(60)
-    this.highLimitTool.setRectangle([
-      120.6014997708723,
-      31.180936477517143,
-      120.60515662761527,
-      31.180896259318505,
-      120.60575593261512,
-      31.186082838897974,
-      120.60050207082269,
-      31.186380190938625,
-    ])
+    this.highLimitTool
+      .setTargetLayers(['楼幢'])
+      .setHeight(60)
+      .setRectangle([
+        120.6014997708723,
+        31.180936477517143,
+        120.60515662761527,
+        31.180896259318505,
+        120.60575593261512,
+        31.186082838897974,
+        120.60050207082269,
+        31.186380190938625,
+      ])
   }
   doTest() {
+    this.sceneRoute()
     // this.submergedTool.start()
     // this.highLimitTool.start()
-    this.loadShapefile()
+    //this.loadShapefile()
     // this.loadGeoJSON()
     // this.insertToolButton()
     // this.entityToGeoJson()
     // window.s3d.setLayerVisible('标志标线', true)
-    // this.sketchTest()
+    //this.sketchTest()
     // window.s3d.viewUtility.rotateZ(1)
     // window.s3d
     //   .query({ layer: '交通信号', sql: 'SMID =1' })
@@ -81,6 +99,10 @@ export default class Test {
     // console.log(window.s3d.getLayer((x) => x.name === '供电'))
   }
 
+  sceneRoute() {
+    let tool = new SceneRouteTool(window.s3d.viewer)
+    tool.setRoute('/test.fpf').then(() => tool.start())
+  }
   insertToolButton() {
     window.s3d.toolbar.insertButton([2, 0], {
       title: '测试',

@@ -128,6 +128,13 @@
               <span aria-hidden="true"
                     class="esri-icon my-icon-submerged"></span>
             </div>
+
+            <div class="esri-widget--button esri-widget "
+                 title="开挖分析"
+                 @click="startExcavation">
+              <span aria-hidden="true"
+                    class="esri-icon my-icon-excavation"></span>
+            </div>
           </div>
         </div>
       </el-popover>
@@ -205,8 +212,7 @@
                      ref="modelObservationPanel"
                      @closed="stopSetting()">
       <template>
-        <ModelObservationSetting ref="modelObservationSetting"
-                                 :tool="modelObservationTool" />
+        <ModelObservationSetting ref="modelObservationSetting" />
       </template>
     </WidgetInfoPanel>
 
@@ -226,7 +232,6 @@ import MeasureTool from '../tools/Measurement/MeasureTool'
 import PointMeasurement from '../tools/Measurement/PointMeasurement'
 import AngleMeasurement from '../tools/Measurement/AngleMeasurement'
 import SceneModeToogleTool from '../tools/Scene/SceneModeToogleTool'
-import ModelObservationTool from '../tools/Model/ModelObservationTool'
 
 import ViewshedTool from '../analysis/Viewshed/ViewshedTool'
 import SliceTool from '../analysis/Slice/SliceTool'
@@ -234,6 +239,7 @@ import SkylineTool from '../analysis/Skyline/SkylineTool'
 import ViewDomeTool from '../analysis/ViewDome/ViewDomeTool'
 import HighLimitTool from '../analysis/HighLimit/HighLimitTool'
 import SubmergedTool from '../analysis/Submerged/SubmergedTool'
+import ExcavationTool from '../analysis/Excavation/ExcavationTool'
 
 import ViewshedSetting from '../analysis/Viewshed/ViewshedSetting.vue'
 import SunlightSetting from '../analysis/Sunlight/SunlightSetting.vue'
@@ -258,24 +264,12 @@ export default {
     return {
       viewMode: '',
       currentTool: '',
-      measureTool: null,
-      pointMeasurement: null,
-      angleMeasurement: null,
-      sceneModeToogleTool: null,
-      viewshedTool: null,
-      skylineTool: null,
-      sliceTool: null,
-      viewDomeTool: null,
-      highLimitTool: null,
-      submergedTool: null,
-      modelObservationTool: null,
-      testTool: null,
     }
   },
   props: [],
   computed: {
     developing () {
-      return process.env.VUE_APP_MODE === 'development' ? true : false
+      return process.env.VUE_APP_MODE === 'dev' ? true : false
     },
   },
   beforeMount () { },
@@ -316,10 +310,9 @@ export default {
       _this.sliceTool = new SliceTool(_viewer)
       _this.viewDomeTool = new ViewDomeTool(_viewer)
       _this.highLimitTool = new HighLimitTool(_viewer)
-      _this.modelObservationTool = new ModelObservationTool(_viewer)
-      _this.submergedTool = new SubmergedTool()
+      _this.submergedTool = new SubmergedTool(_viewer)
+      _this.excavationTool = new ExcavationTool(_viewer)
       _this.viewshedTool.bindUI(_this.$refs.viewshedSettingPanel.$el)
-      _this.$refs.modelObservationSetting.setTool(_this.modelObservationTool)
     })
   },
   methods: {
@@ -385,9 +378,11 @@ export default {
     },
     startModelObservation () {
       this.currentTool = 'ModelObservationTool'
-      this.modelObservationTool.start(() => {
-        this.modelObservationTool.lookAtFront()
-      })
+      this.$refs.modelObservationSetting.init()
+    },
+    startExcavation () {
+      this.currentTool = 'ExcavationTool'
+      this.excavationTool.start()
     },
     multiViewport () {
       window.s3d.layerTree.toggleViewportMode()
@@ -441,7 +436,11 @@ export default {
       this.currentTool = ''
     },
     stopModelObservation () {
-      this.modelObservationTool.clear()
+      this.$refs.modelObservationSetting.reset()
+      this.currentTool = ''
+    },
+    stopExcavation () {
+      this.excavationTool.clear()
       this.currentTool = ''
     },
     stopSetting () {
@@ -459,6 +458,7 @@ export default {
       this.stopSunlight()
       this.stopSubmerged()
       this.stopModelObservation()
+      this.stopExcavation()
 
       for (let i = 0; i < this.$viewer.dataSources.length; i++) {
         let ds = this.$viewer.dataSources.get(i)

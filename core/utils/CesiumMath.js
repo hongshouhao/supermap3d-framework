@@ -206,3 +206,26 @@ export function rayEarthIntersection(position, direction) {
   let point = Cesium.Ray.getPoint(ray, intersection.start)
   return point
 }
+
+export function vectorToQuaternion(origin, target) {
+  let direction = Cesium.Cartesian3.subtract(
+    target,
+    origin,
+    new Cesium.Cartesian3()
+  )
+  Cesium.Cartesian3.normalize(direction, direction)
+  let rotationMatrix = Cesium.Transforms.rotationMatrixFromPositionVelocity(
+    origin,
+    direction
+  )
+  // let rot90 = Cesium.Matrix3.fromRotationY(Cesium.Math.toRadians(90))
+  // Cesium.Matrix3.multiply(rotationMatrix, rot90, rotationMatrix)
+  let quaternion = Cesium.Quaternion.fromRotationMatrix(rotationMatrix)
+  return quaternion
+}
+
+export function vectorToHeadingPitchRoll(origin, target) {
+  return Cesium.HeadingPitchRoll.fromQuaternion(
+    vectorToQuaternion(origin, target)
+  )
+}

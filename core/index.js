@@ -7,13 +7,17 @@ import Layers from './components/Layers.vue'
 import BasemapToggle from './components/BasemapToggle.vue'
 import TopLeftBar from './components/TopLeftBar.vue'
 import TopRightBar from './components/TopRightBar.vue'
+import WidgetInfoPanel from './components/WidgetInfoPanel.vue'
 
-import SunlightTool from './analysis/Sunlight/SunlightTool'
-import ShadowQueryTool from './analysis/Sunlight/ShadowQueryTool'
-
-import S3d from './S3d'
-import { addMessageListener } from './IframeMessage'
+import * as Analysis from './analysis/index'
+import * as Tools from './tools/index'
 import * as CesiumMath from './utils/CesiumMath'
+import * as IfUtility from './utils/IfUtility'
+import * as LayerUtility from './utils/LayerUtility'
+
+import LayerFactory from './utils/LayerFactory'
+import { addMessageListener } from './IframeMessage'
+import S3d from './S3d'
 import './utils/EntityUtility'
 
 const components = [
@@ -62,16 +66,19 @@ const install = function(Vue, config) {
 // if (typeof window !== 'undefined' && window.Vue) {
 //   install(window.Vue)
 // }
-
 export default {
   install,
   Map,
   MapViewer,
+  WidgetInfoPanel,
   BasemapToggle,
   TopLeftBar,
   TopRightBar,
   CesiumMath,
-  SunlightTool,
-  ShadowQueryTool,
+  Analysis,
+  Tools,
+  LayerFactory,
+  IfUtility,
+  LayerUtility,
   addMessageListener,
 }

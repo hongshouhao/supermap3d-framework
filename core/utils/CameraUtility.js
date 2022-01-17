@@ -115,6 +115,24 @@ export default class CameraUtility {
     this.camera.flyTo(tar)
   }
 
+  lookAt(origin, target) {
+    let direction = Cesium.Cartesian3.subtract(
+      target,
+      origin,
+      new Cesium.Cartesian3()
+    )
+    Cesium.Cartesian3.normalize(direction, direction)
+
+    this.viewer.camera.flyTo({
+      destination: origin,
+      orientation: {
+        direction: direction,
+        up: new Cesium.Cartesian3(0, 0, 0),
+      },
+      duration: 2,
+    })
+  }
+
   _flyToPoints(points, options) {
     let _this = this
     return new Promise(function(resolve, reject) {

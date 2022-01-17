@@ -76,9 +76,12 @@ export default class ShadowQueryTool {
 
     this.shadowQuery.startTime = Cesium.JulianDate.fromDate(this.startTime)
     this.shadowQuery.endTime = Cesium.JulianDate.fromDate(this.endTime)
+
+    return this
   }
 
   start() {
+    this.started = true
     this.polygonDrawHandler.deactivate()
     this.polygonDrawHandler.activate()
   }
@@ -93,10 +96,12 @@ export default class ShadowQueryTool {
       this.polygonDrawHandler.polyline.show = false
     }
 
-    this.shadowQuery.qureyRegion({
-      position: [0, 0],
-      bottom: 0,
-      extend: 0,
-    })
+    if (this.started) {
+      this.shadowQuery.qureyRegion({
+        position: [0, 0],
+        bottom: 0,
+        extend: 0,
+      })
+    }
   }
 }

@@ -17,7 +17,6 @@ export default {
   },
   data () {
     return {
-      sceneContainer: null,
     }
   },
   beforeMount () {
@@ -25,74 +24,27 @@ export default {
       throw '配置未初始化: window.s3d.config'
     }
 
-    let gConfig = window.s3d.config
-    // let baseMapProvider = null
-    // for (let mapKey in gConfig.baseMaps) {
-    //   let map = gConfig.baseMaps[mapKey]
-    //   if (map.default) {
-    //     if (mapKey !== "none") {
-    //       baseMapProvider = createImageryProvider(map)
-    //     }
-    //     break
-    //   }
-    // }
-
+    let config = window.s3d.config
     let viewerOptions = {
       infoBox: false,
       shadows: true,
       navigation: false,
       baseLayerPicker: false,
       shouldAnimate: true,
-      // imageryProvider: baseMapProvider,
-      // imageryProvider: new Cesium.TileMapServiceImageryProvider({
-      //   url: 'http://cesium.agi.com/blackmarble',
-      //   maximumLevel: 8,
-      //   credit: 'Black Marble imagery courtesy NASA Earth Observatory',
-      // })
     }
 
-    if (gConfig.dem) {
+    if (config.dem) {
       viewerOptions.terrainProvider = new Cesium.CesiumTerrainProvider({
-        url: gConfig.dem,
+        url: config.dem,
       })
       viewerOptions.terrainProvider.isCreateSkirt = false
     }
 
-    Object.assign(viewerOptions, gConfig.viewerOptions)
-
+    Object.assign(viewerOptions, config.viewerOptions)
     this.sceneContainer = document.createElement('div')
     let viewer = new Cesium.Viewer(this.sceneContainer, viewerOptions)
-
-    if (gConfig.undergroundMode) {
-      viewer.scene.undergroundMode = gConfig.undergroundMode
-    }
-    if (gConfig.minimumZoomDistance) {
-      viewer.scene.screenSpaceCameraController.minimumZoomDistance =
-        gConfig.minimumZoomDistance
-    }
-
-    viewer.scene.screenSpaceCameraController.tiltEventTypes = [
-      Cesium.CameraEventType.RIGHT_DRAG,
-      Cesium.CameraEventType.PINCH,
-      {
-        eventType: Cesium.CameraEventType.LEFT_DRAG,
-        modifier: Cesium.KeyboardEventModifier.CTRL,
-      },
-      {
-        eventType: Cesium.CameraEventType.RIGHT_DRAG,
-        modifier: Cesium.KeyboardEventModifier.CTRL,
-      },
-    ]
-
-    viewer.scene.screenSpaceCameraController.zoomEventTypes = [
-      Cesium.CameraEventType.WHEEL,
-      Cesium.CameraEventType.PINCH,
-    ]
-
-    viewer.camera.flyTo(gConfig.defaultCamera)
     this.__proto__.__proto__.$viewer = viewer
     window.s3d.setViewer(viewer)
-    console.log('s3d', window.s3d)
   },
   mounted () {
     this.$refs.cesiumContainer.appendChild(this.sceneContainer.children[0])

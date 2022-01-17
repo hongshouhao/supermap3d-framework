@@ -3,7 +3,6 @@ import App from './App.vue'
 
 import supermap3d from '../lib/supermap3d-framework.umd'
 import '../lib/supermap3d-framework.css'
-
 import { config } from './config'
 
 Vue.use(supermap3d, config)

@@ -1,7 +1,9 @@
 export default {
   iServerBaseURL: 'http://106.14.242.98:8090/',
+  // dem:
+  //   'http://www.supermapol.com/realspace/services/3D-dixingyingxiang/rest/realspace/datas/DatasetDEM',
   dem:
-    'http://www.supermapol.com/realspace/services/3D-dixingyingxiang/rest/realspace/datas/DatasetDEM',
+    'http://192.168.175.70:8090/iserver/services/3D-local3DCache-demjiangsu/rest/realspace/datas/dem@jiangsu',
   undergroundMode: true,
   minimumZoomDistance: -1000,
   drillPick: { enable: true, depth: 20 },

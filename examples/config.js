@@ -1,19 +1,23 @@
 import { layers } from './layers'
 
-console.log(URL_CONFIG)
-
 export const config = {
   iServerBaseURL: process.env.VUE_APP_ISERVER_BASE_URL,
   useEllipsoid: true,
-  dem: URL_CONFIG.SiChuan_TERRAIN,
+  // dem: URL_CONFIG.SiChuan_TERRAIN,
   undergroundMode: false,
   minimumZoomDistance: -1000,
+  colorCorrection: {
+    brightness: 1.5,
+    hue: 0.05,
+    saturation: 1.1,
+    contrast: 1.05,
+  },
   drillPick: {
     enable: false,
     depth: 20,
   },
   // dem:
-  //   'http://192.168.175.70:8090/iserver/services/3D-local3DCache-SZDEM4490dx/rest/realspace/datas/SZDEM_4490@dx',
+  //   'http://192.168.175.70:8090/iserver/services/3D-GongYeYuanQuDEM_1_1-SZ/rest/realspace/datas/%E5%B7%A5%E4%B8%9A%E5%9B%AD%E5%8C%BADEM_1_1@SZ_Terrain',
   layers: layers,
   defaultCamera: {
     destination: {
@@ -30,7 +34,7 @@ export const config = {
   },
   baseMaps: {
     none: {
-      enable: false,
+      enable: true,
       default: false,
     },
     earth: {
@@ -71,17 +75,25 @@ export const config = {
         //      styleId: 'aaaaaaaaaaaffffffff',
         //    },
         //  },
-        {
-          type: 'gaode',
-          mode: 'night',
-          params: {
-            url:
-              'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
-          },
-        },
+        // {
+        //   type: 'gaode',
+        //   mode: 'night',
+        //   params: {
+        //     url:
+        //       'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+        //   },
+        // },
+        // {
+        //   type: 'arcgisex',
+        //   mode: 'night',
+        //   params: {
+        //     url:
+        //       'http://58.210.9.133/geoserver/rest/services/ZK_DLTB2020/MapServer',
+        //   },
+        // },
         {
           type: 'supermap',
-          mode: 'day',
+          // mode: 'day',
           params: {
             url: URL_CONFIG.SUPERMAP_IMG_MEC,
           },

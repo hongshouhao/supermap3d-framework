@@ -30,9 +30,6 @@ export default {
   data () {
     return {
       basemapType: '',
-      layerNormal: null,
-      layerSatellite: null,
-      enableNoneBaseMapMode: false,
     }
   },
   computed: {
@@ -46,7 +43,7 @@ export default {
       _this.basemapType = args.type
     })
 
-    window.s3d.basemapUtility.createMaps()
+    window.s3d.basemapUtility.createBasemaps()
   },
   methods: {
     toggleBasemap (type) {

@@ -23,6 +23,7 @@ export default class SunlightTool {
 
     this.startTime.setHours(parseInt(startHour))
     this.endTime.setHours(parseInt(endHour))
+    return this
   }
 
   start(intercepor, completedCallback) {

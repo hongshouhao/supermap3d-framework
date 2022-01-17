@@ -1,4 +1,4 @@
-import { rayEarthIntersection } from './CesiumMath'
+// import { rayEarthIntersection } from './CesiumMath'
 export default class DebugUtility {
   constructor(viewer) {
     this.viewer = viewer
@@ -66,15 +66,26 @@ export default class DebugUtility {
   }
 
   drawCameraDirection() {
-    let ptOnEarth = rayEarthIntersection(
+    // let ptOnEarth = rayEarthIntersection(
+    //   this.viewer.camera.position,
+    //   this.viewer.camera.direction
+    // )
+
+    let directionRay = Cesium.Cartesian3.multiplyByScalar(
+      this.viewer.camera.direction,
+      100000,
+      new Cesium.Cartesian3()
+    )
+    Cesium.Cartesian3.add(
       this.viewer.camera.position,
-      this.viewer.camera.direction
+      directionRay,
+      directionRay
     )
 
     this.viewer.entities.add({
       name: 'camera_direction',
       polyline: {
-        positions: [ptOnEarth, this.viewer.camera.position.clone()],
+        positions: [directionRay, this.viewer.camera.position.clone()],
         material: Cesium.Color.fromCssColorString('#fe8001'),
         width: 1.0,
         clampToGround: false,

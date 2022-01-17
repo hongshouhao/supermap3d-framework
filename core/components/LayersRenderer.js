@@ -40,7 +40,8 @@ export default class LayersRenderer {
       let lyName = this._getS3MRenderLayerName(ly.name)
       let renderLayer = this.viewer.scene.layers.find(lyName)
       if (renderLayer) {
-        renderLayer.visible = false
+        // renderLayer.visible = false
+        this.viewer.scene.layers.remove(lyName, true)
       }
     }
   }

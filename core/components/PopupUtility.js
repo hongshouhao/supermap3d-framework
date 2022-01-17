@@ -2,9 +2,7 @@ import axios from 'axios'
 import { isPromise } from '../utils/IfUtility'
 
 export default class PopupUtility {
-  constructor(viewer) {
-    this.viewer = viewer
-  }
+  constructor() {}
 
   getDataForPrimitive(object) {
     let lyName = object.primitive.name
@@ -110,11 +108,31 @@ export default class PopupUtility {
           }
         })
     } else {
+      let lconfig = ly.config
+      let attrs = {}
+      if (
+        lconfig.outFields &&
+        lconfig.outFields instanceof Array &&
+        lconfig.outFields.length > 0
+      ) {
+        if (lconfig.outFields[0] === '*') {
+          attrs = feature.properties
+        } else {
+          for (let field of lconfig.outFields) {
+            if (
+              Object.prototype.hasOwnProperty.call(feature.properties, field)
+            ) {
+              attrs[field] = feature.properties[field]
+            }
+          }
+        }
+      }
+
       let data = {
         object: {
           id: oid,
           layer: lyName,
-          attributes: feature.properties,
+          attributes: attrs,
         },
         position: {},
       }

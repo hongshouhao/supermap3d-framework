@@ -1,6 +1,6 @@
 {
   "name": "@sipsd/supermap3d-framework",
-  "version": "0.1.943",
+  "version": "0.1.95312",
   "private": false,
   "main": "./lib/supermap3d-framework.umd.min.js",
   "files": [
@@ -19,7 +19,7 @@
     "serve-dev-json": "vue-cli-service serve ./examples/main-dev-json.js",
     "serve-dev-js": "vue-cli-service serve ./examples/main-dev-js.js",
     "serve-lib-test": "vue-cli-service serve ./examples/main-lib-test.js",
-    "build": "vue-cli-service build ./examples/main.js",
+    "build": "vue-cli-service build ./examples/main-dev-js.js",
     "lib": "vue-cli-service build --target lib --name supermap3d-framework --dest lib ./core/index.js",
     "publish": "npm publish",
     "lint": "vue-cli-service lint"

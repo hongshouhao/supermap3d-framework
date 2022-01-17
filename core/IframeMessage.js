@@ -1,5 +1,4 @@
-import LayerFactory from './utils/LayerFactory'
-import { isImageryLayer } from './utils/ImageryUtility'
+import { isPromise } from './utils/IfUtility'
 
 export function addMessageListener(transform, callback) {
   window.addEventListener(
@@ -37,25 +36,12 @@ function addLayer(pramas) {
     }
   }
   pramas.name = 'temp_' + pramas.name
-  let factory = new LayerFactory(window.s3d.viewer)
-  if (isImageryLayer(pramas.type)) {
-    let ly = factory.createImageLayer(pramas)
-    window.s3d.flyToLayer(ly, pramas.options)
-    return ly
-  } else if (pramas.type === 'S3M') {
-    return factory.createS3MLayer(pramas).then((ly) => {
+  let result = window.s3d.layerFactory.createLayer(pramas)
+  if (isPromise(result)) {
+    result.then((ly) => {
       window.s3d.flyToLayer(ly, pramas.options)
-      return ly
     })
-  } else if (pramas.type === 'MVT') {
-    let ly = factory.createMVTLayer(pramas)
-    window.s3d.flyToLayer(ly, pramas.options)
-    return ly
-  }
-  // else if (pramas.type === 'DEM') {
-  //   factory.createDEMLayer(pramas)
-  // }
-  else {
-    throw '图层类型配置错误'
+  } else {
+    window.s3d.flyToLayer(result, pramas.options)
   }
 }

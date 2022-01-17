@@ -66,24 +66,8 @@ export default {
       objTitles: [],
       dataObjs: [],
       dockered: false,
-      mouseEventHandler: null,
-      popupTool: null,
       popupVisible: false,
-      popupPosition: null,
       showPropGrid: true,
-      mvtData: null,
-      removePostRenderHandler: null,
-      popupUtility: new PopupUtility(this.$viewer),
-      defaultPloylineSymbol: {
-        material: Cesium.Color.RED,
-        width: 2.0
-      },
-      defaultPolygonSymbol: {
-        material: Cesium.Color.RED.withAlpha(0.3),
-        outline: true,
-        outlineColor: Cesium.Color.RED,
-        outlineWidth: 2.0
-      },
     }
   },
   components: {
@@ -91,6 +75,18 @@ export default {
   },
   props: [],
   mounted () {
+    this.popupUtility = new PopupUtility()
+    this.defaultPloylineSymbol = {
+      material: Cesium.Color.RED,
+      width: 2.0
+    }
+    this.defaultPolygonSymbol = {
+      material: Cesium.Color.RED.withAlpha(0.3),
+      outline: true,
+      outlineColor: Cesium.Color.RED,
+      outlineWidth: 2.0
+    }
+
     this.initIQuery()
     this.initIQueryForMVT()
   },
@@ -128,7 +124,13 @@ export default {
                 })
 
                 Promise.all(promises).then((data) => {
-                  _this.renderPopupMulti(position, data)
+                  if (data.length > 0) {
+                    _this.renderPopupMulti(position, data)
+                  }
+                  else {
+                    _this._clearTempDataSources()
+                    _this.hidePopup()
+                  }
                 })
               } else {
                 _this._clearTempDataSources()
@@ -140,12 +142,18 @@ export default {
               })
               Promise.all(calls)
                 .then((data) => {
-                  for (let dobj of data) {
-                    if (!dobj.position) {
-                      dobj.position = cartesianToLonlat(position)
+                  if (data.length > 0) {
+                    for (let dobj of data) {
+                      if (!dobj.position) {
+                        dobj.position = cartesianToLonlat(position)
+                      }
                     }
+                    _this.renderPopupMulti(position, data)
                   }
-                  _this.renderPopupMulti(position, data)
+                  else {
+                    _this._clearTempDataSources()
+                    _this.hidePopup()
+                  }
                 })
                 .catch((err) => {
                   _this.hidePopup()
@@ -274,10 +282,10 @@ export default {
       }
     },
     _enableStickRender () {
-      let _this = this
       if (this.removePostRenderHandler) {
         return
       }
+      let _this = this
       this.removePostRenderHandler = this.$viewer.scene.postRender.addEventListener(
         function () {
           let screenPosition = Cesium.SceneTransforms.wgs84ToWindowCoordinates(

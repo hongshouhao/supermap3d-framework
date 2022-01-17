@@ -1,5 +1,3 @@
-// import ElementUI from 'element-ui'
-// import VueiClient from '@supermap/vue-iclient3d-webgl'
 import axios from 'axios'
 
 import 'element-ui/lib/theme-chalk/index.css'
@@ -17,10 +15,11 @@ import DebugUtility from './utils/DebugUtility'
 import DataUtility from './utils/DataUtility'
 import BasemapUtility from './utils/BasemapUtility'
 
+import LayerFactory from './utils/LayerFactory'
 import { lonLatToCartesian } from './utils/CesiumMath'
 import { isS3mFeature, isCartesian3 } from './utils/IfUtility'
 import { setCursorStyle, resetCursorStyle } from './utils/CursorUtility'
-import { isImageryLayer } from './utils/ImageryUtility'
+import { setLayerVisible } from './utils/LayerUtility'
 
 import SketchTool from './tools/Sketch/SketchTool'
 import LayersRenderer from './components/LayersRenderer'
@@ -31,8 +30,6 @@ export default class S3d {
     if (!config.iServerBaseURL) throw '参数不能为空: iServerBaseURL'
     if (!config.layers) throw '参数不能为空: layers'
     if (!config.defaultCamera) throw '参数不能为空: defaultCamera'
-    // if (!config.baseMaps.earth) throw '参数不能为空: baseMaps.earth'
-    // if (!config.baseMaps.normal) throw '参数不能为空: baseMaps.normal'
 
     this.config = config
     this.toolbar = new Toolbar()
@@ -65,30 +62,70 @@ export default class S3d {
     this.sketchTool = new SketchTool(viewer)
     this.layersRenderer = new LayersRenderer(viewer)
     this.basemapUtility = new BasemapUtility(viewer, this)
+    this.layerFactory = new LayerFactory(viewer)
 
+    this.viewer.scene.colorCorrection.show = true
     this.viewer.scene.globe.enableLighting = true
     this.viewer.scene.hdrEnabled = true
 
     // viewer.scene.fxaa = false
     // viewer.scene.postProcessStages.fxaa.enabled = false
-    this.viewer.scene.debugShowFramesPerSecond = false
+    this.viewer.scene.debugShowFramesPerSecond = true
     this.viewer.scene.globe.depthTestAgainstTerrain = true
     this.viewer.scene.logarithmicDepthBuffer = false
+
+    if (this.config.colorCorrection) {
+      Object.assign(
+        this.viewer.scene.colorCorrection,
+        this.config.colorCorrection
+      )
+    }
 
     let currentTime = new Date()
     currentTime.setHours(12)
     this.viewer.clock.currentTime = Cesium.JulianDate.fromDate(currentTime)
     this.viewer.clock.multiplier = 1
     this.viewer.clock.shouldAnimate = true
+
+    if (this.config.undergroundMode) {
+      this.viewer.scene.undergroundMode = this.config.undergroundMode
+    }
+    if (this.config.minimumZoomDistance) {
+      this.viewer.scene.screenSpaceCameraController.minimumZoomDistance = this.config.minimumZoomDistance
+    }
+
+    this.viewer.scene.screenSpaceCameraController.tiltEventTypes = [
+      Cesium.CameraEventType.RIGHT_DRAG,
+      Cesium.CameraEventType.PINCH,
+      {
+        eventType: Cesium.CameraEventType.LEFT_DRAG,
+        modifier: Cesium.KeyboardEventModifier.CTRL,
+      },
+      {
+        eventType: Cesium.CameraEventType.RIGHT_DRAG,
+        modifier: Cesium.KeyboardEventModifier.CTRL,
+      },
+    ]
+
+    this.viewer.scene.screenSpaceCameraController.zoomEventTypes = [
+      Cesium.CameraEventType.WHEEL,
+      Cesium.CameraEventType.PINCH,
+    ]
+
+    this.viewer.camera.flyTo(this.config.defaultCamera)
+    this._setSkyBox()
+    return this
   }
 
   setCursor(className) {
     this.viewer.enableCursorStyle = false
     setCursorStyle(className)
+    return this
   }
   resetCursor() {
     this.viewer.enableCursorStyle = true
     resetCursorStyle()
+    return this
   }
 
   _loadCustomMaterials() {
@@ -163,20 +200,15 @@ export default class S3d {
     } else if (typeof params === 'string') {
       return getLayerNode(this.config.layers, (x) => x.name === params)
     } else {
-      throw '不支持的参数类型'
+      throw `不支持的参数类型 ${typeof params}`
     }
   }
   _setLayerVisible(layer, visible) {
-    if ('show' in layer) {
-      layer.show = visible
-      this.eventBus.dispatch('layer-visible-changed', null, layer)
-    } else if ('visible' in layer) {
-      layer.visible = visible
-      this.eventBus.dispatch('layer-visible-changed', null, layer)
-      if (!visible) {
-        if (layer.config.renderer) {
-          this.layersRenderer.stopRender(layer.name)
-        }
+    setLayerVisible(layer, visible)
+    this.eventBus.dispatch('layer-visible-changed', null, layer)
+    if (!visible) {
+      if (layer.config?.renderer) {
+        this.layersRenderer.stopRender(layer.name)
       }
     }
   }
@@ -206,6 +238,76 @@ export default class S3d {
       throw '暂不支持此查询'
     }
     return axios.post(dataUrl, queryParameter)
+  }
+  _setSkyBox() {
+    let scene = this.viewer.scene
+    let blueSkyBox = new Cesium.SkyBox({
+      sources: {
+        positiveX: './skyBox/bluesky/Right.jpg',
+        negativeX: './skyBox/bluesky/Left.jpg',
+        positiveY: './skyBox/bluesky/Front.jpg',
+        negativeY: './skyBox/bluesky/Back.jpg',
+        positiveZ: './skyBox/bluesky/Up.jpg',
+        negativeZ: './skyBox/bluesky/Down.jpg',
+      },
+    })
+    function initialSkyBox() {
+      if (scene.frameState.passes.render) {
+        blueSkyBox.update(scene.frameState, true)
+        scene.postRender.removeEventListener(initialSkyBox)
+      }
+    }
+    scene.postRender.addEventListener(initialSkyBox)
+
+    blueSkyBox.WSpeed = 0.5
+    blueSkyBox.show = true
+    scene.skyBox = blueSkyBox
+
+    this._gradualChange(blueSkyBox)
+  }
+  _gradualChange(skybox) {
+    let scene = this.viewer.scene
+    let skyListener = function() {
+      let cameraHeight = scene.camera.positionCartographic.height
+
+      let skyAtmosphereH1 = 22e4 // 大气开始渐变的最大高度
+      let skyBoxH1 = 15e4 // 天空开始渐变的最大高度
+      let skyBoxH2 = 12e4 // 天空开始渐变的最小高度
+      let bufferHeight = 1e4
+      if (cameraHeight < skyAtmosphereH1) {
+        let skyAtmosphereT =
+          (cameraHeight - skyBoxH2) / (skyAtmosphereH1 - skyBoxH2)
+        if (skyAtmosphereT > 1.0) {
+          skyAtmosphereT = 1.0
+        } else if (skyAtmosphereT < 0.0) {
+          skyAtmosphereT = 0.0
+        }
+        let skyBoxT = (cameraHeight - skyBoxH2) / (skyBoxH1 - skyBoxH2)
+        if (skyBoxT > 1.0) {
+          skyBoxT = 1.0
+        } else if (skyBoxT < 0.0) {
+          skyBoxT = 0.0
+        }
+        skybox.alpha = 1.0 - skyBoxT
+        if (cameraHeight > skyBoxH2) {
+          scene.skyAtmosphere.show = true
+          scene.skyAtmosphere.alpha = skyAtmosphereT
+          scene.skyBox = skybox
+        } else {
+          scene.skyAtmosphere.show = false
+        }
+      }
+
+      if (
+        cameraHeight > skyBoxH2 - 2 * bufferHeight &&
+        cameraHeight < skyBoxH1 + 3 * bufferHeight
+      ) {
+        scene.screenSpaceCameraController.zoomFactor = 0.4
+      } else {
+        scene.screenSpaceCameraController.zoomFactor = 5.0
+      }
+    }
+    scene.postRender.addEventListener(skyListener)
   }
 
   getLayerConfig(params) {
@@ -243,18 +345,6 @@ export default class S3d {
   setLayerVisible(layer, visible) {
     let ly = this.getLayer(layer)
     this._setLayerVisible(ly, visible)
-  }
-  setLayerOpacity(layer, opacity) {
-    if ((layer && isImageryLayer(layer.type)) || layer.type === 'MVT') {
-      layer.alpha = opacity / 100
-    } else if (layer && layer.type === 'S3M') {
-      layer.style3D.fillForeColor = new Cesium.Color(
-        1.0,
-        1.0,
-        1.0,
-        opacity / 100
-      )
-    }
   }
 
   /*
@@ -426,7 +516,6 @@ export default class S3d {
   }
 
   pick(mousePosition) {
-    debugger
     let pickedObjects = []
     if (this.config.drillPick?.enable) {
       pickedObjects = this.pickingUtility.drillPickByDepth(
@@ -447,9 +536,11 @@ export default class S3d {
     this.viewer.scene.bloomEffect.show = true
     this.viewer.scene.bloomEffect.threshold = 0.5
     this.viewer.scene.bloomEffect.bloomIntensity = 3
+    return this
   }
   disableBloom() {
     this.viewer.scene.bloomEffect.show = false
+    return this
   }
 
   // , distance, orientation, duration

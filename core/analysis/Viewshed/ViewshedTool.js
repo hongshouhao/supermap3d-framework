@@ -1,3 +1,4 @@
+import { lonLatToCartesian } from '../../utils/CesiumMath'
 export default class ViewshedTool {
   constructor(viewer) {
     this.viewer = viewer
@@ -35,8 +36,7 @@ export default class ViewshedTool {
       // 若此标记为false，则激活对可视域分析对象的操作
       if (!_this.viewshedFlag) {
         //获取鼠标屏幕坐标,并将其转化成笛卡尔坐标
-        let position = e.endPosition
-        let last = _this.scene.pickPosition(position)
+        let last = _this.scene.pickPosition(e.endPosition)
         //计算该点与视口位置点坐标的距离
         let distance = Cesium.Cartesian3.distance(viewPosition, last)
 
@@ -59,19 +59,28 @@ export default class ViewshedTool {
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     window.s3d.setCursor('cursor-crosshair')
-    _this.drawHandler.setInputAction(function() {
+    _this.drawHandler.setInputAction(function(e) {
       //鼠标右键事件回调，不再执行鼠标移动事件中对可视域的操作
       window.s3d.resetCursor()
       _this.viewshedFlag = true
+      let end = _this.scene.pickPosition(e.position)
+      let start = lonLatToCartesian(..._this.viewshed3D.viewPosition)
+      window.s3d.cameraUtility.lookAt(start, end)
+
+      _this.drawHandler.removeInputAction(
+        Cesium.ScreenSpaceEventType.MOUSE_MOVE
+      )
+      _this.drawHandler.removeInputAction(
+        Cesium.ScreenSpaceEventType.RIGHT_CLICK
+      )
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
 
     _this.pickPointHandler.drawEvt.addEventListener(function(result) {
       let point = result.object
-      let position = point.position
-      viewPosition = position
+      viewPosition = point.position
 
       // 将获取的点的位置转化成经纬度
-      let cartographic = Cesium.Cartographic.fromCartesian(position)
+      let cartographic = Cesium.Cartographic.fromCartesian(point.position)
       let longitude = Cesium.Math.toDegrees(cartographic.longitude)
       let latitude = Cesium.Math.toDegrees(cartographic.latitude)
       let height = cartographic.height + 1.8
@@ -110,28 +119,61 @@ export default class ViewshedTool {
     Cesium.knockout
       .getObservable(_this.viewModel, 'direction')
       .subscribe(function(newValue) {
-        _this.viewshed3D.direction = parseFloat(newValue)
+        if (_this.viewshedFlag) {
+          _this.viewshed3D.direction = parseFloat(newValue)
+          console.log('heading', newValue)
+          console.log('pitch', _this.viewer.camera.pitch)
+          _this._updateCamera(newValue, _this.viewer.camera.pitch)
+          _this._updateCamera(
+            newValue,
+            Cesium.Math.toDegrees(_this.viewer.camera.pitch)
+          )
+        }
       })
     Cesium.knockout
       .getObservable(_this.viewModel, 'pitch')
       .subscribe(function(newValue) {
-        _this.viewshed3D.pitch = parseFloat(newValue)
+        if (_this.viewshedFlag) {
+          _this.viewshed3D.pitch = parseFloat(newValue)
+          _this._updateCamera(
+            Cesium.Math.toDegrees(_this.viewer.camera.heading),
+            newValue
+          )
+        }
       })
     Cesium.knockout
       .getObservable(_this.viewModel, 'distance')
       .subscribe(function(newValue) {
-        _this.viewshed3D.distance = parseFloat(newValue)
+        if (_this.viewshedFlag) {
+          _this.viewshed3D.distance = parseFloat(newValue)
+        }
       })
     Cesium.knockout
       .getObservable(_this.viewModel, 'verticalFov')
       .subscribe(function(newValue) {
-        _this.viewshed3D.verticalFov = parseFloat(newValue)
+        if (_this.viewshedFlag) {
+          _this.viewshed3D.verticalFov = parseFloat(newValue)
+        }
       })
     Cesium.knockout
       .getObservable(_this.viewModel, 'horizontalFov')
       .subscribe(function(newValue) {
-        _this.viewshed3D.horizontalFov = parseFloat(newValue)
+        if (_this.viewshedFlag) {
+          _this.viewshed3D.horizontalFov = parseFloat(newValue)
+        }
       })
+  }
+
+  _updateCamera(heading, pitch) {
+    this.viewer.camera.flyTo({
+      destination: this.viewer.camera.position,
+      orientation: {
+        heading: Cesium.Math.toRadians(heading),
+        pitch: Cesium.Math.toRadians(pitch),
+        roll: 0.0,
+      },
+      duration: 0,
+    })
   }
 
   clear() {

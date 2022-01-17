@@ -4,29 +4,48 @@ export default class SubmergedTool {
     this.maxHeight = 50
     this.minHeight = 0.5
     this.speed = 3
+    this.layerNames = []
   }
 
-  setTargetLayer(layerName) {
-    this.layerName = layerName
+  setTargetLayers(layerNames) {
+    this.layerNames = layerNames
+    return this
+  }
+
+  //positions: [lon1,lat1,height1,lon2,lat2,height2....]
+  includingGlobe(positions) {
+    this._includingGlobe = true
+    this.positions = positions
+    return this
+  }
+
+  excludingGlobe() {
+    this._includingGlobe = false
+    return this
   }
 
   start() {
-    this.layer = window.s3d.getLayer(this.layerName)
-    if (!this.layer) {
-      throw `没有找到对应图层(${this.layerName})，检查图层名是否正确`
+    this.layers = []
+    for (let lname of this.layerNames) {
+      let ly = window.s3d.getLayer(lname)
+      if (!ly) {
+        throw `没有找到对应图层(${lname})，检查图层名是否正确`
+      }
+      this.layers.push(ly)
+      window.s3d.setLayerVisible(lname, true)
     }
-    this.layer.visible = true
 
     let currentHeight = 0
-    this.id = setInterval(() => {
-      if (currentHeight > this.maxHeight) {
-        clearInterval(id)
+    let _this = this
+    this._interval_Id = setInterval(() => {
+      if (currentHeight > _this.maxHeight) {
+        clearInterval(_this._interval_Id)
         return
       }
 
       let hyp = new Cesium.HypsometricSetting()
       hyp.MaxVisibleValue = currentHeight
-      hyp.MinVisibleValue = this.minHeight
+      hyp.MinVisibleValue = _this.minHeight
       hyp.DisplayMode = Cesium.HypsometricSettingEnum.DisplayMode.FACE
       hyp.Opacity = 0.5
       //等高线间隔
@@ -40,24 +59,50 @@ export default class SubmergedTool {
       colorTable.insert(0, new Cesium.Color(9 / 255, 9 / 255, 212 / 255))
       hyp.ColorTable = colorTable
 
-      this.layer.hypsometricSetting = {
-        hypsometricSetting: hyp,
-        analysisMode: Cesium.HypsometricSettingEnum.AnalysisRegionMode.ARM_ALL,
+      for (let ly of _this.layers) {
+        ly.hypsometricSetting = {
+          hypsometricSetting: hyp,
+          analysisMode:
+            Cesium.HypsometricSettingEnum.AnalysisRegionMode.ARM_ALL,
+        }
       }
 
-      currentHeight += this.speed / 10
+      if (_this._includingGlobe) {
+        hyp.CoverageArea = _this.positions
+        _this.viewer.scene.globe.HypsometricSetting = {
+          hypsometricSetting: hyp,
+          analysisMode:
+            Cesium.HypsometricSettingEnum.AnalysisRegionMode.ARM_REGION,
+        }
+      }
+
+      currentHeight += _this.speed / 10
     }, 100)
   }
 
   clear() {
-    if (this.layer) {
-      clearInterval(this.id)
+    if (this._interval_Id) {
+      clearInterval(this._interval_Id)
+
       let hyp = new Cesium.HypsometricSetting()
       hyp.MaxVisibleValue = -1000
 
-      this.layer.hypsometricSetting = {
-        hypsometricSetting: hyp,
-        analysisMode: Cesium.HypsometricSettingEnum.AnalysisRegionMode.ARM_ALL,
+      if (this.layers) {
+        for (let ly of this.layers) {
+          ly.hypsometricSetting = {
+            hypsometricSetting: hyp,
+            analysisMode:
+              Cesium.HypsometricSettingEnum.AnalysisRegionMode.ARM_ALL,
+          }
+        }
+      }
+
+      if (this._includingGlobe) {
+        this.viewer.scene.globe.HypsometricSetting = {
+          hypsometricSetting: hyp,
+          analysisMode:
+            Cesium.HypsometricSettingEnum.AnalysisRegionMode.ARM_ALL,
+        }
       }
     }
   }
