@@ -19,7 +19,8 @@ import LayerFactory from './utils/LayerFactory'
 import { lonLatToCartesian } from './utils/CesiumMath'
 import { isS3mFeature, isCartesian3 } from './utils/IfUtility'
 import { setCursorStyle, resetCursorStyle } from './utils/CursorUtility'
-import { setLayerVisible } from './utils/LayerUtility'
+// import { setLayerVisible } from './utils/LayerUtility'
+import { isPromise } from './utils/IfUtility'
 
 import SketchTool from './tools/Sketch/SketchTool'
 import LayersRenderer from './components/LayersRenderer'
@@ -80,7 +81,6 @@ export default class S3d {
         this.config.colorCorrection
       )
     }
-
     let currentTime = new Date()
     currentTime.setHours(12)
     this.viewer.clock.currentTime = Cesium.JulianDate.fromDate(currentTime)
@@ -204,8 +204,7 @@ export default class S3d {
     }
   }
   _setLayerVisible(layer, visible) {
-    setLayerVisible(layer, visible)
-    this.eventBus.dispatch('layer-visible-changed', null, layer)
+    this.eventBus.dispatch('layer-visible-changed', layer, visible)
     if (!visible) {
       if (layer.config?.renderer) {
         this.layersRenderer.stopRender(layer.name)
@@ -342,9 +341,28 @@ export default class S3d {
     getLayerNode(this.config.layers, list)
     return list
   }
+
   setLayerVisible(layer, visible) {
-    let ly = this.getLayer(layer)
-    this._setLayerVisible(ly, visible)
+    let lyConf = this.getLayerConfig(layer)
+    this._setLayerVisible(lyConf, visible)
+  }
+
+  //layerOptions同layers.js配置
+  addLayer(layerOptions, cameraOptions) {
+    let result = this.layerFactory.createLayer(layerOptions)
+    if (cameraOptions) {
+      if (isPromise(result)) {
+        return result.then((ly) => {
+          flyToLayer(ly, cameraOptions)
+          return ly
+        })
+      } else {
+        flyToLayer(result, cameraOptions)
+        return result
+      }
+    } else {
+      return result
+    }
   }
 
   /*

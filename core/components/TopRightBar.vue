@@ -4,7 +4,7 @@
     <el-popover placement="bottom"
                 trigger="click"
                 popper-class="layer-popup">
-      <Layers />
+      <Layers ref="layersTree" />
 
       <el-button slot="reference"
                  class="btn-layers">
@@ -27,7 +27,9 @@ export default {
   data () {
     return {}
   },
-  mounted () { },
+  mounted () {
+    window.s3d.layersTree = this.$refs.layersTree
+  },
   methods: {},
 }
 </script>

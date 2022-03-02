@@ -1,10 +1,14 @@
+import { gridSamplingPointsInPolygon } from '../../utils/CesiumUtility'
+import { toSimplePolygon } from '../../utils/GeoJsonUtility'
+
 export default class SubmergedTool {
   constructor(viewer) {
     this.viewer = viewer
-    this.maxHeight = 50
-    this.minHeight = 0.5
+    this.maxHeight = 20
+    this.minHeight = 0
     this.speed = 3
     this.layerNames = []
+    this.sampleResolution = 0.0002
   }
 
   setTargetLayers(layerNames) {
@@ -12,9 +16,13 @@ export default class SubmergedTool {
     return this
   }
 
-  //positions: [lon1,lat1,height1,lon2,lat2,height2....]
-  includingGlobe(positions) {
+  includingGlobe() {
     this._includingGlobe = true
+    return this
+  }
+
+  //positions: [lon1,lat1,height1,lon2,lat2,height2....]
+  setCoverageArea(positions) {
     this.positions = positions
     return this
   }
@@ -24,15 +32,35 @@ export default class SubmergedTool {
     return this
   }
 
+  getSubmergedArea() {
+    if (this._includingGlobe) {
+      let polygon = toSimplePolygon(this.positions, true)
+      let result = gridSamplingPointsInPolygon(
+        polygon,
+        this.sampleResolution,
+        this.viewer.terrainProvider
+      )
+      let _this = this
+      return result.then((samplePts) => {
+        return samplePts.filter((x) => x.height < _this.maxHeight)
+      })
+    } else {
+      return Promise.resolve([])
+    }
+  }
+
   start() {
     this.layers = []
     for (let lname of this.layerNames) {
       let ly = window.s3d.getLayer(lname)
       if (!ly) {
-        throw `没有找到对应图层(${lname})，检查图层名是否正确`
+        throw `没有找到对应图层(${lname})，请确定图层是否已经加载或者图层名是否正确`
       }
       this.layers.push(ly)
-      window.s3d.setLayerVisible(lname, true)
+    }
+
+    if (!this.defaultGlobeHypsometricSetting) {
+      this.defaultGlobeHypsometricSetting = this.viewer.scene.globe.HypsometricSetting
     }
 
     let currentHeight = 0
@@ -40,6 +68,7 @@ export default class SubmergedTool {
     this._interval_Id = setInterval(() => {
       if (currentHeight > _this.maxHeight) {
         clearInterval(_this._interval_Id)
+        _this._interval_Id = null
         return
       }
 
@@ -48,8 +77,9 @@ export default class SubmergedTool {
       hyp.MinVisibleValue = _this.minHeight
       hyp.DisplayMode = Cesium.HypsometricSettingEnum.DisplayMode.FACE
       hyp.Opacity = 0.5
+      hyp.CoverageArea = _this.positions
       //等高线间隔
-      hyp.LineInterval = 10.0
+      hyp.LineInterval = 0.3
 
       let colorTable = new Cesium.ColorTable()
       colorTable.insert(71, new Cesium.Color(210 / 255, 15 / 255, 15 / 255))
@@ -60,15 +90,18 @@ export default class SubmergedTool {
       hyp.ColorTable = colorTable
 
       for (let ly of _this.layers) {
-        ly.hypsometricSetting = {
-          hypsometricSetting: hyp,
-          analysisMode:
-            Cesium.HypsometricSettingEnum.AnalysisRegionMode.ARM_ALL,
+        try {
+          ly.hypsometricSetting = {
+            hypsometricSetting: hyp,
+            analysisMode:
+              Cesium.HypsometricSettingEnum.AnalysisRegionMode.ARM_REGION,
+          }
+        } catch (e) {
+          // eslint-disable-next-line no-empty
         }
       }
 
       if (_this._includingGlobe) {
-        hyp.CoverageArea = _this.positions
         _this.viewer.scene.globe.HypsometricSetting = {
           hypsometricSetting: hyp,
           analysisMode:
@@ -83,27 +116,24 @@ export default class SubmergedTool {
   clear() {
     if (this._interval_Id) {
       clearInterval(this._interval_Id)
+      this._interval_Id = null
+    }
 
-      let hyp = new Cesium.HypsometricSetting()
-      hyp.MaxVisibleValue = -1000
-
-      if (this.layers) {
-        for (let ly of this.layers) {
+    if (this.layers) {
+      for (let ly of this.layers) {
+        try {
           ly.hypsometricSetting = {
-            hypsometricSetting: hyp,
-            analysisMode:
-              Cesium.HypsometricSettingEnum.AnalysisRegionMode.ARM_ALL,
+            hypsometricSetting: undefined,
+            analysisMode: 0,
           }
+        } catch (e) {
+          // eslint-disable-next-line no-empty
         }
       }
+    }
 
-      if (this._includingGlobe) {
-        this.viewer.scene.globe.HypsometricSetting = {
-          hypsometricSetting: hyp,
-          analysisMode:
-            Cesium.HypsometricSettingEnum.AnalysisRegionMode.ARM_ALL,
-        }
-      }
+    if (this._includingGlobe) {
+      this.viewer.scene.globe.HypsometricSetting = this.defaultGlobeHypsometricSetting
     }
   }
 }

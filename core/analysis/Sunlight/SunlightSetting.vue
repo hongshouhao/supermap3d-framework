@@ -17,7 +17,7 @@
                         size="small"
                         type="date"
                         placeholder="选择日期"
-                        @change="timeChanged">
+                        @change="dateChanged">
         </el-date-picker>
       </div>
       <el-button type="primary"
@@ -46,6 +46,7 @@ export default {
       marks: {},
       startHour: 8,
       endHour: 18,
+      inited: false
     }
   },
   beforeMount () {
@@ -60,7 +61,9 @@ export default {
       this.marks[i] = mrk
     }
   },
-  mounted () { },
+  mounted () {
+
+  },
   methods: {
     init () {
       if (!this.sunlightTool) {
@@ -69,13 +72,13 @@ export default {
       if (!this.shadowQueryTool) {
         this.shadowQueryTool = new ShadowQueryTool(this.$viewer)
       }
-      this.timeChanged()
+      this.dateChanged()
+      this.inited = true
     },
-    timeChanged () {
+    dateChanged () {
       this.sunlightTool.setTimeRange(this.date, this.startHour, this.endHour)
       this.shadowQueryTool.setTimeRange(this.date, this.startHour, this.endHour)
     },
-
     runSunlight () {
       let _this = this
       if (
@@ -102,9 +105,11 @@ export default {
     },
 
     setCurrentTime () {
-      let newDate = new Date(this.date.valueOf())
-      newDate.setHours(this.currentHour)
-      this.$viewer.clock.currentTime = Cesium.JulianDate.fromDate(newDate)
+      if (this.inited) {
+        let newDate = new Date(this.date.valueOf())
+        newDate.setHours(this.currentHour)
+        this.$viewer.clock.currentTime = Cesium.JulianDate.fromDate(newDate)
+      }
     },
 
     reset () {

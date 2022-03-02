@@ -4,6 +4,8 @@ export const config = {
   iServerBaseURL: process.env.VUE_APP_ISERVER_BASE_URL,
   useEllipsoid: true,
   // dem: URL_CONFIG.SiChuan_TERRAIN,
+  dem:
+    'http://localhost:8090/iserver/services/3D-local3DCache-demjiangsu/rest/realspace/datas/dem@jiangsu',
   undergroundMode: false,
   minimumZoomDistance: -1000,
   colorCorrection: {
@@ -16,8 +18,6 @@ export const config = {
     enable: false,
     depth: 20,
   },
-  // dem:
-  //   'http://192.168.175.70:8090/iserver/services/3D-GongYeYuanQuDEM_1_1-SZ/rest/realspace/datas/%E5%B7%A5%E4%B8%9A%E5%9B%AD%E5%8C%BADEM_1_1@SZ_Terrain',
   layers: layers,
   defaultCamera: {
     destination: {

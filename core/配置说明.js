@@ -43,6 +43,8 @@ export default {
       id: '2',
       //父节点label不可为空
       label: '分类测试',
+      //是否是虚节点，默认false，true时不显示子节点，并且自身被当作子节点渲染, 目前不支持图层设置
+      virtual: false,
       //默认是否展开
       expand: true,
       //节点图标
@@ -55,6 +57,8 @@ export default {
             //三维模型图层
             type: 'S3M',
             visible: true,
+            //标识图层(S3M|3DTILES)是否可以选中要素, 在未作单体化的倾斜图层做i查询并显示结果的时候起作用
+            selectable: true,
             //模型是否描边，绘制出轮廓线，值作用S3M图层
             enableFillAndWireFrame: true,
             //模型选中颜色，可空
@@ -116,6 +120,8 @@ export default {
         enableFillAndWireFrame: true,
         url:
           'http://localhost/iserver/services/3D-管线/rest/realspace/datas/管线/config',
+        //仅针对未做单体化的图层有作用，配置同栅格
+        iQuery: {},
         datasetName: '污水:污水_1',
         outFields: ['*'],
         //压平某个区域
@@ -191,14 +197,23 @@ export default {
           'http://localhost/iserver/services/3D-测试/rest/realspace/datas/测试',
         //i查询配置
         iQuery: {
+          //数值越大查询优先级越高
+          priority: 0,
+          // symbol: {
+          //   stroke: Cesium.Color.fromCssColorString('#FF0000'),
+          //   fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
+          //   strokeWidth: 2,
+          // },
           //图形渲染样式
           symbol: {
-            //轮廓线颜色
-            stroke: Cesium.Color.fromCssColorString('#FF0000'),
             //填充色
-            fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
+            material: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
+            //轮廓线
+            outline: true,
+            //轮廓线颜色
+            outlineColor: Cesium.Color.RED,
             //轮廓线宽度
-            strokeWidth: 1,
+            outlineWidth: 2.0,
           },
           //数据查询服务，服务必须使用GET，且最终lon、lat、height会作为url参数传递给服务端
           //默认需要返回固定结构，见文档下面
@@ -246,6 +261,8 @@ export default {
         //3DTILES类型
         type: '3DTILES',
         visible: true,
+        //标识图层(S3M|3DTILES)是否可以选中要素, 在未作单体化的倾斜图层做i查询并显示结果的时候起作用
+        selectable: true,
         url: `http://localhost:5500/sm-3dtiles/tileset.json`,
         //用于调整图层高度，如没有DEM数据又需要将模型贴地时设置此值，具体数值可使用点标注功能获取
         zOffset: -1,

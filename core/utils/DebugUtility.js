@@ -4,16 +4,36 @@ export default class DebugUtility {
     this.viewer = viewer
   }
 
-  labelPoint(point) {
-    let ent = this.viewer.entities.add({
+  labelPointLL(point, addLabel = true) {
+    let position = Cesium.Cartesian3.fromDegrees(
+      point.longitude,
+      point.latitude,
+      point.height
+    )
+    this._labelPoint(
+      position,
+      `${point.longitude}, ${point.latitude}, ${point.height}`,
+      addLabel
+    )
+  }
+
+  labelPoint(point, addLabel = true) {
+    this._labelPoint(point, `${point.x}, ${point.y}, ${point.z}`, addLabel)
+  }
+
+  _labelPoint(point, text, addLabel) {
+    let options = {
       position: point,
       name: 'point_annotation_debugger',
       point: {
         pixelSize: 8,
         color: Cesium.Color.YELLOW,
       },
-      label: {
-        text: `${point.x}, ${point.y}, ${point.z}`,
+    }
+
+    if (addLabel) {
+      options.label = {
+        text: text,
         font: '20px 宋体',
         fillColor: Cesium.Color.WHITE,
         outlineColor: Cesium.Color.fromCssColorString('#212fd2'),
@@ -27,10 +47,9 @@ export default class DebugUtility {
         ),
         showBackground: true,
         eyeOffset: new Cesium.Cartesian3(0, 0, -10),
-      },
-    })
-
-    console.log(ent)
+      }
+    }
+    this.viewer.entities.add(options)
   }
 
   drawBoundingSphereAndPoints(boundingSphere, pts) {

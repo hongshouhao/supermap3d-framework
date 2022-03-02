@@ -140,7 +140,7 @@ export default class PopupUtility {
     }
   }
 
-  queryOverImageLayer(layerName, position) {
+  queryOverUnselectableLayer(layerName, position) {
     let lconfig = window.s3d.getLayerConfig(layerName)
     if (!lconfig.iQuery) {
       throw `配置错误: 图层[${layerName}]无法i查询`

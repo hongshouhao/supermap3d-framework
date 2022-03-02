@@ -210,7 +210,7 @@
     <WidgetInfoPanel v-show="currentTool == 'ModelObservationTool'"
                      title="模型"
                      ref="modelObservationPanel"
-                     @closed="stopSetting()">
+                     @closed="stopModelObservation()">
       <template>
         <ModelObservationSetting ref="modelObservationSetting" />
       </template>
@@ -374,6 +374,7 @@ export default {
     },
     startSubmerged () {
       this.currentTool = 'SubmergedTool'
+      this.submergedTool.clear()
       this.submergedTool.start()
     },
     startModelObservation () {

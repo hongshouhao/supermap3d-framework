@@ -76,17 +76,6 @@ export default {
   props: [],
   mounted () {
     this.popupUtility = new PopupUtility()
-    this.defaultPloylineSymbol = {
-      material: Cesium.Color.RED,
-      width: 2.0
-    }
-    this.defaultPolygonSymbol = {
-      material: Cesium.Color.RED.withAlpha(0.3),
-      outline: true,
-      outlineColor: Cesium.Color.RED,
-      outlineWidth: 2.0
-    }
-
     this.initIQuery()
     this.initIQueryForMVT()
   },
@@ -104,28 +93,51 @@ export default {
           } else {
             let pickedObjects = window.s3d.pick(e.position)
             if (pickedObjects.length === 0) {
-              let imgLayers = window.s3d.getAllLayers(
-                (x) => (isImageryLayer(x.type) || x.type === "3DTILES") && x.show && x.config?.iQuery
+              let unslctableLayers = window.s3d.getAllLayers(
+                (x) => {
+                  return (isImageryLayer(x.type)
+                    // || (x.type === "3DTILES" && x.config.selectable === false)
+                    // || (x.type === "S3M" && x.config.selectable === false))
+                    || (x.type === "3DTILES")
+                    || (x.type === "S3M"))
+                    && (x.show || x.visible)
+                    && x.config?.iQuery
+                }
               )
+              unslctableLayers.sort((l1, l2) => {
+                if (!l1.config.iQuery.priority) {
+                  l1.config.iQuery.priority = -9999
+                }
+                if (!l2.config.iQuery.priority) {
+                  l2.config.iQuery.priority = -9999
+                }
 
-              if (imgLayers.length > 0) {
+                return l2.config.iQuery.priority - l1.config.iQuery.priority
+              })
+              if (unslctableLayers.length > 0) {
                 let position = _this.$viewer.scene.pickPosition(e.position)
                 let lonlat = cartesianToLonlat(position)
-                let promises = imgLayers.map((l) => {
+                let promises = unslctableLayers.map((l) => {
                   return _this.popupUtility
-                    .queryOverImageLayer(l.name, lonlat)
+                    .queryOverUnselectableLayer(l.name, lonlat)
                     .then((dobj) => {
-                      dobj.object.layer = l.name
-                      if (!dobj.position) {
-                        dobj.position = lonlat
+                      if (dobj) {
+                        dobj.object.layer = l.name
+                        if (!dobj.position) {
+                          dobj.position = lonlat
+                        }
+                        return dobj
                       }
-                      return dobj
+                      else {
+                        return null
+                      }
                     })
                 })
 
                 Promise.all(promises).then((data) => {
-                  if (data.length > 0) {
-                    _this.renderPopupMulti(position, data)
+                  let notNull = data.filter(x => x)
+                  if (notNull.length > 0) {
+                    _this.renderPopupMulti(position, notNull)
                   }
                   else {
                     _this._clearTempDataSources()
@@ -138,7 +150,27 @@ export default {
               }
             } else {
               let calls = pickedObjects.map((x) => {
-                return _this.popupUtility.getDataForPrimitive(x)
+                if (x.primitive.config?.iQuery) {
+                  let lname = x.primitive.config.name
+                  let lonlat = cartesianToLonlat(position)
+                  return _this.popupUtility
+                    .queryOverUnselectableLayer(lname, lonlat)
+                    .then((dobj) => {
+                      if (dobj) {
+                        dobj.object.layer = lname
+                        if (!dobj.position) {
+                          dobj.position = lonlat
+                        }
+                        return dobj
+                      }
+                      else {
+                        return null
+                      }
+                    })
+                }
+                else {
+                  return _this.popupUtility.getDataForPrimitive(x)
+                }
               })
               Promise.all(calls)
                 .then((data) => {
@@ -237,9 +269,26 @@ export default {
       }
       this._clearTempDataSources()
       let ly = window.s3d.getLayer(obj.object.layer)
-      if (ly.type === 'S3M') {
+      if (ly.type === 'S3M' && (typeof ly.config.selectable === 'undefined' || ly.config.selectable === true)) {
         ly.setSelection([obj.object.id])
-      } else if (isImageryLayer(ly.type) || ly.type === "3DTILES") {
+      } else if (isImageryLayer(ly.type)
+        || (ly.type === "3DTILES" && ly.config.selectable === false)
+        || (ly.type === "S3M" && ly.config.selectable === false)
+      ) {
+        ////方案1
+        // let opt = ly.config.iQuery.symbol ?? {
+        //   fill: Cesium.Color.RED.withAlpha(0.3),
+        //   stroke: Cesium.Color.BLUE,
+        //   strokeWidth: 3,
+        //   clampToGround: true,
+        // }
+        // Cesium.GeoJsonDataSource.load(obj.object.shape, opt).then((ds) => {
+        //   debugger
+        //   ds.name = `temp_iquery_geometries_${ly.name}`
+        //   _this.$viewer.dataSources.add(ds)
+        // })
+
+        //方案2
         Cesium.GeoJsonDataSource.load(obj.object.shape).then((ds) => {
           let dataSource = new Cesium.CustomDataSource(`temp_iquery_geometries_${ly.name}`)
           for (let ent of ds.entities.values) {
@@ -250,25 +299,42 @@ export default {
                   positions: ent.polyline.positions._value,
                 },
               }
-              let symbol = ly.config.iQuery.symbol ?? _this.defaultPloylineSymbol
+
+              let symbol = ly.config.iQuery.symbol ?? {
+                material: Cesium.Color.RED,
+                width: 2.0
+              }
               Object.assign(newEnt.polyline, symbol)
             }
             else if (ent.polygon) {
               let hierarchy = ent.polygon.hierarchy.getValue()
               newEnt = {
                 polygon: {
-                  hierarchy: new Cesium.PolygonHierarchy(hierarchy.positions, hierarchy.holes),
+                  hierarchy: {
+                    positions: hierarchy.positions,
+                    holes: hierarchy.holes
+                  },
+                  height: 10,
+                  outline: true,
+                  outlineColor: Cesium.Color.RED,
+                  outlineWidth: 2.0,
+                  material: Cesium.Color.BLUE.withAlpha(0.5),
+                  classificationType: Cesium.ClassificationType.BOTH
                 }
               }
-              let symbol = ly.config.iQuery.symbol ?? _this.defaultPolygonSymbol
+
+              let symbol = ly.config.iQuery.symbol ?? {
+                material: Cesium.Color.RED.withAlpha(0.3),
+                outline: true,
+                outlineColor: Cesium.Color.BLUE,
+                outlineWidth: 2.0
+              }
               Object.assign(newEnt.polygon, symbol)
             }
             dataSource.entities.add(newEnt)
           }
           ds.entities.removeAll()
           _this.$viewer.dataSources.add(dataSource)
-
-          //classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
         })
       }
     },

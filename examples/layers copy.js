@@ -21,56 +21,56 @@ export const layers = [
   //   },
   // },
 
-  // {
-  //   id: 'test-3dTiles',
-  //   name: '3dTiles',
-  //   layer: {
-  //     type: '3DTILES',
-  //     visible: true,
-  //     url: `http://127.0.0.1:5501/tileset.json`,
-  //     zOffset: -19.206,
-  //     iQuery: {
-  //       // symbol: {
-  //       //   stroke: Cesium.Color.fromCssColorString('#FF0000'),
-  //       //   fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
-  //       //   strokeWidth: 2,
-  //       // },
-  //       getData: function(p) {
-  //         console.log(p)
-  //         return {
-  //           object: {
-  //             id: 1,
-  //             shape: {
-  //               type: 'FeatureCollection',
-  //               features: [
-  //                 {
-  //                   type: 'Feature',
-  //                   properties: {},
-  //                   geometry: {
-  //                     type: 'Polygon',
-  //                     coordinates: [
-  //                       [
-  //                         [115.98874574945314, 29.714681663499647, 8],
-  //                         [115.98844966578308, 29.714167413496305, 8],
-  //                         [115.98901889056192, 29.713904099687618, 8],
-  //                         [115.98925663585524, 29.714367876988298, 8],
-  //                         [115.98874574945314, 29.714681663499647, 8],
-  //                       ],
-  //                     ],
-  //                   },
-  //                 },
-  //               ],
-  //             },
-  //             attributes: {
-  //               a: 1,
-  //               b: 2,
-  //             },
-  //           },
-  //         }
-  //       },
-  //     },
-  //   },
-  // },
+  {
+    id: 'test-3dTiles',
+    name: '3dTiles',
+    layer: {
+      type: '3DTILES',
+      visible: true,
+      url: `http://127.0.0.1:5501/tileset.json`,
+      zOffset: -19.206,
+      iQuery: {
+        symbol: {
+          stroke: Cesium.Color.fromCssColorString('#FF0000'),
+          fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
+          strokeWidth: 2,
+        },
+        getData: function(p) {
+          console.log(p)
+          return {
+            object: {
+              id: 1,
+              shape: {
+                type: 'FeatureCollection',
+                features: [
+                  {
+                    type: 'Feature',
+                    properties: {},
+                    geometry: {
+                      type: 'Polygon',
+                      coordinates: [
+                        [
+                          [115.98874574945314, 29.714681663499647, 8],
+                          [115.98844966578308, 29.714167413496305, 8],
+                          [115.98901889056192, 29.713904099687618, 8],
+                          [115.98925663585524, 29.714367876988298, 8],
+                          [115.98874574945314, 29.714681663499647, 8],
+                        ],
+                      ],
+                    },
+                  },
+                ],
+              },
+              attributes: {
+                a: 1,
+                b: 2,
+              },
+            },
+          }
+        },
+      },
+    },
+  },
   // {
   //   id: '111',
   //   name: '市局水下',

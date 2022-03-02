@@ -3,39 +3,52 @@
     <div ref="viewportSpliter"
          v-show="multiViewport"
          class="viewport-spliter" />
-    <el-scrollbar style="height:100%">
-      <el-tree show-checkbox
-               node-key="id"
-               ref="tree1"
-               :render-after-expand="false"
-               :data="layersData"
-               :props="{ disabled: disableNode }"
-               :default-expanded-keys="defaultExpandedKeys"
-               :default-checked-keys="defaultCheckedKeys"
-               :render-content="renderExtButton"
-               @check-change="setLayerVisible1">
-      </el-tree>
-    </el-scrollbar>
 
-    <div v-show="multiViewport"
-         class="divider">
-      <el-divider direction="vertical"></el-divider>
+    <el-input class="layer-filter"
+              size="mini"
+              clearable
+              placeholder="输入图层名"
+              v-model="filterText">
+    </el-input>
+    <div class="layer-tree-container">
+      <el-scrollbar style="height:100%">
+        <el-tree show-checkbox
+                 node-key="id"
+                 ref="tree1"
+                 :expand-on-click-node="false"
+                 :filter-node-method="filterNode"
+                 :render-after-expand="false"
+                 :data="layersData"
+                 :props="{ disabled: disableNode }"
+                 :default-expanded-keys="defaultExpandedKeys"
+                 :default-checked-keys="defaultCheckedKeys"
+                 :render-content="renderExtButton"
+                 @check-change="setLayerVisible1">
+        </el-tree>
+      </el-scrollbar>
+
+      <div v-show="multiViewport"
+           class="divider">
+        <el-divider direction="vertical"></el-divider>
+      </div>
+
+      <el-scrollbar style="height:100%">
+        <el-tree v-show="multiViewport"
+                 show-checkbox
+                 node-key="id"
+                 ref="tree2"
+                 :expand-on-click-node="false"
+                 :filter-node-method="filterNode"
+                 :render-after-expand="false"
+                 :data="layersData"
+                 :props="{ disabled: disableNode }"
+                 :default-expanded-keys="defaultExpandedKeys"
+                 :default-checked-keys="defaultCheckedKeys"
+                 :render-content="renderExtButton"
+                 @check-change="setLayerVisible2">
+        </el-tree>
+      </el-scrollbar>
     </div>
-
-    <el-scrollbar style="height:100%">
-      <el-tree v-show="multiViewport"
-               show-checkbox
-               node-key="id"
-               ref="tree2"
-               :render-after-expand="false"
-               :data="layersData"
-               :props="{ disabled: disableNode }"
-               :default-expanded-keys="defaultExpandedKeys"
-               :default-checked-keys="defaultCheckedKeys"
-               :render-content="renderExtButton"
-               @check-change="setLayerVisible2">
-      </el-tree>
-    </el-scrollbar>
   </div>
 </template>
 
@@ -56,9 +69,16 @@ export default {
       defaultExpandedKeys: [],
       defaultCheckedKeys: [],
       multiViewport: false,
+      filterText: "",
     }
   },
   props: [],
+  watch: {
+    filterText (val) {
+      this.$refs.tree1.filter(val);
+      this.$refs.tree2.filter(val);
+    }
+  },
   mounted () {
     window.s3d.layerTree = this
     let _this = this
@@ -67,8 +87,8 @@ export default {
       _this._checkLayersConfig()
       _this.init()
     })
-    window.s3d.eventBus.addEventListener('layer-visible-changed', (caller, ly) => {
-      _this._setLayerNodeChecked(ly)
+    window.s3d.eventBus.addEventListener('layer-visible-changed', (caller, visible) => {
+      _this.setLayerNodeChecked(caller.target.name, visible)
     })
   },
   methods: {
@@ -78,9 +98,16 @@ export default {
         this.layersData = window.s3d.config.layers
 
         this.$nextTick(() => {
-          let dom = document.querySelectorAll('.hide-tree-node')
-          dom.forEach((item) => {
+          let hideDoms = document.querySelectorAll('.hide-tree-node')
+          hideDoms.forEach((item) => {
             item.parentNode.parentNode.style.display = 'none'
+          })
+
+          let virtualDoms = document.querySelectorAll('.virtual-dir-node')
+          virtualDoms.forEach((item) => {
+            let vDom = item.parentNode.querySelector('.el-tree-node__expand-icon');
+            // vDom.classList.add('is-leaf');
+            vDom.style.visibility = "hidden"
           })
         })
 
@@ -101,6 +128,10 @@ export default {
             _this._createLayer(lyElModel)
           }
         } else if (lyElModel.children) {
+          if (lyElModel.virtual) {
+            lyElModel.children.forEach(item => item.display = false)
+          }
+
           if (lyElModel.expand) {
             _this.defaultExpandedKeys.push(lyElModel.id)
           }
@@ -183,21 +214,66 @@ export default {
     },
     renderExtButton (h, { node }) {
       let lyElModel = node.data
+
       if (node.childNodes && node.childNodes.length > 0) {
-        return (
-          <span
-            class={
-              lyElModel.display === false
-                ? 'custom-tree-node hide-tree-node'
-                : 'custom-tree-node dir-node'
-            }
-          >
-            <i class={lyElModel.icon ? 'layer-node-icon ' + lyElModel.icon : ''} />
-            <span class="over-ellipsis">
-              <span title={node.label}>{node.label}</span>
+        if (node.checked) {
+          return (
+            <span class={this.getDirNodeClass(lyElModel)}>
+              <i class={lyElModel.icon ? 'layer-node-icon ' + lyElModel.icon : ''} />
+              <span class="over-ellipsis">
+                <span on-dblclick={() => {
+                  let firstLayer = lyElModel.children[0]
+                  if (firstLayer.cesiumLayer) {
+                    window.s3d.flyToLayer(
+                      firstLayer.cesiumLayer,
+                      firstLayer.layer.defaultCamera
+                    )
+                  }
+                }} title={node.label}>{node.label}</span>
+              </span>
             </span>
-          </span>
-        )
+          )
+          // return (
+          //   <span class={this.getDirNodeClass(lyElModel)}>
+          //     <i class={lyElModel.icon ? 'layer-node-icon ' + lyElModel.icon : ''} />
+          //     <span class="over-ellipsis">
+          //       <span on-dblclick={() => {
+          //         if (lyElModel.cesiumLayer) {
+          //           window.s3d.flyToLayer(
+          //             lyElModel.cesiumLayer,
+          //             lyElModel.layer.defaultCamera
+          //           )
+          //         }
+          //       }} title={node.label}>{node.label}</span>
+          //     </span>
+          //     <el-popover
+          //       placement="bottom"
+          //       popper-class="layer-setting-popup"
+          //       trigger="hover"
+          //     >
+          //       <LayerSetting lyElModel={lyElModel} />
+          //       <i
+          //         slot="reference"
+          //         class={node.checked ? 'layer-settings my-icon-more' : ''}
+          //       />
+          //     </el-popover>
+          //   </span>
+          // )
+        }
+        else {
+          return (
+            <span
+              class={
+                this.getDirNodeClass(lyElModel)
+              }
+            >
+              <i class={lyElModel.icon ? 'layer-node-icon ' + lyElModel.icon : ''} />
+              <span class="over-ellipsis">
+                <span title={node.label}>{node.label}</span>
+              </span>
+            </span>
+          )
+        }
       } else {
         if (node.checked) {
           return (
@@ -320,15 +396,18 @@ export default {
         }
       }
     },
-    _setLayerNodeChecked (layer) {
-      if (layer.nodeKey) {
+    setLayerNodeChecked (layerName, checked) {
+      let lnode = window.s3d._getLayerNode(layerName)
+      if (lnode) {
         let keys = this.$refs.tree1.getCheckedKeys()
-        let idx = keys.findIndex((item) => item === layer.nodeKey)
-        if (layer.visible || layer.show) {
+        let idx = keys.findIndex((item) => item === lnode.id)
+
+        if (checked) {
           if (idx == -1) {
-            keys.push(layer.nodeKey)
+            keys.push(lnode.id)
           }
-        } else {
+        }
+        else {
           if (idx != -1) {
             keys.splice(idx, 1)
           }
@@ -342,7 +421,6 @@ export default {
         return result.then(ly => {
           lyElModel.cesiumLayer = ly
           lyElModel.cesiumLayerLoaded = true
-          lyElModel.cesiumLayer.nodeKey = lyElModel.id
         })
       }
       else if (lyElModel.layer.type === 'DEM') {
@@ -351,7 +429,6 @@ export default {
       else {
         lyElModel.cesiumLayer = result
         lyElModel.cesiumLayerLoaded = true
-        lyElModel.cesiumLayer.nodeKey = lyElModel.id
       }
       return lyElModel.cesiumLayer
     },
@@ -362,84 +439,127 @@ export default {
       }
       lyElModel.cesiumLayer = null
       lyElModel.cesiumLayerLoaded = false
+    },
+    getDirNodeClass (lyElModel) {
+      if (lyElModel.display === false) {
+        return 'custom-tree-node hide-tree-node'
+      }
+      else {
+        if (lyElModel.virtual === true) {
+          return 'custom-tree-node virtual-dir-node'
+        }
+        else {
+          return 'custom-tree-node dir-node'
+        }
+      }
+    },
+    filterNode (value, data) {
+      if (!value) {
+        if (typeof data.display === 'boolean') {
+          return data.display
+        }
+        else {
+          return true;
+        }
+      }
+      else {
+        if (typeof data.display === 'boolean') {
+          if (data.display) {
+            return data.label.indexOf(value) !== -1;
+          }
+          else {
+            return false
+          }
+        }
+        else {
+          return data.label.indexOf(value) !== -1;
+        }
+      }
     }
   },
 }
 </script>
 <style lang="scss">
 .layer-tree {
-  display: flex;
-  width: 100%;
-  background: white;
   padding: 10px 0px 10px 5px;
-
-  .el-scrollbar__wrap {
-    overflow-x: hidden;
-    overflow-y: auto;
-    max-height: calc(100vh - 200px);
-    margin: 0 !important;
-    scrollbar-width: none; /* firefox */
-    -ms-overflow-style: none; /* IE 10+ */
-    &::-webkit-scrollbar {
-      display: none; /* Chrome Safari */
+  background: white;
+  .layer-filter {
+    input {
+      border-radius: 0px;
     }
+    padding-right: 5px;
+    margin-bottom: 5px;
   }
-
-  .el-scrollbar__view {
-    .el-tree {
-      margin-right: 5px;
-      min-width: 190px;
-    }
-  }
-  .el-tree-node__content {
-    .el-checkbox {
-      margin-bottom: 0px;
-    }
-  }
-
-  .divider {
-    position: relative;
-    width: 10px;
-    // margin-left: 2px;
-    .el-divider {
-      height: 100%;
-    }
-  }
-
-  .custom-tree-node {
+  .layer-tree-container {
     display: flex;
-    align-items: center;
-    margin-bottom: 0px;
-    width: 100%;
-    justify-content: space-between;
-    &.dir-node {
-      justify-content: flex-start;
+    .el-scrollbar__wrap {
+      overflow-x: hidden;
+      overflow-y: auto;
+      max-height: calc(100vh - 200px);
+      margin: 0 !important;
+      scrollbar-width: none; /* firefox */
+      -ms-overflow-style: none; /* IE 10+ */
+      &::-webkit-scrollbar {
+        display: none; /* Chrome Safari */
+      }
     }
 
-    .layer-node-content {
-      height: 19px;
+    .el-scrollbar__view {
+      .el-tree {
+        margin-right: 5px;
+        min-width: 190px;
+      }
+    }
+    .el-tree-node__content {
+      .el-checkbox {
+        margin-bottom: 0px;
+      }
     }
 
-    .over-ellipsis {
-      display: inline-block;
-      max-width: 100px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      -webkit-line-clamp: 1;
-      user-select: none;
+    .divider {
+      position: relative;
+      width: 10px;
+      // margin-left: 2px;
+      .el-divider {
+        height: 100%;
+      }
     }
 
-    .layer-node-icon {
-      margin-right: 4px;
-      margin-top: 1px;
-      color: #409eff;
-    }
+    .custom-tree-node {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0px;
+      width: 100%;
+      // justify-content: space-between;
+      &.dir-node {
+        justify-content: flex-start;
+      }
 
-    .layer-settings {
-      width: 13px;
-      display: block;
-      margin-right: 5px;
+      .layer-node-content {
+        height: 19px;
+      }
+
+      .over-ellipsis {
+        display: inline-block;
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        -webkit-line-clamp: 1;
+        user-select: none;
+      }
+
+      .layer-node-icon {
+        margin-right: 4px;
+        margin-top: 1px;
+        color: #409eff;
+      }
+
+      .layer-settings {
+        width: 13px;
+        display: block;
+        margin-right: 5px;
+      }
     }
   }
 }

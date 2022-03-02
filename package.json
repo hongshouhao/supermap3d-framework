@@ -1,6 +1,6 @@
 {
   "name": "@sipsd/supermap3d-framework",
-  "version": "0.1.95312",
+  "version": "0.1.95324",
   "private": false,
   "main": "./lib/supermap3d-framework.umd.min.js",
   "files": [
@@ -28,6 +28,7 @@
     "@supermap/iclient3d-webgl": "^10.2.1",
     "@supermap/vue-iclient3d-webgl": "^1.0.9",
     "@tmcw/togeojson": "^4.5.0",
+    "@turf/turf": "^6.5.0",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "element-ui": "^2.15.3",

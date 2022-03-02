@@ -56,6 +56,7 @@ export default class ShadowQueryTool {
         bottom: 10,
         extend: 50,
       })
+      _this.started = true
     })
   }
 
@@ -81,7 +82,6 @@ export default class ShadowQueryTool {
   }
 
   start() {
-    this.started = true
     this.polygonDrawHandler.deactivate()
     this.polygonDrawHandler.activate()
   }
