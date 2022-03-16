@@ -53,12 +53,13 @@ import $ from 'jquery'
 import Enumerable from 'linq'
 import { cartesianToLonlat } from '../utils/CesiumMath'
 import PropertyGrid from './PropertyGrid.vue'
-import PopupUtility from './PopupUtility.js'
+import PopupDataAccess from './PopupDataAccess.js'
 import { isImageryLayer } from '../utils/ImageryUtility'
 
 export default {
   data () {
     return {
+      enabled: false,
       propArray: [],
       title: '',
       multiable: false,
@@ -75,11 +76,19 @@ export default {
   },
   props: [],
   mounted () {
-    this.popupUtility = new PopupUtility()
+    this.dataAccess = new PopupDataAccess()
     this.initIQuery()
     this.initIQueryForMVT()
   },
   methods: {
+    enable () {
+      this.enabled = true
+    },
+    disable () {
+      this.enabled = false
+      this._clearTempDataSources()
+      this.hidePopup()
+    },
     initIQuery () {
       let _this = this
       this.mouseEventHandler = new Cesium.ScreenSpaceEventHandler(
@@ -87,11 +96,11 @@ export default {
       )
       this.mouseEventHandler.setInputAction(function (e) {
         let position = _this.$viewer.scene.pickPosition(e.position)
-        if (!window.s3d.toolWorking) {
+        if (_this.enabled) {
           if (_this.mvtData) {
             _this.renderPopup(position, _this.mvtData)
           } else {
-            let pickedObjects = window.s3d.pick(e.position)
+            let pickedObjects = window.s3d.pickObject(e.position)
             if (pickedObjects.length === 0) {
               let unslctableLayers = window.s3d.getAllLayers(
                 (x) => {
@@ -111,14 +120,13 @@ export default {
                 if (!l2.config.iQuery.priority) {
                   l2.config.iQuery.priority = -9999
                 }
-
                 return l2.config.iQuery.priority - l1.config.iQuery.priority
               })
               if (unslctableLayers.length > 0) {
                 let position = _this.$viewer.scene.pickPosition(e.position)
                 let lonlat = cartesianToLonlat(position)
                 let promises = unslctableLayers.map((l) => {
-                  return _this.popupUtility
+                  return _this.dataAccess
                     .queryOverUnselectableLayer(l.name, lonlat)
                     .then((dobj) => {
                       if (dobj) {
@@ -149,11 +157,28 @@ export default {
                 _this.hidePopup()
               }
             } else {
+              debugger
               let calls = pickedObjects.map((x) => {
-                if (x.primitive.config?.iQuery) {
+                if (x.id instanceof Cesium.Entity) {
+                  let data = {
+                    sourceType: "ENTITY",
+                    object: {
+                      layer: x.id.name,
+                      id: x.id.id,
+                      attributes: x.id.attributes,
+                    },
+                    position: {
+                      longitude: x.id.position._value.x,
+                      latitude: x.id.position._value.y,
+                      height: x.id.position._value.z,
+                    },
+                  }
+                  return Promise.resolve(data)
+                }
+                else if (x.primitive.config?.iQuery) {
                   let lname = x.primitive.config.name
                   let lonlat = cartesianToLonlat(position)
-                  return _this.popupUtility
+                  return _this.dataAccess
                     .queryOverUnselectableLayer(lname, lonlat)
                     .then((dobj) => {
                       if (dobj) {
@@ -169,7 +194,7 @@ export default {
                     })
                 }
                 else {
-                  return _this.popupUtility.getDataForPrimitive(x)
+                  return _this.dataAccess.getDataForPrimitive(x)
                 }
               })
               Promise.all(calls)
@@ -201,7 +226,7 @@ export default {
     initIQueryForMVT () {
       let _this = this
       _this.$viewer.selectedEntityChanged.addEventListener(function (entity) {
-        if (window.s3d.toolWorking) {
+        if (!_this.enabled) {
           _this.mvtData = null
           return
         }
@@ -211,7 +236,7 @@ export default {
           let fItem = features.find(
             (x) => x.feature.id === entity.pickResult.featureID
           )
-          _this.mvtData = _this.popupUtility.getDataForMVT(
+          _this.mvtData = _this.dataAccess.getDataForMVT(
             layerName,
             fItem.feature
           )
@@ -257,85 +282,81 @@ export default {
       $('.my-popup .multi-header input').css('width', this._textWidth(header))
     },
     _highlight (obj) {
-      let _this = this
       let grps = Enumerable.from(this.dataObjs)
         .groupBy((x) => x.object.layer)
         .toArray()
       for (let g of grps) {
         let ly = window.s3d.getLayer(g.key())
-        if (ly.type === 'S3M') {
+        if (ly && ly.type === 'S3M') {
           ly.setSelection([])
         }
       }
       this._clearTempDataSources()
+
+      if (obj.sourceType == "ENTITY") {
+        return
+      }
+
       let ly = window.s3d.getLayer(obj.object.layer)
-      if (ly.type === 'S3M' && (typeof ly.config.selectable === 'undefined' || ly.config.selectable === true)) {
+      if (ly.type === 'S3M'
+        && (typeof ly.config.selectable === 'undefined' || ly.config.selectable === true)) {
         ly.setSelection([obj.object.id])
       } else if (isImageryLayer(ly.type)
         || (ly.type === "3DTILES" && ly.config.selectable === false)
         || (ly.type === "S3M" && ly.config.selectable === false)
       ) {
-        ////方案1
-        // let opt = ly.config.iQuery.symbol ?? {
-        //   fill: Cesium.Color.RED.withAlpha(0.3),
-        //   stroke: Cesium.Color.BLUE,
-        //   strokeWidth: 3,
-        //   clampToGround: true,
-        // }
-        // Cesium.GeoJsonDataSource.load(obj.object.shape, opt).then((ds) => {
-        //   debugger
-        //   ds.name = `temp_iquery_geometries_${ly.name}`
-        //   _this.$viewer.dataSources.add(ds)
+        //方案1
+        let opts = ly.config.iQuery.symbol
+        window.s3d.dataUtility.loadGeoJson(obj.object.shape, opts, `temp_iquery_geometries_${ly.name}`)
+
+        ////方案2
+        // Cesium.GeoJsonDataSource.load(obj.object.shape).then((ds) => {
+        //   let dataSource = new Cesium.CustomDataSource(`temp_iquery_geometries_${ly.name}`)
+        //   for (let ent of ds.entities.values) {
+        //     let newEnt = null;
+        //     if (ent.polyline) {
+        //       newEnt = {
+        //         polyline: {
+        //           positions: ent.polyline.positions._value,
+        //         },
+        //       }
+
+        //       let symbol = ly.config.iQuery.symbol ?? {
+        //         material: Cesium.Color.RED,
+        //         width: 2.0
+        //       }
+        //       Object.assign(newEnt.polyline, symbol)
+        //     }
+        //     else if (ent.polygon) {
+        //       let hierarchy = ent.polygon.hierarchy.getValue()
+        //       newEnt = {
+        //         polygon: {
+        //           hierarchy: {
+        //             positions: hierarchy.positions,
+        //             holes: hierarchy.holes
+        //           },
+        //           height: 10,
+        //           outline: true,
+        //           outlineColor: Cesium.Color.RED,
+        //           outlineWidth: 2.0,
+        //           material: Cesium.Color.BLUE.withAlpha(0.5),
+        //           classificationType: Cesium.ClassificationType.BOTH
+        //         }
+        //       }
+
+        //       let symbol = ly.config.iQuery.symbol ?? {
+        //         material: Cesium.Color.RED.withAlpha(0.3),
+        //         outline: true,
+        //         outlineColor: Cesium.Color.BLUE,
+        //         outlineWidth: 2.0
+        //       }
+        //       Object.assign(newEnt.polygon, symbol)
+        //     }
+        //     dataSource.entities.add(newEnt)
+        //   }
+        //   ds.entities.removeAll()
+        //   _this.$viewer.dataSources.add(dataSource)
         // })
-
-        //方案2
-        Cesium.GeoJsonDataSource.load(obj.object.shape).then((ds) => {
-          let dataSource = new Cesium.CustomDataSource(`temp_iquery_geometries_${ly.name}`)
-          for (let ent of ds.entities.values) {
-            let newEnt = null;
-            if (ent.polyline) {
-              newEnt = {
-                polyline: {
-                  positions: ent.polyline.positions._value,
-                },
-              }
-
-              let symbol = ly.config.iQuery.symbol ?? {
-                material: Cesium.Color.RED,
-                width: 2.0
-              }
-              Object.assign(newEnt.polyline, symbol)
-            }
-            else if (ent.polygon) {
-              let hierarchy = ent.polygon.hierarchy.getValue()
-              newEnt = {
-                polygon: {
-                  hierarchy: {
-                    positions: hierarchy.positions,
-                    holes: hierarchy.holes
-                  },
-                  height: 10,
-                  outline: true,
-                  outlineColor: Cesium.Color.RED,
-                  outlineWidth: 2.0,
-                  material: Cesium.Color.BLUE.withAlpha(0.5),
-                  classificationType: Cesium.ClassificationType.BOTH
-                }
-              }
-
-              let symbol = ly.config.iQuery.symbol ?? {
-                material: Cesium.Color.RED.withAlpha(0.3),
-                outline: true,
-                outlineColor: Cesium.Color.BLUE,
-                outlineWidth: 2.0
-              }
-              Object.assign(newEnt.polygon, symbol)
-            }
-            dataSource.entities.add(newEnt)
-          }
-          ds.entities.removeAll()
-          _this.$viewer.dataSources.add(dataSource)
-        })
       }
     },
     _clearTempDataSources () {
@@ -367,20 +388,24 @@ export default {
             top > _this.$viewer.scene.canvas.height - popupDom.offsetHeight ||
             left > _this.$viewer.scene.canvas.width - popupDom.offsetWidth
           ) {
-            _this._setPopupStyle(true)
+            _this.enableDock()
+            //_this._setPopupStyle(true)
           } else if (top < 0) {
             top = screenPosition.y + 10
 
             if (top - 30 < 0) {
-              _this._setPopupStyle(true)
+              _this.enableDock()
+              // _this._setPopupStyle(true)
             } else {
-              _this._setPopupStyle(false)
+              //_this._setPopupStyle(false)
+              _this.disableDock()
               _this.$refs.popupPointer.style.top = '0'
               popupDom.style.left = left + 'px'
               popupDom.style.top = top + 'px'
             }
           } else {
-            _this._setPopupStyle(false)
+            // _this._setPopupStyle(false)
+            _this.disableDock()
             popupDom.style.left = left + 'px'
             popupDom.style.top = top + 'px'
             _this.$refs.popupPointer.style.top = '100%'
@@ -475,6 +500,7 @@ export default {
     enableDock () {
       this._setPopupStyle(true)
       if (this.removePostRenderHandler) {
+        debugger
         this.removePostRenderHandler()
         this.removePostRenderHandler = null
       }

@@ -2,12 +2,14 @@
   <div class="top-right-bar">
     <BasemapToggle />
     <el-popover placement="bottom"
-                trigger="click"
+                trigger="manual"
+                v-model="visible"
                 popper-class="layer-popup">
       <Layers ref="layersTree" />
 
       <el-button slot="reference"
-                 class="btn-layers">
+                 class="btn-layers"
+                 @click="visible = !visible">
         <span style="display:flex"><i class="esri-icon-layers"
              style="margin-right:5px"></i><span>图层</span><i class="el-icon-arrow-down el-icon--right"></i></span>
       </el-button>
@@ -25,7 +27,9 @@ export default {
     BasemapToggle,
   },
   data () {
-    return {}
+    return {
+      visible: false
+    }
   },
   mounted () {
     window.s3d.layersTree = this.$refs.layersTree

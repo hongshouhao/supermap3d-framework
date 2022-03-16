@@ -35,6 +35,7 @@ export const isImageryLayer = function(type) {
     case 'ARCGISIMG':
     case 'ARCGISEXIMG':
     case 'SMIMG':
+    case 'STIMG':
       return true
     default:
       return false

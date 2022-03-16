@@ -65,7 +65,7 @@ export default class SunlightTool {
         if (completedCallback) {
           completedCallback()
         }
-        this.state = 'none'
+        _this.state = 'none'
       }
     }, _this.updateInterval)
   }

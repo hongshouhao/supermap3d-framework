@@ -17,7 +17,7 @@ import BasemapUtility from './utils/BasemapUtility'
 
 import LayerFactory from './utils/LayerFactory'
 import { lonLatToCartesian } from './utils/CesiumMath'
-import { isS3mFeature, isCartesian3 } from './utils/IfUtility'
+import { isS3mFeature } from './utils/IfUtility'
 import { setCursorStyle, resetCursorStyle } from './utils/CursorUtility'
 // import { setLayerVisible } from './utils/LayerUtility'
 import { isPromise } from './utils/IfUtility'
@@ -65,34 +65,28 @@ export default class S3d {
     this.basemapUtility = new BasemapUtility(viewer, this)
     this.layerFactory = new LayerFactory(viewer)
 
+    if (this.config.globalNightMap) {
+      this.config.globalNightMap.type = 'SMIMG'
+      this.config.globalNightMap.visible = true
+      this.layerFactory.createLayer(this.config.globalNightMap)
+    }
+
+    if (this.config.emptyMap) {
+      this.config.emptyMap.type = 'STIMG'
+      this.config.emptyMap.visible = true
+      this.layerFactory.createLayer(this.config.emptyMap)
+    }
+
     this.viewer.scene.colorCorrection.show = true
     this.viewer.scene.globe.enableLighting = true
     this.viewer.scene.hdrEnabled = true
+    // this.viewer.scene.mode = Cesium.SceneMode.COLUMBUS_VIEW
 
     // viewer.scene.fxaa = false
     // viewer.scene.postProcessStages.fxaa.enabled = false
     this.viewer.scene.debugShowFramesPerSecond = true
     this.viewer.scene.globe.depthTestAgainstTerrain = true
     this.viewer.scene.logarithmicDepthBuffer = false
-
-    if (this.config.colorCorrection) {
-      Object.assign(
-        this.viewer.scene.colorCorrection,
-        this.config.colorCorrection
-      )
-    }
-    let currentTime = new Date()
-    currentTime.setHours(12)
-    this.viewer.clock.currentTime = Cesium.JulianDate.fromDate(currentTime)
-    this.viewer.clock.multiplier = 1
-    this.viewer.clock.shouldAnimate = true
-
-    if (this.config.undergroundMode) {
-      this.viewer.scene.undergroundMode = this.config.undergroundMode
-    }
-    if (this.config.minimumZoomDistance) {
-      this.viewer.scene.screenSpaceCameraController.minimumZoomDistance = this.config.minimumZoomDistance
-    }
 
     this.viewer.scene.screenSpaceCameraController.tiltEventTypes = [
       Cesium.CameraEventType.RIGHT_DRAG,
@@ -112,11 +106,57 @@ export default class S3d {
       Cesium.CameraEventType.PINCH,
     ]
 
+    let currentTime = new Date()
+    currentTime.setHours(12)
+    this.viewer.clock.currentTime = Cesium.JulianDate.fromDate(currentTime)
+    this.viewer.clock.multiplier = 1
+    this.viewer.clock.shouldAnimate = true
+
+    if (this.config.colorCorrection) {
+      Object.assign(
+        this.viewer.scene.colorCorrection,
+        this.config.colorCorrection
+      )
+    }
+
+    if (this.config.undergroundMode) {
+      this.viewer.scene.undergroundMode = this.config.undergroundMode
+    }
+    if (this.config.minimumZoomDistance) {
+      this.viewer.scene.screenSpaceCameraController.minimumZoomDistance = this.config.minimumZoomDistance
+    }
+
     this.viewer.camera.flyTo(this.config.defaultCamera)
+    this._setLayerVisibleAltitude()
     this._setSkyBox()
     return this
   }
 
+  _setLayerVisibleAltitude() {
+    let _this = this
+    let setLayerVisible = function() {
+      let altitude = _this.cameraUtility.getCameraHeight()
+      for (let i = 0; i < _this.scene.imageryLayers.length; i++) {
+        let imgLy = _this.scene.imageryLayers.get(i)
+        let minVisibleAltitude = imgLy.config?.minVisibleAltitude
+        let maxVisibleAltitude = imgLy.config?.maxVisibleAltitude
+        if (minVisibleAltitude) {
+          if (altitude < minVisibleAltitude) {
+            imgLy.show = false
+          } else {
+            imgLy.show = true
+          }
+        } else if (maxVisibleAltitude) {
+          if (altitude > maxVisibleAltitude) {
+            imgLy.show = false
+          } else {
+            imgLy.show = true
+          }
+        }
+      }
+    }
+    this.viewer.camera.changed.addEventListener(setLayerVisible)
+  }
   setCursor(className) {
     this.viewer.enableCursorStyle = false
     setCursorStyle(className)
@@ -419,7 +459,7 @@ export default class S3d {
         if (response.data.features.length > 0) {
           let feature = response.data.features[0]
 
-          let dobj = this.popup.$data.popupUtility.convertS3mFeatureToDataObject(
+          let dobj = this.popup.$data.dataAccess.convertS3mFeatureToDataObject(
             data.object.layer,
             feature
           )
@@ -467,12 +507,12 @@ export default class S3d {
           throw '参数错误'
         }
         return this.cameraUtility.flyToPoints(pts, options)
-      } else if (isCartesian3(sample)) {
+      } else if (sample instanceof Cesium.Cartesian3) {
         return this.cameraUtility.flyToPoints(params, options)
       } else if (isS3mFeature(sample)) {
         return this.cameraUtility.flyToS3mFeatures(params, options)
       }
-    } else if (isCartesian3(params)) {
+    } else if (sample instanceof Cesium.Cartesian3) {
       return this.cameraUtility.flyToPoints([params], options)
     } else if (isS3mFeature(params)) {
       return this.cameraUtility.flyToS3mFeatures([params], options)
@@ -533,7 +573,7 @@ export default class S3d {
     }
   }
 
-  pick(mousePosition) {
+  pickObject(mousePosition) {
     let pickedObjects = []
     if (this.config.drillPick?.enable) {
       pickedObjects = this.pickingUtility.drillPickByDepth(
@@ -542,7 +582,11 @@ export default class S3d {
       )
     } else {
       let pobj = this.scene.pick(mousePosition, 3)
-      if (pobj && pobj.primitive && typeof pobj.id === 'string') {
+      if (
+        pobj &&
+        pobj.primitive &&
+        (typeof pobj.id === 'string' || pobj.id instanceof Cesium.Entity)
+      ) {
         pickedObjects.push(pobj)
       }
     }
@@ -586,5 +630,16 @@ export default class S3d {
       Cesium.Math.toDegrees(southeast.latitude),
     ])
     this.flyTo(pts, options)
+  }
+
+  labelPoints(ptObjs, entOptions, enableIQuery, fitView, flyOptions) {
+    this.dataUtility.labelPoints(ptObjs, entOptions)
+    if (enableIQuery) {
+      this.popup.enable()
+    }
+    if (fitView) {
+      let pts = ptObjs.map((x) => x.position)
+      this.cameraUtility.flyToPointsLL(pts, flyOptions)
+    }
   }
 }

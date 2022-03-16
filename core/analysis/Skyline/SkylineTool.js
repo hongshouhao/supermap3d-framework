@@ -3,7 +3,7 @@ export default class SkylineTool {
     this.viewer = viewer
     this.scene = viewer.scene
     this.skyline = new Cesium.Skyline(this.scene)
-    this.skyline.lineWidth = 2
+    this.skyline.lineWidth = 4
     this.skyline.radius = 10000
   }
 

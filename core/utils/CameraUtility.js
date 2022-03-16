@@ -9,6 +9,8 @@ export default class CameraUtility {
       this.flyToS3mFeatures(features, options)
     Cesium.Camera.prototype.lookAtFeature = (feature, direction, options) =>
       this.lookAtFeature(feature, direction, options)
+    Cesium.Camera.prototype.flyToPointsLL = (points, options) =>
+      this.flyToPointsLL(points, options)
     Cesium.Camera.prototype.flyToPoints = (points, options) =>
       this.flyToPoints(points, options)
     Cesium.Camera.prototype.rotateZAroundPoint = (point, heading, duration) =>
@@ -29,7 +31,7 @@ export default class CameraUtility {
       pts.push(box[1])
     }
 
-    return this._flyToPoints(pts, options)
+    return this.flyToPoints(pts, options)
   }
 
   lookAtFeature(feature, direction, options) {
@@ -77,12 +79,12 @@ export default class CameraUtility {
     })
   }
 
-  flyToPoints(points, options) {
+  flyToPointsLL(points, options) {
     let pts = []
     for (let pt of points) {
       pts.push(Cesium.Cartesian3.fromDegrees(pt.x, pt.y, pt.z))
     }
-    this._flyToPoints(points, options)
+    this.flyToPoints(pts, options)
   }
 
   rotateZAroundPoint(point, heading, duration) {
@@ -133,11 +135,13 @@ export default class CameraUtility {
     })
   }
 
-  _flyToPoints(points, options) {
+  flyToPoints(points, options) {
     let _this = this
     return new Promise(function(resolve, reject) {
       let boundingSphere = Cesium.BoundingSphere.fromPoints(points)
-
+      if (boundingSphere.radius == 0) {
+        boundingSphere.radius = 1
+      }
       if (options?.scale) {
         boundingSphere.radius = boundingSphere.radius * options.scale
       }

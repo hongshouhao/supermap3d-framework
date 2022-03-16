@@ -148,6 +148,15 @@
 
     <div class="esri-component esri-widget">
       <div class="esri-widget--button esri-widget"
+           title="i查询"
+           @click="startIQuery">
+        <span aria-hidden="true"
+              class="esri-icon esri-icon-description"></span>
+      </div>
+    </div>
+
+    <div class="esri-component esri-widget">
+      <div class="esri-widget--button esri-widget"
            title="清理"
            @click="clearEverything">
         <span aria-hidden="true"
@@ -332,6 +341,10 @@ export default {
     zoomOut () {
       this.$viewer.camera.zoomOut(100)
     },
+    startIQuery () {
+      this.currentTool = 'IQueryTool'
+      window.s3d.popup.enable();
+    },
     startDistanceMeasure () {
       this.currentTool = 'MeasureTool'
       this.measureTool.measureDistance()
@@ -396,6 +409,10 @@ export default {
     settings () {
       this.currentTool = 'CommonSettings'
     },
+    stopIQuery () {
+      this.currentTool = ''
+      window.s3d.popup.disable();
+    },
     stopViewshedTool () {
       this.viewshedTool.clear()
       this.currentTool = ''
@@ -448,6 +465,7 @@ export default {
       this.currentTool = ''
     },
     clearEverything () {
+      this.stopIQuery()
       this.stopMeasureTool()
       this.stopAngleMeasurement()
       this.stopPointMeasurement()
@@ -460,13 +478,14 @@ export default {
       this.stopSubmerged()
       this.stopModelObservation()
       this.stopExcavation()
-
       for (let i = 0; i < this.$viewer.dataSources.length; i++) {
         let ds = this.$viewer.dataSources.get(i)
         if (ds.name.startsWith('temp_')) {
           this.$viewer.dataSources.remove(ds, true)
         }
       }
+
+      window.s3d.eventBus.dispatch('clear-clicked', null, null)
     },
 
     test () {

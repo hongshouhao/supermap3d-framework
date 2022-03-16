@@ -28,7 +28,6 @@ export default class PointMeasurement {
     }
 
     let _this = this
-    window.s3d.toolWorking = true
     window.s3d.setCursor('cursor-crosshair')
     _this.createHandler.setInputAction(function(e) {
       if (_this.status === 'none') {
@@ -48,7 +47,6 @@ export default class PointMeasurement {
         Cesium.ScreenSpaceEventType.RIGHT_CLICK
       )
       _this.status = 'none'
-      window.s3d.toolWorking = false
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
 
     _this.editHandler.setInputAction(function(e) {
@@ -81,7 +79,6 @@ export default class PointMeasurement {
   }
 
   clear() {
-    window.s3d.toolWorking = false
     for (let ent of this.pointEntities) {
       this.viewer.entities.remove(ent)
     }

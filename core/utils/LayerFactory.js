@@ -36,9 +36,17 @@ export default class LayerFactory {
         if (options.selectColorType) {
           cly.selectColorType = options.selectColorType
         }
+
         if (typeof options.clearMemoryImmediately === 'boolean') {
           cly.clearMemoryImmediately = options.clearMemoryImmediately
         }
+        if (options.minVisibleAltitude) {
+          cly.minVisibleAltitude = options.minVisibleAltitude
+        }
+        if (options.maxVisibleAltitude) {
+          cly.maxVisibleAltitude = options.maxVisibleAltitude
+        }
+
         if (options.opacity) {
           cly.style3D.fillForeColor = new Cesium.Color(
             1.0,
@@ -47,18 +55,22 @@ export default class LayerFactory {
             options.opacity
           )
         }
-        // cly.selectedColor = Cesium.Color.RED
-        // cly.selectedLineColor = Cesium.Color.BLUE
-        // cly.silhouetteColor = Cesium.Color.RED
-        // cly.silhouetteSize = 10
-        // console.log(cly.silhouetteColor)
-
         if (options.enableFillAndWireFrame) {
+          // cly.selectedColor = Cesium.Color.RED
+          // cly.selectedLineColor = Cesium.Color.BLUE
+          // cly.silhouetteColor = Cesium.Color.RED
+          // cly.silhouetteSize = 10
+          // console.log(cly.silhouetteColor)
+
           cly.style3D.fillStyle = Cesium.FillStyle.Fill_And_WireFrame
           cly.style3D.lineColor = Cesium.Color.BLACK
           cly.style3D.lineWidth = 1
           cly.wireFrameMode = Cesium.WireFrameType.EffectOutline
           // cly.wireFrameMode = Cesium.WireFrameType.Triangle
+        }
+
+        if (options.themeStyle) {
+          cly.themeStyle = new Cesium.Cesium3DTileStyle(options.themeStyle)
         }
 
         if (options.colorCorrection) {
@@ -125,7 +137,6 @@ export default class LayerFactory {
     ly.config = options
     ly.show = options.visible
     ly.name = options.name
-
     if (options.opacity) {
       ly.alpha = options.opacity
     }
@@ -173,6 +184,8 @@ export default class LayerFactory {
         return new Cesium.ArcGisMapServerImageryProvider(options)
       case 'SMIMG':
         return new Cesium.SuperMapImageryProvider(options)
+      case 'STIMG':
+        return new Cesium.SingleTileImageryProvider(options)
       default:
         throw `暂不支持类型为${options.type}的栅格图层`
     }

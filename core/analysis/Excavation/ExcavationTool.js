@@ -10,13 +10,11 @@ export default class ExcavationTool {
   }
 
   start() {
-    window.s3d.toolWorking = true
     this.handlerPolygon.activeEvt.addEventListener(function(isActive) {
       if (isActive == true) {
         window.s3d.setCursor('cursor-crosshair')
       } else {
         window.s3d.resetCursor()
-        window.s3d.toolWorking = false
       }
     })
 

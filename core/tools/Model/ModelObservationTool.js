@@ -6,7 +6,6 @@ export default class ModelObservationTool {
   }
 
   start(callback) {
-    window.s3d.toolWorking = true
     let _this = this
     this.selectHandler.setInputAction(function(e) {
       let pickobject = _this.viewer.scene.pick(e.position)
@@ -74,7 +73,6 @@ export default class ModelObservationTool {
   }
 
   clear() {
-    window.s3d.toolWorking = false
     this.feature = null
     this.selectHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK)
   }

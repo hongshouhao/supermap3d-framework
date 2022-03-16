@@ -2,6 +2,12 @@
 
 export default {
   iServerBaseURL: 'http://localhost/',
+  //空白底图
+  emptyMap: {
+    url: '/empty.jpg',
+    //相机高度大于此值时图层不可见
+    maxVisibleAltitude: 756827,
+  },
   //默认球体为圆球，true修改为真实椭球体
   useEllipsoid: true,
   //DEM地址，可空
@@ -61,6 +67,12 @@ export default {
             selectable: true,
             //模型是否描边，绘制出轮廓线，值作用S3M图层
             enableFillAndWireFrame: true,
+            //根据条件设置渲染颜色, 具体参数构成见超图文档
+            themeStyle: {},
+            //最小可见距离
+            minVisibleAltitude: 0,
+            //最大可见距离
+            maxVisibleAltitude: 0,
             //模型选中颜色，可空
             selectColorType: Cesium.SelectColorType.REPLACE,
             url:
@@ -73,6 +85,37 @@ export default {
                 pitch: -0.5091484573438768,
                 range: 100,
               },
+            },
+            //压平某个区域
+            flattenRegions: [
+              [
+                120.60176437339629,
+                31.184432532743152,
+                0,
+                120.60203936867242,
+                31.181754094638176,
+                0,
+                120.60324403847666,
+                31.181772259112677,
+                0,
+                120.60323994862907,
+                31.184236800529675,
+                0,
+                120.60176437339629,
+                31.184432532743152,
+                0,
+              ],
+            ],
+            //图层颜色校正
+            colorCorrection: {
+              //亮度
+              brightness: 1.5,
+              //色调
+              hue: 0.05,
+              //饱和度
+              saturation: 1.1,
+              //对比度
+              contrast: 1.05,
             },
             //数据查询时需要此参数
             datasetName: '模型1:BackUp_TarDataset_1',
@@ -124,37 +167,6 @@ export default {
         iQuery: {},
         datasetName: '污水:污水_1',
         outFields: ['*'],
-        //压平某个区域
-        flattenRegions: [
-          [
-            120.60176437339629,
-            31.184432532743152,
-            0,
-            120.60203936867242,
-            31.181754094638176,
-            0,
-            120.60324403847666,
-            31.181772259112677,
-            0,
-            120.60323994862907,
-            31.184236800529675,
-            0,
-            120.60176437339629,
-            31.184432532743152,
-            0,
-          ],
-        ],
-        //图层颜色校正
-        colorCorrection: {
-          //亮度
-          brightness: 1.5,
-          //色调
-          hue: 0.05,
-          //饱和度
-          saturation: 1.1,
-          //对比度
-          contrast: 1.05,
-        },
         //定位时默认的相机参数
         defaultCamera: {
           duration: 2,
@@ -199,22 +211,23 @@ export default {
         iQuery: {
           //数值越大查询优先级越高
           priority: 0,
-          // symbol: {
-          //   stroke: Cesium.Color.fromCssColorString('#FF0000'),
-          //   fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
-          //   strokeWidth: 2,
-          // },
           //图形渲染样式
           symbol: {
-            //填充色
-            material: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
-            //轮廓线
-            outline: true,
-            //轮廓线颜色
-            outlineColor: Cesium.Color.RED,
-            //轮廓线宽度
-            outlineWidth: 2.0,
+            stroke: Cesium.Color.fromCssColorString('#FF0000'),
+            fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
+            strokeWidth: 2,
           },
+          //图形渲染样式
+          // symbol: {
+          //   //填充色
+          //   material: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
+          //   //轮廓线
+          //   outline: true,
+          //   //轮廓线颜色
+          //   outlineColor: Cesium.Color.RED,
+          //   //轮廓线宽度
+          //   outlineWidth: 2.0,
+          // },
           //数据查询服务，服务必须使用GET，且最终lon、lat、height会作为url参数传递给服务端
           //默认需要返回固定结构，见文档下面
           dataUrl: 'http://localhost:9864/cad-connect-test',

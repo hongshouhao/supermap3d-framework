@@ -3,6 +3,7 @@ export const popupTemplateWithCustomUI = {
     return data.object.layer + 'test'
   },
   getContent: function(data) {
+    debugger
     let div = document.createElement('div')
     div.innerHTML = data.object.layer
     return div

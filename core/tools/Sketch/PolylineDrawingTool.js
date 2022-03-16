@@ -21,7 +21,6 @@ export default class PolylineDrawingTool {
 
   start() {
     this.stop()
-    window.s3d.toolWorking = true
     window.s3d.setCursor('cursor-crosshair')
 
     let _this = this
@@ -76,7 +75,6 @@ export default class PolylineDrawingTool {
 
   stop() {
     window.s3d.resetCursor()
-    window.s3d.toolWorking = false
     this._drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE)
     this._drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK)
     this._drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK)

@@ -3,6 +3,8 @@ import HighLimitTool from './analysis/HighLimit/HighLimitTool'
 import SubmergedTool from './analysis/Submerged/SubmergedTool'
 import SceneRouteTool from './tools/Scene/SceneRouteTool'
 import { gridSamplingPointsInPolygon } from './utils/CesiumUtility'
+import centerOfMass from '@turf/center-of-mass'
+
 export default class Test {
   constructor() {
     this.createSketchTool()
@@ -15,19 +17,22 @@ export default class Test {
   }
 
   doTest() {
+    //this.labelPolygonsTest()
+    //this.flyToPointsTest()
+    this.labelPointsTest()
     //this.setLayerVisibleTest()
     // this.addLayerTest()
-    this.submergedTest()
+    //this.submergedTest()
     //this.highLimitTest()
     //this.randomPoints()
-    // this.sceneRoute()
+    //this.sceneRoute()
     //this.loadShapefile()
-    // this.loadGeoJSON()
-    // this.insertToolButton()
-    // this.entityToGeoJson()
+    //this.loadGeoJSON()
+    //this.insertToolButton()
+    //this.entityToGeoJson()
     //this.sketchTest()
-    // window.s3d.viewUtility.rotateZ(1)
-    // window.s3d
+    //window.s3d.viewUtility.rotateZ(1)
+    //window.s3d
     //   .query({ layer: '交通信号', sql: 'SMID =1' })
     //   .then((response) => console.log(response))
     // window.s3d.openPopup({
@@ -66,6 +71,110 @@ export default class Test {
     // console.log(window.s3d.getLayer((x) => x.name === '供电'))
   }
 
+  flyToPointsTest() {
+    window.s3d.cameraUtility.flyToPointsLL(
+      [
+        { x: 120.6704, y: 31.3152, z: 10 },
+        { x: 120.671, y: 31.311, z: 2 },
+      ],
+      {
+        scale: 3,
+      }
+    )
+  }
+  labelPointsTest() {
+    window.s3d.labelPoints(
+      [
+        {
+          position: { x: 120.6704, y: 31.3152, z: 3 },
+          name: 'test',
+          attributes: { a: 1 },
+        },
+      ],
+      {
+        billboard: {
+          image: '/img/location.png',
+          autoIndex: false,
+          heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+        },
+        label: {
+          autoIndex: false,
+          heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+        },
+      },
+      true,
+      true,
+      { scale: 1000 }
+    )
+  }
+  labelPolygonsTest() {
+    let geojson = {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [120.6051439576166, 31.182623348967315],
+            [120.60454406195154, 31.18123669097755],
+            [120.60557820129517, 31.180994015265277],
+            [120.60619062354726, 31.18215582423319],
+            [120.60618967226178, 31.182160091113577],
+            [120.61562716969533, 31.187796980711134],
+            [120.60675290392506, 31.18458419309506],
+            [120.60677488993603, 31.184584192869124],
+            [120.6051439576166, 31.182623348967315],
+          ],
+        ],
+      },
+      properties: {
+        name: 'sketch_polygon_fill',
+        styleUrl: '#style-1',
+        styleHash: '-640c9941',
+        'fill-opacity': 0.5019607843137255,
+        fill: '#12d035',
+        visibility: '1',
+      },
+    }
+    window.s3d.dataUtility.loadGeoJson(geojson)
+    let geoJsonToPt = function(polygon) {
+      let center = centerOfMass(polygon)
+      let x = center.geometry.coordinates[0]
+      let y = center.geometry.coordinates[1]
+      let z = center.geometry.coordinates[2]
+      let name = polygon.properties.name
+      return {
+        position: { x: x, y: y, z: z },
+        name: name,
+        attributes: polygon.properties,
+      }
+    }
+
+    let pts = []
+    if (geojson.type == 'Feature') {
+      pts.push(geoJsonToPt(geojson))
+    } else if (geojson.type == 'FeatureCollection') {
+      for (let feature of geojson) {
+        pts.push(geoJsonToPt(feature))
+      }
+    }
+    window.s3d.labelPoints(
+      pts,
+      {
+        billboard: {
+          image: '/img/location.png',
+          autoIndex: false,
+          heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+        },
+        label: {
+          autoIndex: false,
+          heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+        },
+      },
+      true,
+      true,
+      { scale: 1000 }
+    )
+  }
   setLayerVisibleTest() {
     if (typeof this.layerVisible === 'undefined') {
       this.layerVisible = false
@@ -258,7 +367,7 @@ export default class Test {
         visibility: '1',
       },
     }
-    window.s3d.dataUtility.loadGeoJson(geojson)
+    return window.s3d.dataUtility.loadGeoJson(geojson)
   }
 
   debug() {

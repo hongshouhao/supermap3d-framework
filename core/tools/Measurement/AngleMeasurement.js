@@ -15,8 +15,6 @@ export default class AngleMeasurement {
   start() {
     this.clear()
 
-    window.s3d.toolWorking = true
-
     let step = 0
     let _this = this
     _this.legLength = 0
@@ -75,13 +73,10 @@ export default class AngleMeasurement {
       _this.angleDrawHandler.removeInputAction(
         Cesium.ScreenSpaceEventType.LEFT_CLICK
       )
-
-      window.s3d.toolWorking = false
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
 
   clear() {
-    window.s3d.toolWorking = false
     if (this.angleEntity) {
       this.viewer.entities.remove(this.angleEntity)
       this.angleEntity = null

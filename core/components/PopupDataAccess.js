@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { isPromise } from '../utils/IfUtility'
 
-export default class PopupUtility {
+export default class PopupDataAccess {
   constructor() {}
 
   getDataForPrimitive(object) {
@@ -33,8 +33,10 @@ export default class PopupUtility {
       }
 
       return new Promise(function(resolve) {
+        if (!ly.config.outFields) {
+          ly.config.outFields = ['*']
+        }
         if (
-          ly.config.outFields &&
           ly.config.outFields instanceof Array &&
           ly.config.outFields.length > 0
         ) {
@@ -119,9 +121,7 @@ export default class PopupUtility {
           attrs = feature.properties
         } else {
           for (let field of lconfig.outFields) {
-            if (
-              Object.prototype.hasOwnProperty.call(feature.properties, field)
-            ) {
+            if (field in feature.properties) {
               attrs[field] = feature.properties[field]
             }
           }
