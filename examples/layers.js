@@ -3,7 +3,7 @@
 // S3M        三维图层
 // MVT        矢量瓦片图层
 
-import { popupTemplateWithCustomUI } from './popupTemplate'
+import {} from './popupTemplate'
 
 export const layers = [
   {
@@ -83,7 +83,6 @@ export const layers = [
               }
             },
           },
-          popupTemplate: popupTemplateWithCustomUI,
         },
       },
       // {
@@ -94,48 +93,7 @@ export const layers = [
       //     visible: false,
       //     selectable: false,
       //     url: `http://106.14.242.98:8090/iserver/services/3D-DXGX/rest/realspace/datas/%E7%87%83%E6%B0%94/config`,
-      //     iQuery: {
-      //       // symbol: {
-      //       //   stroke: Cesium.Color.fromCssColorString('#FF0000'),
-      //       //   fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
-      //       //   strokeWidth: 2,
-      //       // },
-      //       getData: function(p) {
-      //         console.log(p)
-      //         return {
-      //           object: {
-      //             id: 1,
-      //             shape: {
-      //               type: 'FeatureCollection',
-      //               features: [
-      //                 {
-      //                   type: 'Feature',
-      //                   properties: {},
-      //                   geometry: {
-      //                     type: 'Polygon',
-      //                     coordinates: [
-      //                       [
-      //                         [120.59053263900012, 31.194568653000033, 3],
-      //                         [120.59047571700012, 31.19460944900004, 3],
-      //                         [120.58735664000005, 31.194363434000024, 3],
-      //                         [120.58721493400003, 31.194216397000048, 3],
-      //                         [120.58736773800001, 31.19284602600004, 3],
-      //                         [120.59068445000003, 31.193111611000063, 3],
-      //                         [120.59053263900012, 31.194568653000033, 3],
-      //                       ],
-      //                     ],
-      //                   },
-      //                 },
-      //               ],
-      //             },
-      //             attributes: {
-      //               a: 1,
-      //               b: 2,
-      //             },
-      //           },
-      //         }
-      //       },
-      //     },
+
       //   },
       // },
       // {
@@ -154,7 +112,48 @@ export const layers = [
           type: 'MVT',
           visible: false,
           url: `http://106.14.242.98:8090/iserver/services/map-mvt-TDLYXZDLTB1/restjsr/v1/vectortile/maps/TDLYXZ_DLTB_1`,
-          popupTemplate: popupTemplateWithCustomUI,
+          iQuery: {
+            // symbol: {
+            //   stroke: Cesium.Color.fromCssColorString('#FF0000'),
+            //   fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
+            //   strokeWidth: 2,
+            // },
+            getData: function(p) {
+              console.log(p)
+              return {
+                object: {
+                  id: 1,
+                  shape: {
+                    type: 'FeatureCollection',
+                    features: [
+                      {
+                        type: 'Feature',
+                        properties: {},
+                        geometry: {
+                          type: 'Polygon',
+                          coordinates: [
+                            [
+                              [120.59053263900012, 31.194568653000033, 3],
+                              [120.59047571700012, 31.19460944900004, 3],
+                              [120.58735664000005, 31.194363434000024, 3],
+                              [120.58721493400003, 31.194216397000048, 3],
+                              [120.58736773800001, 31.19284602600004, 3],
+                              [120.59068445000003, 31.193111611000063, 3],
+                              [120.59053263900012, 31.194568653000033, 3],
+                            ],
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                  attributes: {
+                    a: 1,
+                    b: 2,
+                  },
+                },
+              }
+            },
+          },
         },
       },
       // {
@@ -197,6 +196,18 @@ export const layers = [
   //     url: `http://106.14.242.98:8090/iserver/services/3D-local3DCache-XZDMMXTHXCGX/rest/realspace/datas/XZDMMX@THXCGX/config`,
   //   },
   // },
+  {
+    id: '供电',
+    name: '供电',
+    layer: {
+      type: 'S3M',
+      visible: true,
+      enableFillAndWireFrame: true,
+      url: `http://106.14.242.98:8090/iserver/services/3D-GongDian/rest/realspace/datas/供电_1@供电/config`,
+      datasetName: '供电:供电_1',
+      outFields: ['*'],
+    },
+  },
   {
     id: '园区-盒子',
     name: '园区-盒子',
@@ -246,7 +257,6 @@ export const layers = [
       //     }
       //   },
       // },
-      popupTemplate: popupTemplateWithCustomUI,
       outFields: ['*'],
       // enableFillAndWireFrame: true,
       selectColorType: Cesium.SelectColorType.SILHOUETTE,

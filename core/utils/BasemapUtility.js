@@ -1,10 +1,10 @@
 import { createImageryProvider } from '../utils/ImageryUtility'
 
 export default class BasemapUtility {
-  constructor(viewer, sm3d) {
+  constructor(viewer, config, eventBus) {
     this.viewer = viewer
-    this.sm3d = sm3d
-    this.mapsConfig = sm3d.config.baseMaps
+    this.eventBus = eventBus
+    this.mapsConfig = config.baseMaps
     this._initMapConfig()
     //白天还是夜晚
     // this.mode = 'night'
@@ -73,7 +73,7 @@ export default class BasemapUtility {
   //     this.viewer.scene.skyBox.show = false
   //     this.viewer.scene.skyAtmosphere.show = false
   //     this.baseMaps.current = null
-  //     this.sm3d.eventBus.dispatch('baseMap-changed', null, {
+  //     this.eventBus.dispatch('basemap-changed', null, {
   //       type: type,
   //       currentMaps: this.baseMaps.current,
   //     })
@@ -108,7 +108,7 @@ export default class BasemapUtility {
   //     }
 
   //     this.baseMaps.current = this.baseMaps[type]
-  //     this.sm3d.eventBus.dispatch('baseMap-changed', null, {
+  //     this.eventBus.dispatch('basemap-changed', null, {
   //       type: type,
   //       currentMaps: this.baseMaps.current,
   //     })
@@ -128,7 +128,7 @@ export default class BasemapUtility {
       this.viewer.scene.skyAtmosphere.show = false
 
       this.currentMaps = null
-      this.sm3d.eventBus.dispatch('baseMap-changed', null, {
+      this.eventBus.dispatch('basemap-changed', null, {
         type: type,
         currentMaps: null,
       })
@@ -144,7 +144,7 @@ export default class BasemapUtility {
         return map
       })
 
-      this.sm3d.eventBus.dispatch('baseMap-changed', null, {
+      this.eventBus.dispatch('basemap-changed', null, {
         type: type,
         currentMaps: this.currentMaps,
       })

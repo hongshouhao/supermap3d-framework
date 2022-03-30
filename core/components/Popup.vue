@@ -53,7 +53,7 @@ import $ from 'jquery'
 import Enumerable from 'linq'
 import { cartesianToLonlat } from '../utils/CesiumMath'
 import PropertyGrid from './PropertyGrid.vue'
-import PopupDataAccess from './PopupDataAccess.js'
+import PopupData from './PopupData.js'
 import { isImageryLayer } from '../utils/ImageryUtility'
 
 export default {
@@ -76,7 +76,7 @@ export default {
   },
   props: [],
   mounted () {
-    this.dataAccess = new PopupDataAccess()
+    this.popupData = new PopupData()
     this.initIQuery()
     this.initIQueryForMVT()
   },
@@ -98,11 +98,25 @@ export default {
         let position = _this.$viewer.scene.pickPosition(e.position)
         if (_this.enabled) {
           if (_this.mvtData) {
-            _this.renderPopup(position, _this.mvtData)
+            let layerName = _this.mvtData.object.layer
+            let lconf = window.s3d.layerManager.getLayerConfig(layerName)
+            if (lconf.iQuery) {
+              let lonlat = cartesianToLonlat(position)
+              _this.popupData.dataFromiQuery(
+                layerName,
+                lonlat
+              ).then(data => {
+                _this.renderPopup(position, data)
+              })
+            }
+            else {
+              _this.renderPopup(position, _this.mvtData)
+            }
           } else {
-            let pickedObjects = window.s3d.pickObject(e.position)
-            if (pickedObjects.length === 0) {
-              let unslctableLayers = window.s3d.getAllLayers(
+            let pikObjs = window.s3d.pickObject(e.position)
+            debugger
+            if (pikObjs.length === 0) {
+              let unslctableLayers = window.s3d.layerManager.getAllLayers(
                 (x) => {
                   return (isImageryLayer(x.type)
                     // || (x.type === "3DTILES" && x.config.selectable === false)
@@ -123,27 +137,13 @@ export default {
                 return l2.config.iQuery.priority - l1.config.iQuery.priority
               })
               if (unslctableLayers.length > 0) {
-                let position = _this.$viewer.scene.pickPosition(e.position)
                 let lonlat = cartesianToLonlat(position)
-                let promises = unslctableLayers.map((l) => {
-                  return _this.dataAccess
-                    .queryOverUnselectableLayer(l.name, lonlat)
-                    .then((dobj) => {
-                      if (dobj) {
-                        dobj.object.layer = l.name
-                        if (!dobj.position) {
-                          dobj.position = lonlat
-                        }
-                        return dobj
-                      }
-                      else {
-                        return null
-                      }
-                    })
+                let calls = unslctableLayers.map((l) => {
+                  return _this.popupData.dataFromiQuery(l.name, lonlat)
                 })
 
-                Promise.all(promises).then((data) => {
-                  let notNull = data.filter(x => x)
+                Promise.all(calls).then((result) => {
+                  let notNull = result.filter(x => x)
                   if (notNull.length > 0) {
                     _this.renderPopupMulti(position, notNull)
                   }
@@ -157,55 +157,28 @@ export default {
                 _this.hidePopup()
               }
             } else {
-              debugger
-              let calls = pickedObjects.map((x) => {
+              let calls = pikObjs.map((x) => {
                 if (x.id instanceof Cesium.Entity) {
-                  let data = {
-                    sourceType: "ENTITY",
-                    object: {
-                      layer: x.id.name,
-                      id: x.id.id,
-                      attributes: x.id.attributes,
-                    },
-                    position: {
-                      longitude: x.id.position._value.x,
-                      latitude: x.id.position._value.y,
-                      height: x.id.position._value.z,
-                    },
-                  }
-                  return Promise.resolve(data)
+                  return _this.popupData.dataFromEntity(x.id)
                 }
                 else if (x.primitive.config?.iQuery) {
                   let lname = x.primitive.config.name
                   let lonlat = cartesianToLonlat(position)
-                  return _this.dataAccess
-                    .queryOverUnselectableLayer(lname, lonlat)
-                    .then((dobj) => {
-                      if (dobj) {
-                        dobj.object.layer = lname
-                        if (!dobj.position) {
-                          dobj.position = lonlat
-                        }
-                        return dobj
-                      }
-                      else {
-                        return null
-                      }
-                    })
+                  return _this.popupData.dataFromiQuery(lname, lonlat)
                 }
                 else {
-                  return _this.dataAccess.getDataForPrimitive(x)
+                  return _this.popupData.dataFromPrimitive(x)
                 }
               })
               Promise.all(calls)
-                .then((data) => {
-                  if (data.length > 0) {
-                    for (let dobj of data) {
-                      if (!dobj.position) {
-                        dobj.position = cartesianToLonlat(position)
+                .then((result) => {
+                  if (result.length > 0) {
+                    for (let item of result) {
+                      if (!item.position) {
+                        item.position = cartesianToLonlat(position)
                       }
                     }
-                    _this.renderPopupMulti(position, data)
+                    _this.renderPopupMulti(position, result)
                   }
                   else {
                     _this._clearTempDataSources()
@@ -230,16 +203,19 @@ export default {
           _this.mvtData = null
           return
         }
+
         if (entity && entity.pickResult) {
           let layerName = entity.pickResult.mapName
           let features = entity.pickResult[entity.pickResult['layerID']]
           let fItem = features.find(
             (x) => x.feature.id === entity.pickResult.featureID
           )
-          _this.mvtData = _this.dataAccess.getDataForMVT(
+          _this.popupData.dataFromMVTFeature(
             layerName,
             fItem.feature
-          )
+          ).then(data => {
+            _this.mvtData = data
+          })
         } else {
           _this.mvtData = null
         }
@@ -252,22 +228,22 @@ export default {
       }
       this.popupVisible = false
     },
-    renderPopupMulti (worldPosition, data) {
+    renderPopupMulti (cartesian, data) {
       this.multiable = data.length > 1
       this.dataObjs = data
       this.objTitles = data.map((x) => this._getPopupHeader(x))
       this.objIndex = 0
       this._reRenderPopup()
-      this._showPopup(worldPosition)
+      this._showPopup(cartesian)
     },
-    renderPopup (worldPosition, data) {
+    renderPopup (cartesian, data) {
       this.multiable = false
       this._setHeader(this._getPopupHeader(data))
       this._setContent(this._getPopupContent(data))
-      this._showPopup(worldPosition)
+      this._showPopup(cartesian)
     },
-    _showPopup (worldPosition) {
-      this.popupPosition = worldPosition
+    _showPopup (cartesian) {
+      this.popupPosition = cartesian
       this.popupVisible = true
       if (!this.dockered) {
         this._enableStickRender()
@@ -286,7 +262,7 @@ export default {
         .groupBy((x) => x.object.layer)
         .toArray()
       for (let g of grps) {
-        let ly = window.s3d.getLayer(g.key())
+        let ly = window.s3d.layerManager.getLayer(g.key())
         if (ly && ly.type === 'S3M') {
           ly.setSelection([])
         }
@@ -297,7 +273,7 @@ export default {
         return
       }
 
-      let ly = window.s3d.getLayer(obj.object.layer)
+      let ly = window.s3d.layerManager.getLayer(obj.object.layer)
       if (ly.type === 'S3M'
         && (typeof ly.config.selectable === 'undefined' || ly.config.selectable === true)) {
         ly.setSelection([obj.object.id])
@@ -428,10 +404,10 @@ export default {
       }
     },
     _getPopupContent (data) {
-      let lconfig = window.s3d.getLayerConfig(data.object.layer)
+      let lconfig = window.s3d.layerManager.getLayerConfig(data.object.layer)
       if (lconfig && lconfig.popupTemplate) {
         if (!lconfig.popupTemplate.getContent) {
-          throw `配置错误: 图层${data.object.layer}相关配置丢失, 函数popupTemplate.getContent丢失`
+          throw `配置错误: 图层${data.object.layer}相关配置丢失, 函数[popupTemplate.getContent]丢失`
         }
         return lconfig.popupTemplate.getContent(data)
       } else {
@@ -467,7 +443,7 @@ export default {
       }
     },
     _getPopupHeader (data) {
-      let lconfig = window.s3d.getLayerConfig(data.object.layer)
+      let lconfig = window.s3d.layerManager.getLayerConfig(data.object.layer)
       if (lconfig && lconfig.popupTemplate) {
         if (!lconfig.popupTemplate.getHeader) {
           throw `配置错误: 图层${data.object.layer}相关配置丢失, 函数popupTemplate.getHeader丢失`

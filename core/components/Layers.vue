@@ -88,7 +88,8 @@ export default {
       _this.init()
     })
     window.s3d.eventBus.addEventListener('layer-visible-changed', (caller, visible) => {
-      _this.setLayerNodeChecked(caller.target.name, visible)
+      debugger
+      _this.setLayerNodeChecked(caller.target, visible)
     })
   },
   methods: {
@@ -159,11 +160,7 @@ export default {
           else {
             let lyName = data.cesiumLayer.name
             this._removeLayer(data)
-            window.s3d.eventBus.dispatch(
-              'layer-invisible-internal',
-              null,
-              lyName
-            )
+            window.s3d.eventBus.dispatch('layer-invisible-internal', "layers-tree", lyName)
           }
         }
       } else if (data.dem) {
@@ -397,7 +394,7 @@ export default {
       }
     },
     setLayerNodeChecked (layerName, checked) {
-      let lnode = window.s3d._getLayerNode(layerName)
+      let lnode = window.s3d.layerManager._getLayerNode(layerName)
       if (lnode) {
         let keys = this.$refs.tree1.getCheckedKeys()
         let idx = keys.findIndex((item) => item === lnode.id)
@@ -417,28 +414,33 @@ export default {
     },
     _createLayer (lyElModel) {
       let result = this.layerFactory.createLayer(lyElModel.layer)
+
       if (isPromise(result)) {
         return result.then(ly => {
           lyElModel.cesiumLayer = ly
           lyElModel.cesiumLayerLoaded = true
+          window.s3d.eventBus.dispatch('layer-added', "layers-tree", ly)
         })
       }
       else if (lyElModel.layer.type === 'DEM') {
         Object.assign(lyElModel, result)
+        window.s3d.eventBus.dispatch('dem-added', "layers-tree", result)
       }
       else {
         lyElModel.cesiumLayer = result
         lyElModel.cesiumLayerLoaded = true
+        window.s3d.eventBus.dispatch('layer-added', "layers-tree", result)
       }
       return lyElModel.cesiumLayer
     },
     _removeLayer (lyElModel) {
       this.layerFactory.removeLayer(lyElModel.cesiumLayer)
       if (lyElModel.layer.renderer) {
-        window.s3d.layersRenderer.stopRender(lyElModel.cesiumLayer.name)
+        window.s3d.layerManager.layerRenderer.stopRender(lyElModel.cesiumLayer.name)
       }
       lyElModel.cesiumLayer = null
       lyElModel.cesiumLayerLoaded = false
+      window.s3d.eventBus.dispatch('layer-removed', "layers-tree", lyElModel.name)
     },
     getDirNodeClass (lyElModel) {
       if (lyElModel.display === false) {

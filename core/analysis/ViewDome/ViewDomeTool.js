@@ -1,21 +1,7 @@
 export default class ViewDomeTool {
   constructor(viewer) {
     this.viewer = viewer
-    this.built = false
-    this.viewDome = new Cesium.ViewDome(viewer.scene)
-    this.viewDome.distance = 100
-    this.viewDome.domeType = Cesium.ViewDomeType.ALLDOME
-    this.viewDome.visibleAreaColor = Cesium.Color.fromAlpha(
-      Cesium.Color.fromCssColorString('#1891ba'),
-      0.5
-    )
-    this.viewDome.hiddenAreaColor = Cesium.Color.fromAlpha(
-      Cesium.Color.fromCssColorString('#ce3839'),
-      0.5
-    )
-    this.viewDome.startAngle = 0
-    this.viewDome.endAngle = 360
-    this.viewDome.isClosed = true
+
     this.handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
   }
 
@@ -36,12 +22,10 @@ export default class ViewDomeTool {
         height = 0
       }
 
+      debugger
+      _this.createViewDome()
       _this.viewDome.viewPosition = [longitude, latitude, height]
-      _this.viewDome.startAngle = 0 //必须要加这行无用得代码 不然不更新
-      if (!_this.built) {
-        _this.viewDome.build()
-        _this.built = true
-      }
+      _this.viewDome.build()
 
       _this.viewer.entities.removeAll()
       _this.viewer.entities.add(
@@ -65,7 +49,25 @@ export default class ViewDomeTool {
 
   clear() {
     this.viewer.entities.removeAll()
-    this.viewDome.clear()
+    this.viewDome.destroy()
+    this.viewDome = null
     this.handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK)
+  }
+
+  createViewDome() {
+    this.viewDome = new Cesium.ViewDome(this.viewer.scene)
+    this.viewDome.distance = 200
+    this.viewDome.domeType = Cesium.ViewDomeType.ALLDOME
+    this.viewDome.visibleAreaColor = Cesium.Color.fromAlpha(
+      Cesium.Color.fromCssColorString('#1891ba'),
+      0.5
+    )
+    this.viewDome.hiddenAreaColor = Cesium.Color.fromAlpha(
+      Cesium.Color.fromCssColorString('#ce3839'),
+      0.5
+    )
+    this.viewDome.startAngle = 0
+    this.viewDome.endAngle = 360
+    this.viewDome.isClosed = true
   }
 }

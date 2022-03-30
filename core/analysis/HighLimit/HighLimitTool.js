@@ -108,7 +108,7 @@ export default class HighLimitTool {
         if (layer) {
           // layer.clipLineColor = Cesium.Color.RED
 
-          let url = window.s3d.getLayerConfig(lname).url
+          let url = window.s3d.layerManager.getLayerConfig(lname).url
           //let url = `${layer._baseUri.scheme}://${layer._baseUri.authority}${layer._baseUri.path}`
           //url = url.replace('/data/path/', '/config')
           let pro = this.viewer.scene

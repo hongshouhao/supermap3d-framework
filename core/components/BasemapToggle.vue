@@ -39,7 +39,7 @@ export default {
   },
   mounted () {
     let _this = this
-    window.s3d.eventBus.addEventListener('baseMap-changed', (caller, args) => {
+    window.s3d.eventBus.addEventListener('basemap-changed', (caller, args) => {
       _this.basemapType = args.type
     })
 

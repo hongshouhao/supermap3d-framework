@@ -52,7 +52,7 @@ export default class SubmergedTool {
   start() {
     this.layers = []
     for (let lname of this.layerNames) {
-      let ly = window.s3d.getLayer(lname)
+      let ly = window.s3d.layerManager.getLayer(lname)
       if (!ly) {
         throw `没有找到对应图层(${lname})，请确定图层是否已经加载或者图层名是否正确`
       }

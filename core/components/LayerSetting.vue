@@ -171,9 +171,9 @@ export default {
     },
     toogleRenderer (enable) {
       if (enable) {
-        window.s3d.layersRenderer.startRender(this.lyElModel.cesiumLayer.name)
+        window.s3d.layerManager.layerRenderer.startRender(this.lyElModel.cesiumLayer.name)
       } else {
-        window.s3d.layersRenderer.stopRender(this.lyElModel.cesiumLayer.name)
+        window.s3d.layerManager.layerRenderer.stopRender(this.lyElModel.cesiumLayer.name)
       }
     },
   },

@@ -19,8 +19,8 @@ export default class Test {
   doTest() {
     //this.labelPolygonsTest()
     //this.flyToPointsTest()
-    this.labelPointsTest()
-    //this.setLayerVisibleTest()
+    //this.labelPointsTest()
+    this.setLayerVisibleTest()
     // this.addLayerTest()
     //this.submergedTest()
     //this.highLimitTest()
@@ -66,9 +66,9 @@ export default class Test {
     // window.s3d.flyTo([130, 31, 1000])
     // window.s3d.flyTo(Cesium.Cartesian3.fromDegreesArray([130, 31])[0])
     // window.s3d.flyTo(Cesium.Cartesian3.fromDegrees(130, 31))
-    // console.log(window.s3d.getAllLayers((x) => x.type === 'S3M' && x.visible))
-    // console.log(window.s3d.getLayer('供电'))
-    // console.log(window.s3d.getLayer((x) => x.name === '供电'))
+    // console.log(window.s3d.layerManager.getAllLayers((x) => x.type === 'S3M' && x.visible))
+    // console.log(window.s3d.layerManager.getLayer('供电'))
+    // console.log(window.s3d.layerManager.getLayer((x) => x.name === '供电'))
   }
 
   flyToPointsTest() {
@@ -178,12 +178,42 @@ export default class Test {
   setLayerVisibleTest() {
     if (typeof this.layerVisible === 'undefined') {
       this.layerVisible = false
+
+      window.s3d.eventBus.addEventListener(
+        'layer-visible-changed',
+        (caller, args) => {
+          console.log('layer-visible-changed')
+          console.log(caller)
+          console.log(args)
+        }
+      )
+
+      window.s3d.eventBus.addEventListener('layer-added', (caller, args) => {
+        console.log('layer-added')
+        console.log(caller)
+        console.log(args)
+      })
+
+      window.s3d.eventBus.addEventListener('layer-removed', (caller, args) => {
+        console.log('layer-removed')
+        console.log(caller)
+        console.log(args)
+      })
+
+      window.s3d.eventBus.addEventListener(
+        'layer-invisible-internal',
+        (caller, args) => {
+          console.log('layer-invisible-internal')
+          console.log(caller)
+          console.log(args)
+        }
+      )
     }
     this.layerVisible = !this.layerVisible
-    window.s3d.setLayerVisible('东沙湖', this.layerVisible)
+    window.s3d.layerManager.setLayerVisible('东沙湖-倾斜', this.layerVisible)
   }
   addLayerTest() {
-    window.s3d.addLayer(
+    window.s3d.layerManager.addLayer(
       {
         name: '倾斜',
         type: 'S3M',

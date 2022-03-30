@@ -125,7 +125,7 @@ export default {
     this.saturation = this.$viewer.scene.colorCorrection.saturation
     this.contrast = this.$viewer.scene.colorCorrection.contrast
 
-    window.s3d.eventBus.addEventListener('baseMap-changed', (caller, args) => {
+    window.s3d.eventBus.addEventListener('basemap-changed', (caller, args) => {
       if (args.currentMaps) {
         let alpha = window.s3d.basemapUtility.getCurrentMapAlpha(args.type)
         _this.baseMapAlpha = parseInt(alpha)
