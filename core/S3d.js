@@ -145,7 +145,7 @@ export default class S3d {
   }
 
   _setLayerVisibleByAltitude() {
-    let _this = this;
+              let _this = this;
     let setLayerVisible = function() {
       let altitude = _this.cameraUtility.getCameraHeight();
       for (let i = 0; i < _this.scene.imageryLayers.length; i++) {
