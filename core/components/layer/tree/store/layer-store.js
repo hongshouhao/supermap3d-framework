@@ -2,7 +2,7 @@
  * @Author: zhangbo
  * @Date: 2022-04-07 13:45:48
  * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-08 18:35:08
+ * @LastEditTime: 2022-04-08 14:10:01
  * @FilePath: \supermap3d-framework\core\components\layer\tree\store\layer-store.js
  * @Description: 前端缓存图层
  *
@@ -16,9 +16,8 @@ export default class LayerStore {
   }
 
   set(id) {
-    return this.get().then(ids=>{
-      let test =""
-             if (ids.indexOf(id) > -1) {
+    return this.get().then((ids) => {
+      if (ids.indexOf(id) > -1) {
         ids.splice(ids.indexOf(id), 1);
       }
 
@@ -27,23 +26,22 @@ export default class LayerStore {
       if (this.options.max) {
         ids = ids.slice(0, this.options.max);
       }
-      localStorage.setItem(this.storeKey, ids.join(';'));
+      localStorage.setItem(this.storeKey, ids.join(";"));
     });
   }
 
   get() {
     return new Promise((resolve) => {
-      let ids = localStorage.getItem(this.storeKey) || '';
-      resolve(ids.split(';'));
+      let ids = localStorage.getItem(this.storeKey) || "";
+      resolve(ids.split(";"));
     });
   }
 
   remove(id) {
-
-    return this.get().then(ids=>{
+    return this.get().then((ids) => {
       ids.splice(ids.indexOf(id), 1);
 
-      localStorage.setItem(this.storeKey, ids.join(';'));
+      localStorage.setItem(this.storeKey, ids.join(";"));
     });
   }
 }
