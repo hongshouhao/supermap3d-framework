@@ -2,7 +2,7 @@
  * @Author: zhangbo
  * @Date: 2022-04-07 13:45:48
  * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-08 14:10:01
+ * @LastEditTime: 2022-04-08 18:35:08
  * @FilePath: \supermap3d-framework\core\components\layer\tree\store\layer-store.js
  * @Description: 前端缓存图层
  *
@@ -17,7 +17,8 @@ export default class LayerStore {
 
   set(id) {
     return this.get().then(ids=>{
-      if (ids.indexOf(id) > -1) {
+      let test =""
+             if (ids.indexOf(id) > -1) {
         ids.splice(ids.indexOf(id), 1);
       }
 
