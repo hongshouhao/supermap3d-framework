@@ -109,7 +109,7 @@
 </template>
 
 <script>
-import { getLayerOpacity, setLayerOpacity } from '../utils/LayerUtility'
+import { getLayerOpacity, setLayerOpacity } from '@/utils/LayerUtility';
 
 export default {
   data () {
@@ -123,11 +123,11 @@ export default {
       contrast: 0,
       gamma: 0,
       hasLight: false,
-    }
+    };
   },
   computed: {
     showRenderer () {
-      return this.layerInfo?.renderer?.type === 'S3MLAYER'
+      return this.layerInfo?.renderer?.type === 'S3MLAYER';
     },
   },
   props: ['lyElModel'],
@@ -135,49 +135,49 @@ export default {
     'lyElModel.cesiumLayerLoaded': {
       handler (val) {
         if (val) {
-          this.cesiumLayerLoaded = true
-          this.cesiumLayer = this.lyElModel.cesiumLayer
-          this.opacity = getLayerOpacity(this.cesiumLayer)
-          this.brightness = this.cesiumLayer.brightness
-          this.hue = this.cesiumLayer.hue
-          this.saturation = this.cesiumLayer.saturation
-          this.contrast = this.cesiumLayer.contrast
-          this.gamma = this.cesiumLayer.gamma
-          this.hasLight = !this.cesiumLayer.hasLight
+          this.cesiumLayerLoaded = true;
+          this.cesiumLayer = this.lyElModel.cesiumLayer;
+          this.opacity = getLayerOpacity(this.cesiumLayer);
+          this.brightness = this.cesiumLayer.brightness;
+          this.hue = this.cesiumLayer.hue;
+          this.saturation = this.cesiumLayer.saturation;
+          this.contrast = this.cesiumLayer.contrast;
+          this.gamma = this.cesiumLayer.gamma;
+          this.hasLight = !this.cesiumLayer.hasLight;
         }
       }
     }
   },
   mounted () {
-    let _this = this
+    let _this = this;
     window.s3d.eventBus.addEventListener(
       'layer-invisible-internal',
       (caller, lyName) => {
         if (_this.layerInfo && lyName === _this.layerInfo.name) {
-          _this.enableRenderer = false
+          _this.enableRenderer = false;
         }
       }
-    )
+    );
   },
   methods: {
     setOpacity (opacity) {
-      setLayerOpacity(this.cesiumLayer, opacity)
+      setLayerOpacity(this.cesiumLayer, opacity);
     },
     setLayerProperty (value, key) {
-      this.cesiumLayer[key] = value
+      this.cesiumLayer[key] = value;
     },
     toogleLight (val) {
-      this.lyElModel.cesiumLayer.hasLight = !val
+      this.lyElModel.cesiumLayer.hasLight = !val;
     },
     toogleRenderer (enable) {
       if (enable) {
-        window.s3d.layerManager.layerRenderer.startRender(this.lyElModel.cesiumLayer.name)
+        window.s3d.layerManager.layerRenderer.startRender(this.lyElModel.cesiumLayer.name);
       } else {
-        window.s3d.layerManager.layerRenderer.stopRender(this.lyElModel.cesiumLayer.name)
+        window.s3d.layerManager.layerRenderer.stopRender(this.lyElModel.cesiumLayer.name);
       }
     },
   },
-}
+};
 </script>
 <style lang="scss">
 .layer-settings {

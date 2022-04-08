@@ -23,12 +23,12 @@ export default {
   data () {
     return {
       table: [],
-    }
+    };
   },
   props: ['propArray'],
   mounted () { },
   methods: {},
-}
+};
 </script>
 
 <style lang="scss">

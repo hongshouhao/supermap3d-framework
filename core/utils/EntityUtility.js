@@ -1,38 +1,38 @@
-import { kml } from '@tmcw/togeojson'
+import { kml } from '@tmcw/togeojson';
 
 Cesium.Entity.prototype.toGeoJson = function() {
-  let coll = new Cesium.EntityCollection(this.entityCollection.owner)
-  coll.add(this)
+  let coll = new Cesium.EntityCollection(this.entityCollection.owner);
+  coll.add(this);
   return coll.toGeoJson().then((result) => {
-    return result.features[0]
-  })
-}
+    return result.features[0];
+  });
+};
 
 Cesium.EntityCollection.prototype.toGeoJson = function() {
-  let ents = this
+  let ents = this;
   return new Promise(function(resolve) {
     Cesium.exportKml({
       entities: ents,
     }).then(function(result) {
-      let dom = new DOMParser().parseFromString(result.kml, 'application/xml')
-      let coll = kml(dom)
+      let dom = new DOMParser().parseFromString(result.kml, 'application/xml');
+      let coll = kml(dom);
 
-      //先简单处理，不考虑复杂图形
+      // 先简单处理，不考虑复杂图形
       for (let f of coll.features) {
         if (f.geometry.type === 'Polygon') {
-          let polyCoords = f.geometry.coordinates[0]
-          let start = polyCoords[0]
-          let end = polyCoords[polyCoords.length - 1]
+          let polyCoords = f.geometry.coordinates[0];
+          let start = polyCoords[0];
+          let end = polyCoords[polyCoords.length - 1];
           if (
             start[0] !== end[0] ||
             start[1] !== end[1] ||
             start[2] !== end[2]
           ) {
-            polyCoords.push(Array.from(start))
+            polyCoords.push(Array.from(start));
           }
         }
       }
-      resolve(coll)
-    })
-  })
-}
+      resolve(coll);
+    });
+  });
+};

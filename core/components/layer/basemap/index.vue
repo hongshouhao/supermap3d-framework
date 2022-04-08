@@ -30,27 +30,27 @@ export default {
   data () {
     return {
       basemapType: '',
-    }
+    };
   },
   computed: {
     enableNone () {
-      return window.s3d.config.baseMaps.none?.enable
+      return window.s3d.config.baseMaps.none?.enable;
     },
   },
   mounted () {
-    let _this = this
+    let _this = this;
     window.s3d.eventBus.addEventListener('basemap-changed', (caller, args) => {
-      _this.basemapType = args.type
-    })
+      _this.basemapType = args.type;
+    });
 
-    window.s3d.basemapUtility.createBasemaps()
+    window.s3d.basemapUtility.createBasemaps();
   },
   methods: {
     toggleBasemap (type) {
-      window.s3d.basemapUtility.toggleMap(type)
+      window.s3d.basemapUtility.toggleMap(type);
     }
   },
-}
+};
 </script>
 
 <style scoped lang="scss">

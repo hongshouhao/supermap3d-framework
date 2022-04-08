@@ -1,20 +1,35 @@
+<!--
+ * @Author: zhangbo
+ * @Date: 2022-04-02 13:47:14
+ * @LastEditors: zhangbo
+ * @LastEditTime: 2022-04-08 14:32:08
+ * @FilePath: \supermap3d-framework\core\Map.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
+-->
+
 <template>
   <div class="cesium-core-container">
-    <div class="top-left-bar-container">
-      <TopLeftBar />
-    </div>
-    <div class="top-right-bar-container">
-      <TopRightBar />
-    </div>
-
-    <MapViewer />
+    <slot name="tool-bar">
+      <div class="top-left-bar-container">
+        <TopLeftBar />
+      </div>
+    </slot>
+    <slot name="layer-bar">
+      <div class="top-right-bar-container">
+        <TopRightBar />
+      </div>
+    </slot>
+    <slot></slot>
+    <MapViewer @viewer-created="onViewerCreated" />
   </div>
 </template>
-
 <script>
-import MapViewer from './MapViewer.vue'
-import TopLeftBar from './components/TopLeftBar.vue'
-import TopRightBar from './components/TopRightBar.vue'
+import MapViewer from './MapViewer.vue';
+import TopLeftBar from './components/common/TopLeftBar.vue';
+import TopRightBar from './components/common/TopRightBar.vue';
+
 export default {
   name: 'smmap',
   components: {
@@ -22,12 +37,19 @@ export default {
     TopLeftBar,
     TopRightBar,
   },
-  data () {
-    return {}
+  data() {
+    return {
+      viewer: null,
+    };
   },
-  beforeMount () { },
-  mounted () { },
-}
+  beforeMount() {},
+  mounted() {},
+  methods: {
+    onViewerCreated(viewer) {
+      this.viewer = viewer;
+    },
+  },
+};
 </script>
 
 <style lang="scss">

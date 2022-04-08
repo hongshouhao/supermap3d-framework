@@ -1,7 +1,7 @@
 // import { rayEarthIntersection } from './CesiumMath'
 export default class DebugUtility {
   constructor(viewer) {
-    this.viewer = viewer
+    this.viewer = viewer;
   }
 
   labelPointLL(point, addLabel = true) {
@@ -9,16 +9,16 @@ export default class DebugUtility {
       point.longitude,
       point.latitude,
       point.height
-    )
+    );
     this._labelPoint(
       position,
       `${point.longitude}, ${point.latitude}, ${point.height}`,
       addLabel
-    )
+    );
   }
 
   labelPoint(point, addLabel = true) {
-    this._labelPoint(point, `${point.x}, ${point.y}, ${point.z}`, addLabel)
+    this._labelPoint(point, `${point.x}, ${point.y}, ${point.z}`, addLabel);
   }
 
   _labelPoint(point, text, addLabel) {
@@ -29,7 +29,7 @@ export default class DebugUtility {
         pixelSize: 8,
         color: Cesium.Color.YELLOW,
       },
-    }
+    };
 
     if (addLabel) {
       options.label = {
@@ -47,17 +47,17 @@ export default class DebugUtility {
         ),
         showBackground: true,
         eyeOffset: new Cesium.Cartesian3(0, 0, -10),
-      }
+      };
     }
-    this.viewer.entities.add(options)
+    this.viewer.entities.add(options);
   }
 
   drawBoundingSphereAndPoints(boundingSphere, pts) {
-    this.viewer.entities.removeAll()
+    this.viewer.entities.removeAll();
     for (let p of pts) {
-      this.labelPoint(p)
+      this.labelPoint(p);
     }
-    this.labelPoint(boundingSphere.center)
+    this.labelPoint(boundingSphere.center);
 
     this.viewer.entities.add({
       name: 'bounding-sphere',
@@ -72,7 +72,7 @@ export default class DebugUtility {
         outline: true,
         outlineColor: Cesium.Color.RED,
       },
-    })
+    });
   }
 
   printCamera() {
@@ -81,7 +81,7 @@ export default class DebugUtility {
       heading: this.viewer.camera.heading,
       pitch: this.viewer.camera.pitch,
       roll: this.viewer.camera.roll,
-    })
+    });
   }
 
   drawCameraDirection() {
@@ -94,12 +94,12 @@ export default class DebugUtility {
       this.viewer.camera.direction,
       100000,
       new Cesium.Cartesian3()
-    )
+    );
     Cesium.Cartesian3.add(
       this.viewer.camera.position,
       directionRay,
       directionRay
-    )
+    );
 
     this.viewer.entities.add({
       name: 'camera_direction',
@@ -109,10 +109,10 @@ export default class DebugUtility {
         width: 1.0,
         clampToGround: false,
       },
-    })
+    });
   }
 
   flyToPoint(point) {
-    window.s3d.cameraUtility.flyToPoints([point])
+    window.s3d.cameraUtility.flyToPoints([point]);
   }
 }

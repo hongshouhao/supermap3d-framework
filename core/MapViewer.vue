@@ -1,60 +1,75 @@
+<!--
+ * @Author: zhangbo
+ * @Date: 2022-04-02 13:47:14
+ * @LastEditors: zhangbo
+ * @LastEditTime: 2022-04-06 18:17:07
+ * @FilePath: \supermap3d-framework\core\MapViewer.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
+-->
 <template>
-  <div class="cesium-container"
-       ref="cesiumContainer">
-    <Popup ref="popup"
-           v-show="false" />
+  <div class="cesium-container" ref="cesiumContainer">
+    <Popup ref="popup" v-show="false" />
   </div>
 </template>
 
 <script>
-import Popup from './components/Popup.vue'
+import Popup from './components/popup/Popup.vue';
 // import { createImageryProvider } from './utils/ImageryUtility'
-import { enableCursorStyle } from './utils/CursorUtility'
+import { enableCursorStyle } from './utils/CursorUtility';
+import EmitToMixin from './components/common/emit-to';
+
 export default {
   name: 'map-viewer',
   components: {
     Popup,
   },
-  data () {
-    return {
-    }
+  mixins: [EmitToMixin],
+
+  data() {
+    return {};
   },
-  beforeMount () {
+  beforeMount() {
     if (!window.s3d || !window.s3d.config) {
-      throw '配置未初始化: window.s3d.config'
+      throw '配置未初始化: window.s3d.config';
     }
 
-    let config = window.s3d.config
+    let config = window.s3d.config;
     let viewerOptions = {
       infoBox: false,
       shadows: true,
       navigation: false,
       baseLayerPicker: false,
       shouldAnimate: true,
-    }
+    };
 
     if (config.dem) {
       viewerOptions.terrainProvider = new Cesium.CesiumTerrainProvider({
         url: config.dem,
-      })
-      viewerOptions.terrainProvider.isCreateSkirt = false
+      });
+      viewerOptions.terrainProvider.isCreateSkirt = false;
     }
 
-    Object.assign(viewerOptions, config.viewerOptions)
-    this.sceneContainer = document.createElement('div')
-    let viewer = new Cesium.Viewer(this.sceneContainer, viewerOptions)
-    this.__proto__.__proto__.$viewer = viewer
-    window.s3d.setViewer(viewer)
-  },
-  mounted () {
-    this.$refs.cesiumContainer.appendChild(this.sceneContainer.children[0])
-    this.$viewer.cesiumWidget.container.appendChild(this.$refs.popup.$el)
+    Object.assign(viewerOptions, config.viewerOptions);
+    this.sceneContainer = document.createElement('div');
+    let viewer = new Cesium.Viewer(this.sceneContainer, viewerOptions);
+    this.__proto__.__proto__.$viewer = viewer;
+    window.s3d.setViewer(viewer);
 
-    enableCursorStyle(this.$viewer)
-    window.s3d.popup = this.$refs.popup
-    window.s3d.eventBus.dispatch('framework-initialized')
+    this.$emit('viewer-created', viewer);
+    this.$emitTo('smmap', 'viewer-created', viewer);
   },
-}
+  mounted() {
+    this.$refs.cesiumContainer.appendChild(this.sceneContainer.children[0]);
+    this.$viewer.cesiumWidget.container.appendChild(this.$refs.popup.$el);
+
+    enableCursorStyle(this.$viewer);
+    window.s3d.popup = this.$refs.popup;
+   
+    window.s3d.eventBus.dispatch('framework-initialized');
+  },
+};
 </script>
 
 <style lang="scss">

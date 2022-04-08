@@ -33,8 +33,8 @@
 </template>
 
 <script>
-import ShadowQueryTool from './ShadowQueryTool'
-import SunlightTool from './SunlightTool'
+import ShadowQueryTool from './ShadowQueryTool';
+import SunlightTool from './SunlightTool';
 
 export default {
   data () {
@@ -47,18 +47,18 @@ export default {
       startHour: 8,
       endHour: 18,
       inited: false
-    }
+    };
   },
   beforeMount () {
-    this.date = new Date().toLocaleDateString()
+    this.date = new Date().toLocaleDateString();
     for (let i = this.startHour; i <= this.endHour; i++) {
       let mrk = {
         style: {
           color: '#1989FA',
         },
         label: `${i}:00`,
-      }
-      this.marks[i] = mrk
+      };
+      this.marks[i] = mrk;
     }
   },
   mounted () {
@@ -67,57 +67,57 @@ export default {
   methods: {
     init () {
       if (!this.sunlightTool) {
-        this.sunlightTool = new SunlightTool(this.$viewer)
+        this.sunlightTool = new SunlightTool(this.$viewer);
       }
       if (!this.shadowQueryTool) {
-        this.shadowQueryTool = new ShadowQueryTool(this.$viewer)
+        this.shadowQueryTool = new ShadowQueryTool(this.$viewer);
       }
-      this.dateChanged()
-      this.inited = true
+      this.dateChanged();
+      this.inited = true;
     },
     dateChanged () {
-      this.sunlightTool.setTimeRange(this.date, this.startHour, this.endHour)
-      this.shadowQueryTool.setTimeRange(this.date, this.startHour, this.endHour)
+      this.sunlightTool.setTimeRange(this.date, this.startHour, this.endHour);
+      this.shadowQueryTool.setTimeRange(this.date, this.startHour, this.endHour);
     },
     runSunlight () {
-      let _this = this
+      let _this = this;
       if (
         _this.sunlightTool.state === 'none' ||
         _this.sunlightTool.state === 'paused'
       ) {
         _this.sunlightTool.start(
           (h) => {
-            _this.currentHour = h
+            _this.currentHour = h;
           },
           () => {
-            _this.startText = '日照效果'
+            _this.startText = '日照效果';
           }
-        )
-        _this.startText = '暂停'
+        );
+        _this.startText = '暂停';
       } else if (_this.sunlightTool.state === 'running') {
-        _this.sunlightTool.pause()
-        _this.startText = '继续'
+        _this.sunlightTool.pause();
+        _this.startText = '继续';
       }
     },
 
     doShadowQuery () {
-      this.shadowQueryTool.start()
+      this.shadowQueryTool.start();
     },
 
     setCurrentTime () {
       if (this.inited) {
-        let newDate = new Date(this.date.valueOf())
-        newDate.setHours(this.currentHour)
-        this.$viewer.clock.currentTime = Cesium.JulianDate.fromDate(newDate)
+        let newDate = new Date(this.date.valueOf());
+        newDate.setHours(this.currentHour);
+        this.$viewer.clock.currentTime = Cesium.JulianDate.fromDate(newDate);
       }
     },
 
     reset () {
-      if (this.sunlightTool) this.sunlightTool.clear()
-      if (this.shadowQueryTool) this.shadowQueryTool.clear()
+      if (this.sunlightTool) this.sunlightTool.clear();
+      if (this.shadowQueryTool) this.shadowQueryTool.clear();
     },
   },
-}
+};
 </script>
 <style lang="scss">
 .sunlight-setting {

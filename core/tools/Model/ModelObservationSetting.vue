@@ -44,10 +44,10 @@
   </div>
 </template>
 <script>
-import $ from 'jquery'
-import RoundSlider from 'vue-round-slider'
-import { boundingSphereFromFeature } from '../../utils/CesiumUtility'
-import ModelObservationTool from './ModelObservationTool'
+import $ from 'jquery';
+import RoundSlider from 'vue-round-slider';
+import { boundingSphereFromFeature } from '../../utils/CesiumUtility';
+import ModelObservationTool from './ModelObservationTool';
 export default {
   components: {
     RoundSlider,
@@ -57,80 +57,80 @@ export default {
       heading: 0,
       headingChangedBySlider: false,
       scale: 1,
-    }
+    };
   },
   mounted () {
-    let _this = this
-    _this.tool = new ModelObservationTool(_this.$viewer)
+    let _this = this;
+    _this.tool = new ModelObservationTool(_this.$viewer);
     _this.$viewer.camera.changed.addEventListener(function () {
       if (_this.headingChangedBySlider) {
-        return
+        return;
       }
-      let val = Cesium.Math.toDegrees(_this.$viewer.camera.heading)
-      _this.heading = val
-      _this.$refs.buttonContainer.style = `transform: rotateZ(${val}deg);`
-    })
+      let val = Cesium.Math.toDegrees(_this.$viewer.camera.heading);
+      _this.heading = val;
+      _this.$refs.buttonContainer.style = `transform: rotateZ(${val}deg);`;
+    });
 
     $('.compass-container .rs-handle').mousedown(function () {
-      _this.caculateScale()
-    })
+      _this.caculateScale();
+    });
   },
   methods: {
     init () {
       this.tool.start(() => {
-        this.tool.lookAtFront()
-      })
+        this.tool.lookAtFront();
+      });
     },
     reset () {
-      this.tool.clear()
+      this.tool.clear();
     },
     lookAt (angle) {
-      this.tool.lookAt(angle, this.scale)
+      this.tool.lookAt(angle, this.scale);
     },
     lookAtFront () {
-      this.tool.lookAtFront()
+      this.tool.lookAtFront();
     },
     lookAtBehind () {
-      this.tool.lookAtBehind()
+      this.tool.lookAtBehind();
     },
     lookAtLeft () {
-      this.tool.lookAtLeft()
+      this.tool.lookAtLeft();
     },
     lookAtRight () {
-      this.tool.lookAtRight()
+      this.tool.lookAtRight();
     },
     lookAtTop () {
-      this.tool.lookAtTop()
+      this.tool.lookAtTop();
     },
     headingUpdate (e) {
       if (!this.tool) {
-        return
+        return;
       }
 
-      this.headingChangedBySlider = true
-      let rotation = e.value
-      this.lookAt(Cesium.Math.toRadians(rotation))
-      this.$refs.buttonContainer.style = `transform: rotateZ(${rotation}deg);`
+      this.headingChangedBySlider = true;
+      let rotation = e.value;
+      this.lookAt(Cesium.Math.toRadians(rotation));
+      this.$refs.buttonContainer.style = `transform: rotateZ(${rotation}deg);`;
     },
     headingChange () {
-      this.headingChangedBySlider = false
+      this.headingChangedBySlider = false;
     },
     caculateScale () {
       if (!this.tool?.feature) {
-        return
+        return;
       }
-      let boundingSphere = boundingSphereFromFeature(this.tool.feature)
+      let boundingSphere = boundingSphereFromFeature(this.tool.feature);
       let dis = Cesium.Cartesian3.distance(
         boundingSphere.center,
         this.$viewer.camera.position
-      )
+      );
 
-      //1.9807740244477263(常数) = 完整定位时相机位置与球体中心点的距离/球体的半径
-      let radius = dis / 1.9807740244477263
-      this.scale = radius / boundingSphere.radius
+      // 1.9807740244477263(常数) = 完整定位时相机位置与球体中心点的距离/球体的半径
+      let radius = dis / 1.9807740244477263;
+      this.scale = radius / boundingSphere.radius;
     },
   },
-}
+};
 </script>
 <style lang="scss">
 .model-ob-setting {

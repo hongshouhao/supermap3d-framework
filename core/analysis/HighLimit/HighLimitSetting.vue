@@ -20,14 +20,14 @@ export default {
       min: 30,
       max: 120,
       marks: {}
-    }
+    };
   },
   beforeMount () {
-    this.initMarkers()
+    this.initMarkers();
   },
   methods: {
     heightChanged (v) {
-      this.$emit("height-changed", v)
+      this.$emit('height-changed', v);
     },
     initMarkers () {
       for (let i = this.min; i <= this.max; i = i + 10) {
@@ -36,12 +36,12 @@ export default {
             color: '#1989FA'
           },
           label: `${i}`
-        }
-        this.marks[i] = mrk
+        };
+        this.marks[i] = mrk;
       }
     }
   }
-}
+};
 </script>
 <style lang='scss'>
 .high-limit-setting {

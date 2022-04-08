@@ -1,25 +1,25 @@
-import { createImageryProvider } from '../utils/ImageryUtility'
+import { createImageryProvider } from '../utils/ImageryUtility';
 
 export default class BasemapUtility {
   constructor(viewer, config, eventBus) {
-    this.viewer = viewer
-    this.eventBus = eventBus
-    this.mapsConfig = config.baseMaps
-    this._initMapConfig()
-    //白天还是夜晚
+    this.viewer = viewer;
+    this.eventBus = eventBus;
+    this.mapsConfig = config.baseMaps;
+    this._initMapConfig();
+    // 白天还是夜晚
     // this.mode = 'night'
   }
 
   _initMapConfig() {
-    let i = 0
+    let i = 0;
     for (let mapKey in this.mapsConfig) {
       if (mapKey === 'none') {
-        continue
+        continue;
       }
-      let mapConf = this.mapsConfig[mapKey]
+      let mapConf = this.mapsConfig[mapKey];
       for (let mapParams of mapConf.maps) {
-        mapParams.name = `${mapParams.type}_${i}`
-        i++
+        mapParams.name = `${mapParams.type}_${i}`;
+        i++;
       }
     }
   }
@@ -27,11 +27,11 @@ export default class BasemapUtility {
   createBasemaps() {
     for (let mapKey in this.mapsConfig) {
       if (mapKey === 'none') {
-        continue
+        continue;
       }
-      let mapConf = this.mapsConfig[mapKey]
+      let mapConf = this.mapsConfig[mapKey];
       if (mapConf.default) {
-        this.toggleMap(mapKey)
+        this.toggleMap(mapKey);
       }
     }
   }
@@ -118,77 +118,77 @@ export default class BasemapUtility {
   toggleMap(type) {
     if (this.currentMaps) {
       for (let map of this.currentMaps) {
-        this.viewer.imageryLayers.remove(map, true)
+        this.viewer.imageryLayers.remove(map, true);
       }
     }
 
     if (type === 'none') {
-      this.viewer.scene.globe.show = false
-      this.viewer.scene.skyBox.show = false
-      this.viewer.scene.skyAtmosphere.show = false
+      this.viewer.scene.globe.show = false;
+      this.viewer.scene.skyBox.show = false;
+      this.viewer.scene.skyAtmosphere.show = false;
 
-      this.currentMaps = null
+      this.currentMaps = null;
       this.eventBus.dispatch('basemap-changed', null, {
         type: type,
         currentMaps: null,
-      })
+      });
     } else {
-      this.viewer.scene.globe.show = true
-      this.viewer.scene.skyBox.show = true
-      this.viewer.scene.skyAtmosphere.show = true
-      let alpha = this.getCurrentMapAlpha(type)
-      let mapsToCreate = this.getMapsToCreate(type)
+      this.viewer.scene.globe.show = true;
+      this.viewer.scene.skyBox.show = true;
+      this.viewer.scene.skyAtmosphere.show = true;
+      let alpha = this.getCurrentMapAlpha(type);
+      let mapsToCreate = this.getMapsToCreate(type);
       this.currentMaps = mapsToCreate.map((mapParams) => {
-        let map = this.createMap(mapParams)
-        map.alpha = alpha
-        return map
-      })
+        let map = this.createMap(mapParams);
+        map.alpha = alpha;
+        return map;
+      });
 
       this.eventBus.dispatch('basemap-changed', null, {
         type: type,
         currentMaps: this.currentMaps,
-      })
+      });
     }
   }
 
   getCurrentMapAlpha() {
     if (this.currentMaps && this.currentMaps.length > 0) {
-      return this.currentMaps[0].alpha
+      return this.currentMaps[0].alpha;
     } else {
-      return 1
+      return 1;
     }
   }
 
   getMapsToCreate(type) {
     if (type === 'none') {
-      return []
+      return [];
     } else {
-      let mapParams = []
+      let mapParams = [];
       for (let mapKey in this.mapsConfig) {
-        let mapconf = this.mapsConfig[mapKey]
+        let mapconf = this.mapsConfig[mapKey];
         if (mapKey === type) {
           for (let map of mapconf.maps) {
             if (map.mode) {
               if (this.mode === map.mode) {
-                mapParams.push(map)
+                mapParams.push(map);
               }
             } else {
-              mapParams.push(map)
+              mapParams.push(map);
             }
           }
         }
       }
 
-      return mapParams
+      return mapParams;
     }
   }
 
   createMap(mapParams) {
-    let mapProvider = createImageryProvider(mapParams)
-    let map = this.viewer.imageryLayers.addImageryProvider(mapProvider)
-    map.type = mapParams.type
-    map.mode = mapParams.mode
-    map.name = mapParams.name
-    return map
+    let mapProvider = createImageryProvider(mapParams);
+    let map = this.viewer.imageryLayers.addImageryProvider(mapProvider);
+    map.type = mapParams.type;
+    map.mode = mapParams.mode;
+    map.name = mapParams.name;
+    return map;
   }
 }

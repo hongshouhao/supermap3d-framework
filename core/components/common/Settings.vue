@@ -115,60 +115,60 @@ export default {
       hue: 0,
       saturation: 0,
       contrast: 0,
-    }
+    };
   },
   mounted () {
-    let _this = this
-    this.enableLight = this.$viewer.scene.sun.show = true
-    this.brightness = this.$viewer.scene.colorCorrection.brightness
-    this.hue = this.$viewer.scene.colorCorrection.hue
-    this.saturation = this.$viewer.scene.colorCorrection.saturation
-    this.contrast = this.$viewer.scene.colorCorrection.contrast
+    let _this = this;
+    this.enableLight = this.$viewer.scene.sun.show = true;
+    this.brightness = this.$viewer.scene.colorCorrection.brightness;
+    this.hue = this.$viewer.scene.colorCorrection.hue;
+    this.saturation = this.$viewer.scene.colorCorrection.saturation;
+    this.contrast = this.$viewer.scene.colorCorrection.contrast;
 
     window.s3d.eventBus.addEventListener('basemap-changed', (caller, args) => {
       if (args.currentMaps) {
-        let alpha = window.s3d.basemapUtility.getCurrentMapAlpha(args.type)
-        _this.baseMapAlpha = parseInt(alpha)
+        let alpha = window.s3d.basemapUtility.getCurrentMapAlpha(args.type);
+        _this.baseMapAlpha = parseInt(alpha);
       }
-    })
+    });
   },
   methods: {
     setBaseMapAlpha (alpha) {
-      let baseMaps = window.s3d.basemapUtility.currentMaps
+      let baseMaps = window.s3d.basemapUtility.currentMaps;
       if (baseMaps) {
         for (let map of baseMaps) {
-          map.alpha = alpha
+          map.alpha = alpha;
         }
       }
     },
     setSceneColorCorrection (value, key) {
-      this.$viewer.scene.colorCorrection[key] = value
+      this.$viewer.scene.colorCorrection[key] = value;
     },
     toggleRain (enable) {
       if (enable) {
-        this.$viewer.scene.postProcessStages.rain.enabled = true
-        this.$viewer.scene.postProcessStages.rain.uniforms.angle = 170
-        this.$viewer.scene.postProcessStages.rain.uniforms.speed = 6
+        this.$viewer.scene.postProcessStages.rain.enabled = true;
+        this.$viewer.scene.postProcessStages.rain.uniforms.angle = 170;
+        this.$viewer.scene.postProcessStages.rain.uniforms.speed = 6;
       } else {
-        this.$viewer.scene.postProcessStages.rain.enabled = false
+        this.$viewer.scene.postProcessStages.rain.enabled = false;
       }
     },
     toggleSnow (enable) {
       if (enable) {
-        this.$viewer.scene.postProcessStages.snow.enabled = true
-        this.$viewer.scene.postProcessStages.snow.uniforms.density = 15
-        this.$viewer.scene.postProcessStages.snow.uniforms.angle = 0
-        this.$viewer.scene.postProcessStages.snow.uniforms.speed = 6
+        this.$viewer.scene.postProcessStages.snow.enabled = true;
+        this.$viewer.scene.postProcessStages.snow.uniforms.density = 15;
+        this.$viewer.scene.postProcessStages.snow.uniforms.angle = 0;
+        this.$viewer.scene.postProcessStages.snow.uniforms.speed = 6;
       } else {
-        this.$viewer.scene.postProcessStages.snow.enabled = false
+        this.$viewer.scene.postProcessStages.snow.enabled = false;
       }
     },
     toogleLight (enable) {
       // this.$viewer.scene.sun.show = enable
-      this.$viewer.scene.globe.enableLighting = enable
+      this.$viewer.scene.globe.enableLighting = enable;
     }
   },
-}
+};
 </script>
 
 <style lang="scss">

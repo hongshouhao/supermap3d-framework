@@ -237,27 +237,27 @@
 </template>
 
 <script>
-import MeasureTool from '../tools/Measurement/MeasureTool'
-import PointMeasurement from '../tools/Measurement/PointMeasurement'
-import AngleMeasurement from '../tools/Measurement/AngleMeasurement'
-import SceneModeToogleTool from '../tools/Scene/SceneModeToogleTool'
+import MeasureTool from '../../tools/Measurement/MeasureTool';
+import PointMeasurement from '../../tools/Measurement/PointMeasurement';
+import AngleMeasurement from '../../tools/Measurement/AngleMeasurement';
+import SceneModeToogleTool from '../../tools/Scene/SceneModeToogleTool';
 
-import ViewshedTool from '../analysis/Viewshed/ViewshedTool'
-import SliceTool from '../analysis/Slice/SliceTool'
-import SkylineTool from '../analysis/Skyline/SkylineTool'
-import ViewDomeTool from '../analysis/ViewDome/ViewDomeTool'
-import HighLimitTool from '../analysis/HighLimit/HighLimitTool'
-import SubmergedTool from '../analysis/Submerged/SubmergedTool'
-import ExcavationTool from '../analysis/Excavation/ExcavationTool'
+import ViewshedTool from '../../analysis/Viewshed/ViewshedTool';
+import SliceTool from '../../analysis/Slice/SliceTool';
+import SkylineTool from '../../analysis/Skyline/SkylineTool';
+import ViewDomeTool from '../../analysis/ViewDome/ViewDomeTool';
+import HighLimitTool from '../../analysis/HighLimit/HighLimitTool';
+import SubmergedTool from '../../analysis/Submerged/SubmergedTool';
+import ExcavationTool from '../../analysis/Excavation/ExcavationTool';
 
-import ViewshedSetting from '../analysis/Viewshed/ViewshedSetting.vue'
-import SunlightSetting from '../analysis/Sunlight/SunlightSetting.vue'
-import HighLimitSetting from '../analysis/HighLimit/HighLimitSetting.vue'
-import ModelObservationSetting from '../tools/Model/ModelObservationSetting.vue'
-import Settings from './Settings.vue'
+import ViewshedSetting from '../../analysis/Viewshed/ViewshedSetting.vue';
+import SunlightSetting from '../../analysis/Sunlight/SunlightSetting.vue';
+import HighLimitSetting from '../../analysis/HighLimit/HighLimitSetting.vue';
+import ModelObservationSetting from '../../tools/Model/ModelObservationSetting.vue';
+import Settings from './Settings.vue';
 
-import WidgetInfoPanel from './WidgetInfoPanel'
-import Test from '../Test'
+import WidgetInfoPanel from './WidgetInfoPanel';
+import Test from '../../Test';
 
 export default {
   name: 'top-left-bar',
@@ -273,226 +273,226 @@ export default {
     return {
       viewMode: '',
       currentTool: '',
-    }
+    };
   },
   props: [],
   computed: {
     developing () {
-      return process.env.VUE_APP_MODE === 'dev' ? true : false
+      return process.env.VUE_APP_MODE === 'dev' ? true : false;
     },
   },
   beforeMount () { },
   mounted () {
-    window.s3d.topLeftBar = this
-    let _viewer = this.$viewer
+    window.s3d.topLeftBar = this;
+    let _viewer = this.$viewer;
     _viewer.cesiumWidget.container.appendChild(
       this.$refs.viewshedSettingPanel.$el
-    )
+    );
     _viewer.cesiumWidget.container.appendChild(
       this.$refs.sunlightSettingPanel.$el
-    )
+    );
     _viewer.cesiumWidget.container.appendChild(
       this.$refs.highLimitSettingPanel.$el
-    )
+    );
     _viewer.cesiumWidget.container.appendChild(
       this.$refs.modelObservationPanel.$el
-    )
+    );
     _viewer.cesiumWidget.container.appendChild(
       this.$refs.commonSettingsPanel.$el
-    )
+    );
 
-    let _this = this
+    let _this = this;
     _viewer.camera.changed.addEventListener(function () {
       _this.$refs.compass.style = `transform: rotateZ(-${Cesium.Math.toDegrees(
         _viewer.camera.heading
-      )}deg);`
-    })
+      )}deg);`;
+    });
 
     window.s3d.eventBus.addEventListener('framework-initialized', () => {
-      _this.testTool = new Test()
-      _this.sceneModeToogleTool = new SceneModeToogleTool(_viewer)
-      _this.measureTool = new MeasureTool(_viewer)
-      _this.pointMeasurement = new PointMeasurement(_viewer)
-      _this.angleMeasurement = new AngleMeasurement(_viewer)
-      _this.viewshedTool = new ViewshedTool(_viewer)
-      _this.skylineTool = new SkylineTool(_viewer)
-      _this.sliceTool = new SliceTool(_viewer)
-      _this.viewDomeTool = new ViewDomeTool(_viewer)
-      _this.highLimitTool = new HighLimitTool(_viewer)
-      _this.submergedTool = new SubmergedTool(_viewer)
-      _this.excavationTool = new ExcavationTool(_viewer)
-      _this.viewshedTool.bindUI(_this.$refs.viewshedSettingPanel.$el)
-    })
+      _this.testTool = new Test();
+      _this.sceneModeToogleTool = new SceneModeToogleTool(_viewer);
+      _this.measureTool = new MeasureTool(_viewer);
+      _this.pointMeasurement = new PointMeasurement(_viewer);
+      _this.angleMeasurement = new AngleMeasurement(_viewer);
+      _this.viewshedTool = new ViewshedTool(_viewer);
+      _this.skylineTool = new SkylineTool(_viewer);
+      _this.sliceTool = new SliceTool(_viewer);
+      _this.viewDomeTool = new ViewDomeTool(_viewer);
+      _this.highLimitTool = new HighLimitTool(_viewer);
+      _this.submergedTool = new SubmergedTool(_viewer);
+      _this.excavationTool = new ExcavationTool(_viewer);
+      _this.viewshedTool.bindUI(_this.$refs.viewshedSettingPanel.$el);
+    });
   },
   methods: {
     globeView () {
-      this.$viewer.camera.flyTo(window.s3d.config.defaultCamera)
+      this.$viewer.camera.flyTo(window.s3d.config.defaultCamera);
     },
     toggleView () {
-      this.sceneModeToogleTool.toogle()
-      this.viewMode = this.sceneModeToogleTool.mode
+      this.sceneModeToogleTool.toogle();
+      this.viewMode = this.sceneModeToogleTool.mode;
     },
     setViewNorthUp () {
-      window.s3d.viewUtility.rotateZ(this.$viewer.camera.heading)
+      window.s3d.viewUtility.rotateZ(this.$viewer.camera.heading);
     },
     zoomIn () {
-      this.$viewer.camera.zoomIn(100)
+      this.$viewer.camera.zoomIn(100);
     },
     zoomOut () {
-      this.$viewer.camera.zoomOut(100)
+      this.$viewer.camera.zoomOut(100);
     },
     startIQuery () {
-      this.currentTool = 'IQueryTool'
+      this.currentTool = 'IQueryTool';
       window.s3d.popup.enable();
     },
     startDistanceMeasure () {
-      this.currentTool = 'MeasureTool'
-      this.measureTool.measureDistance()
+      this.currentTool = 'MeasureTool';
+      this.measureTool.measureDistance();
     },
     startAreaMeasure () {
-      this.currentTool = 'MeasureTool'
-      this.measureTool.measureArea()
+      this.currentTool = 'MeasureTool';
+      this.measureTool.measureArea();
     },
     annotatePoint () {
-      this.currentTool = 'PointMeasurement'
-      this.pointMeasurement.start()
+      this.currentTool = 'PointMeasurement';
+      this.pointMeasurement.start();
     },
     startAngleMeasure () {
-      this.currentTool = 'AngleMeasurement'
-      this.angleMeasurement.start()
+      this.currentTool = 'AngleMeasurement';
+      this.angleMeasurement.start();
     },
     startSlice () {
-      this.currentTool = 'SliceTool'
-      this.sliceTool.start()
+      this.currentTool = 'SliceTool';
+      this.sliceTool.start();
     },
     startViewshed () {
-      this.currentTool = 'ViewshedTool'
-      this.viewshedTool.start()
+      this.currentTool = 'ViewshedTool';
+      this.viewshedTool.start();
     },
     startSunlight () {
-      this.currentTool = 'SunlightTool'
-      this.$refs.sunlightSetting.init()
+      this.currentTool = 'SunlightTool';
+      this.$refs.sunlightSetting.init();
     },
     startSkyline () {
-      this.currentTool = 'SkylineTool'
-      this.skylineTool.start()
+      this.currentTool = 'SkylineTool';
+      this.skylineTool.start();
     },
     startViewDome () {
-      this.currentTool = 'ViewDomeTool'
-      this.viewDomeTool.start()
+      this.currentTool = 'ViewDomeTool';
+      this.viewDomeTool.start();
     },
     startHighLimit () {
-      this.currentTool = 'HighLimitTool'
-      this.highLimitTool.start()
+      this.currentTool = 'HighLimitTool';
+      this.highLimitTool.start();
     },
     startSubmerged () {
-      this.currentTool = 'SubmergedTool'
-      this.submergedTool.clear()
-      this.submergedTool.start()
+      this.currentTool = 'SubmergedTool';
+      this.submergedTool.clear();
+      this.submergedTool.start();
     },
     startModelObservation () {
-      this.currentTool = 'ModelObservationTool'
-      this.$refs.modelObservationSetting.init()
+      this.currentTool = 'ModelObservationTool';
+      this.$refs.modelObservationSetting.init();
     },
     startExcavation () {
-      this.currentTool = 'ExcavationTool'
-      this.excavationTool.start()
+      this.currentTool = 'ExcavationTool';
+      this.excavationTool.start();
     },
     multiViewport () {
-      window.s3d.layerTree.toggleViewportMode()
+      window.s3d.layerTree.toggleViewportMode();
     },
     updateHeight (height) {
       if (this.highLimitTool) {
-        this.highLimitTool.setHeight(height)
+        this.highLimitTool.setHeight(height);
       }
     },
     settings () {
-      this.currentTool = 'CommonSettings'
+      this.currentTool = 'CommonSettings';
     },
     stopIQuery () {
-      this.currentTool = ''
+      this.currentTool = '';
       window.s3d.popup.disable();
     },
     stopViewshedTool () {
-      this.viewshedTool.clear()
-      this.currentTool = ''
+      this.viewshedTool.clear();
+      this.currentTool = '';
     },
     stopMeasureTool () {
-      this.measureTool.clear()
-      this.currentTool = ''
+      this.measureTool.clear();
+      this.currentTool = '';
     },
     stopPointMeasurement () {
-      this.pointMeasurement.clear()
-      this.currentTool = ''
+      this.pointMeasurement.clear();
+      this.currentTool = '';
     },
     stopAngleMeasurement () {
-      this.angleMeasurement.clear()
-      this.currentTool = ''
+      this.angleMeasurement.clear();
+      this.currentTool = '';
     },
     stopSkylineTool () {
-      this.skylineTool.clear()
-      this.currentTool = ''
+      this.skylineTool.clear();
+      this.currentTool = '';
     },
     stopViewDomeTool () {
-      this.viewDomeTool.clear()
-      this.currentTool = ''
+      this.viewDomeTool.clear();
+      this.currentTool = '';
     },
     stopHighLimitTool () {
-      this.highLimitTool.clear()
-      this.currentTool = ''
+      this.highLimitTool.clear();
+      this.currentTool = '';
     },
     stopSliceTool () {
-      this.sliceTool.clear()
-      this.currentTool = ''
+      this.sliceTool.clear();
+      this.currentTool = '';
     },
     stopSunlight () {
-      this.$refs.sunlightSetting.reset()
-      this.currentTool = ''
+      this.$refs.sunlightSetting.reset();
+      this.currentTool = '';
     },
     stopSubmerged () {
-      this.submergedTool.clear()
-      this.currentTool = ''
+      this.submergedTool.clear();
+      this.currentTool = '';
     },
     stopModelObservation () {
-      this.$refs.modelObservationSetting.reset()
-      this.currentTool = ''
+      this.$refs.modelObservationSetting.reset();
+      this.currentTool = '';
     },
     stopExcavation () {
-      this.excavationTool.clear()
-      this.currentTool = ''
+      this.excavationTool.clear();
+      this.currentTool = '';
     },
     stopSetting () {
-      this.currentTool = ''
+      this.currentTool = '';
     },
     clearEverything () {
-      this.stopIQuery()
-      this.stopMeasureTool()
-      this.stopAngleMeasurement()
-      this.stopPointMeasurement()
-      this.stopViewshedTool()
-      this.stopSkylineTool()
-      this.stopViewDomeTool()
-      this.stopHighLimitTool()
-      this.stopSliceTool()
-      this.stopSunlight()
-      this.stopSubmerged()
-      this.stopModelObservation()
-      this.stopExcavation()
+      this.stopIQuery();
+      this.stopMeasureTool();
+      this.stopAngleMeasurement();
+      this.stopPointMeasurement();
+      this.stopViewshedTool();
+      this.stopSkylineTool();
+      this.stopViewDomeTool();
+      this.stopHighLimitTool();
+      this.stopSliceTool();
+      this.stopSunlight();
+      this.stopSubmerged();
+      this.stopModelObservation();
+      this.stopExcavation();
       for (let i = 0; i < this.$viewer.dataSources.length; i++) {
-        let ds = this.$viewer.dataSources.get(i)
+        let ds = this.$viewer.dataSources.get(i);
         if (ds.name.startsWith('temp_')) {
-          this.$viewer.dataSources.remove(ds, true)
+          this.$viewer.dataSources.remove(ds, true);
         }
       }
 
-      window.s3d.eventBus.dispatch('clear-clicked', null, null)
+      window.s3d.eventBus.dispatch('clear-clicked', null, null);
     },
 
     test () {
-      this.testTool.doTest()
+      this.testTool.doTest();
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

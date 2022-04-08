@@ -1,1 +1,1 @@
-import './PolylineTrailLinkMaterial'
+import './PolylineTrailLinkMaterial';

@@ -1,38 +1,38 @@
-import SketchTool from './tools/Sketch/SketchTool'
-import HighLimitTool from './analysis/HighLimit/HighLimitTool'
-import SubmergedTool from './analysis/Submerged/SubmergedTool'
-import SceneRouteTool from './tools/Scene/SceneRouteTool'
-import { gridSamplingPointsInPolygon } from './utils/CesiumUtility'
-import centerOfMass from '@turf/center-of-mass'
+import SketchTool from './tools/Sketch/SketchTool';
+import HighLimitTool from './analysis/HighLimit/HighLimitTool';
+import SubmergedTool from './analysis/Submerged/SubmergedTool';
+import SceneRouteTool from './tools/Scene/SceneRouteTool';
+import { gridSamplingPointsInPolygon } from './utils/CesiumUtility';
+import centerOfMass from '@turf/center-of-mass';
 
 export default class Test {
   constructor() {
-    this.createSketchTool()
+    this.createSketchTool();
   }
   createSketchTool() {
-    this.count = 1
-    this.sketchTool = new SketchTool(window.s3d.viewer)
-    this.sketchTool.setMultiable(false)
-    this.sketchTestStep = 0
+    this.count = 1;
+    this.sketchTool = new SketchTool(window.s3d.viewer);
+    this.sketchTool.setMultiable(false);
+    this.sketchTestStep = 0;
   }
 
   doTest() {
-    //this.labelPolygonsTest()
-    //this.flyToPointsTest()
-    //this.labelPointsTest()
-    this.setLayerVisibleTest()
+    // this.labelPolygonsTest()
+    // this.flyToPointsTest()
+    // this.labelPointsTest()
+    this.setLayerVisibleTest();
     // this.addLayerTest()
-    //this.submergedTest()
-    //this.highLimitTest()
-    //this.randomPoints()
-    //this.sceneRoute()
-    //this.loadShapefile()
-    //this.loadGeoJSON()
-    //this.insertToolButton()
-    //this.entityToGeoJson()
-    //this.sketchTest()
-    //window.s3d.viewUtility.rotateZ(1)
-    //window.s3d
+    // this.submergedTest()
+    // this.highLimitTest()
+    // this.randomPoints()
+    // this.sceneRoute()
+    // this.loadShapefile()
+    // this.loadGeoJSON()
+    // this.insertToolButton()
+    // this.entityToGeoJson()
+    // this.sketchTest()
+    // window.s3d.viewUtility.rotateZ(1)
+    // window.s3d
     //   .query({ layer: '交通信号', sql: 'SMID =1' })
     //   .then((response) => console.log(response))
     // window.s3d.openPopup({
@@ -80,7 +80,7 @@ export default class Test {
       {
         scale: 3,
       }
-    )
+    );
   }
   labelPointsTest() {
     window.s3d.labelPoints(
@@ -105,7 +105,7 @@ export default class Test {
       true,
       true,
       { scale: 1000 }
-    )
+    );
   }
   labelPolygonsTest() {
     let geojson = {
@@ -134,27 +134,27 @@ export default class Test {
         fill: '#12d035',
         visibility: '1',
       },
-    }
-    window.s3d.dataUtility.loadGeoJson(geojson)
+    };
+    window.s3d.dataUtility.loadGeoJson(geojson);
     let geoJsonToPt = function(polygon) {
-      let center = centerOfMass(polygon)
-      let x = center.geometry.coordinates[0]
-      let y = center.geometry.coordinates[1]
-      let z = center.geometry.coordinates[2]
-      let name = polygon.properties.name
+      let center = centerOfMass(polygon);
+      let x = center.geometry.coordinates[0];
+      let y = center.geometry.coordinates[1];
+      let z = center.geometry.coordinates[2];
+      let name = polygon.properties.name;
       return {
         position: { x: x, y: y, z: z },
         name: name,
         attributes: polygon.properties,
-      }
-    }
+      };
+    };
 
-    let pts = []
+    let pts = [];
     if (geojson.type == 'Feature') {
-      pts.push(geoJsonToPt(geojson))
+      pts.push(geoJsonToPt(geojson));
     } else if (geojson.type == 'FeatureCollection') {
       for (let feature of geojson) {
-        pts.push(geoJsonToPt(feature))
+        pts.push(geoJsonToPt(feature));
       }
     }
     window.s3d.labelPoints(
@@ -173,44 +173,44 @@ export default class Test {
       true,
       true,
       { scale: 1000 }
-    )
+    );
   }
   setLayerVisibleTest() {
     if (typeof this.layerVisible === 'undefined') {
-      this.layerVisible = false
+      this.layerVisible = false;
 
       window.s3d.eventBus.addEventListener(
         'layer-visible-changed',
         (caller, args) => {
-          console.log('layer-visible-changed')
-          console.log(caller)
-          console.log(args)
+          console.log('layer-visible-changed');
+          console.log(caller);
+          console.log(args);
         }
-      )
+      );
 
       window.s3d.eventBus.addEventListener('layer-added', (caller, args) => {
-        console.log('layer-added')
-        console.log(caller)
-        console.log(args)
-      })
+        console.log('layer-added');
+        console.log(caller);
+        console.log(args);
+      });
 
       window.s3d.eventBus.addEventListener('layer-removed', (caller, args) => {
-        console.log('layer-removed')
-        console.log(caller)
-        console.log(args)
-      })
+        console.log('layer-removed');
+        console.log(caller);
+        console.log(args);
+      });
 
       window.s3d.eventBus.addEventListener(
         'layer-invisible-internal',
         (caller, args) => {
-          console.log('layer-invisible-internal')
-          console.log(caller)
-          console.log(args)
+          console.log('layer-invisible-internal');
+          console.log(caller);
+          console.log(args);
         }
-      )
+      );
     }
-    this.layerVisible = !this.layerVisible
-    window.s3d.layerManager.setLayerVisible('东沙湖-倾斜', this.layerVisible)
+    this.layerVisible = !this.layerVisible;
+    window.s3d.layerManager.setLayerVisible('东沙湖-倾斜', this.layerVisible);
   }
   addLayerTest() {
     window.s3d.layerManager.addLayer(
@@ -218,7 +218,7 @@ export default class Test {
         name: '倾斜',
         type: 'S3M',
         visible: false,
-        url: `http://localhost:8090/iserver/services/3D-local3DCache-szgx4490/rest/realspace/datas/Config_3/config`,
+        url: 'http://localhost:8090/iserver/services/3D-local3DCache-szgx4490/rest/realspace/datas/Config_3/config',
       },
       {
         duration: 2,
@@ -228,10 +228,10 @@ export default class Test {
           range: 100,
         },
       }
-    )
+    );
   }
   highLimitTest() {
-    let highLimitTool = new HighLimitTool(window.s3d.viewer)
+    let highLimitTool = new HighLimitTool(window.s3d.viewer);
     highLimitTool
       .setTargetLayers(['楼幢'])
       .setHeight(60)
@@ -244,16 +244,16 @@ export default class Test {
         31.186082838897974,
         120.60050207082269,
         31.186380190938625,
-      ])
+      ]);
 
-    highLimitTool.start()
+    highLimitTool.start();
   }
   submergedTest() {
-    let submergedTool = new SubmergedTool(window.s3d.viewer)
+    let submergedTool = new SubmergedTool(window.s3d.viewer);
     submergedTool
       .setTargetLayers(['园区-盒子'])
       .includingGlobe()
-      //园区
+      // 园区
       .setCoverageArea([
         120.655,
         31.3219,
@@ -270,7 +270,7 @@ export default class Test {
         120.655,
         31.3219,
         3,
-      ])
+      ]);
     // .setCoverageArea([
     //   120.7658,
     //   31.3345,
@@ -288,12 +288,12 @@ export default class Test {
     //   31.3345,
     //   3,
     // ])
-    submergedTool.start()
+    submergedTool.start();
     submergedTool.getSubmergedArea().then((samplePts) => {
       samplePts.forEach((p) => {
-        window.s3d.debugUtility.labelPointLL(p, false)
-      })
-    })
+        window.s3d.debugUtility.labelPointLL(p, false);
+      });
+    });
   }
   randomPoints() {
     let geojson = {
@@ -311,39 +311,39 @@ export default class Test {
         ],
       },
       properties: {},
-    }
+    };
 
-    window.s3d.dataUtility.loadGeoJson(geojson)
+    window.s3d.dataUtility.loadGeoJson(geojson);
     let resutl = gridSamplingPointsInPolygon(
       geojson,
       0.0003,
       window.s3d.viewer.terrainProvider
-    )
+    );
     resutl.then((positions) => {
       positions.forEach((p) => {
-        window.s3d.debugUtility.labelPointLL(p, false)
-      })
-    })
+        window.s3d.debugUtility.labelPointLL(p, false);
+      });
+    });
   }
   sceneRoute() {
-    let tool = new SceneRouteTool(window.s3d.viewer)
-    tool.setRoute('/test.fpf').then(() => tool.start())
+    let tool = new SceneRouteTool(window.s3d.viewer);
+    tool.setRoute('/test.fpf').then(() => tool.start());
   }
   insertToolButton() {
     window.s3d.toolbar.insertButton([2, 0], {
       title: '测试',
       icon: 'my-icon-mea-point',
       click: function() {
-        alert('click')
+        alert('click');
       },
-    })
+    });
   }
   load3dTiles() {
     var tileset = window.s3d.scene.primitives.add(
       new Cesium.Cesium3DTileset({
         url: './3dtiles/tileset.json',
       })
-    )
+    );
 
     tileset.readyPromise.then(function(tileset) {
       // window.s3d.viewer.zoomTo(
@@ -357,8 +357,8 @@ export default class Test {
       window.s3d.viewer.camera.viewBoundingSphere(
         tileset.boundingSphere
         // new Cesium.HeadingPitchRange(0, -0.5, 0)
-      )
-    })
+      );
+    });
   }
   loadShapefile() {
     // window.s3d.dataUtility.loadShapefile('/test.shp')
@@ -367,7 +367,7 @@ export default class Test {
       color: new Cesium.Color(0.9765, 0.7647, 0.4667, 1.0),
       trailLength: 0.5,
       period: 2,
-    })
+    });
   }
   loadGeoJSON() {
     let geojson = {
@@ -396,36 +396,36 @@ export default class Test {
         fill: '#12d035',
         visibility: '1',
       },
-    }
-    return window.s3d.dataUtility.loadGeoJson(geojson)
+    };
+    return window.s3d.dataUtility.loadGeoJson(geojson);
   }
 
   debug() {
     window.s3d.debugUtility.labelPoint(
       Cesium.Cartesian3.fromDegrees(120.7769, 31.6024, 11.573)
-    )
+    );
   }
 
   sketchTest() {
     if (this.sketchTestStep === 0) {
-      this.sketchTestStep++
-      this.sketchTool.start('polyline')
+      this.sketchTestStep++;
+      this.sketchTool.start('polyline');
     } else if (this.sketchTestStep === 1) {
-      this.sketchTestStep++
-      this.sketchTool.start('polygon')
+      this.sketchTestStep++;
+      this.sketchTool.start('polygon');
     } else {
       this.sketchTool.getGeometries().then((result) => {
-        console.log(result)
-      })
+        console.log(result);
+      });
     }
   }
   entityToGeoJson() {
-    window.s3d.debugUtility.drawCameraDirection()
+    window.s3d.debugUtility.drawCameraDirection();
     window.s3d.viewer.entities
       .toGeoJson()
-      .then((geojson) => console.log(geojson))
+      .then((geojson) => console.log(geojson));
     window.s3d.viewer.entities.values[0]
       .toGeoJson()
-      .then((geojson) => console.log(geojson))
+      .then((geojson) => console.log(geojson));
   }
 }

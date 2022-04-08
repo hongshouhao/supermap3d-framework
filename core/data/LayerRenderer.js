@@ -1,47 +1,47 @@
 export default class LayerRenderer {
   constructor(viewer) {
-    this.viewer = viewer
+    this.viewer = viewer;
   }
 
   startRender(layer) {
-    let ly = window.s3d.layerManager.getLayer(layer)
+    let ly = window.s3d.layerManager.getLayer(layer);
     if (ly.config.renderer?.type === 'S3MLAYER') {
-      this.addS3MRender(ly)
+      this.addS3MRender(ly);
     }
   }
 
   _getS3MRenderLayerName(lyName) {
-    return `${lyName}-s3mrender`
+    return `${lyName}-s3mrender`;
   }
 
   addS3MRender(ly) {
     // let ly = window.s3d.layerManager.getLayer(layer)
-    let lyName = this._getS3MRenderLayerName(ly.name)
-    let renderLayer = this.viewer.scene.layers.find(lyName)
+    let lyName = this._getS3MRenderLayerName(ly.name);
+    let renderLayer = this.viewer.scene.layers.find(lyName);
     if (renderLayer) {
-      renderLayer.visible = true
+      renderLayer.visible = true;
     } else {
       let promise = this.viewer.scene.addS3MTilesLayerByScp(
         ly.config.renderer.layer.url,
         {
           name: lyName,
         }
-      )
+      );
       promise.then((rly) => {
-        rly.textureUVSpeed = ly.config.renderer.layer.textureUVSpeed
-        rly.visible = true
-      })
+        rly.textureUVSpeed = ly.config.renderer.layer.textureUVSpeed;
+        rly.visible = true;
+      });
     }
   }
 
   stopRender(layer) {
-    let ly = window.s3d.layerManager.getLayer(layer)
+    let ly = window.s3d.layerManager.getLayer(layer);
     if (ly.config.renderer?.type === 'S3MLAYER') {
-      let lyName = this._getS3MRenderLayerName(ly.name)
-      let renderLayer = this.viewer.scene.layers.find(lyName)
+      let lyName = this._getS3MRenderLayerName(ly.name);
+      let renderLayer = this.viewer.scene.layers.find(lyName);
       if (renderLayer) {
         // renderLayer.visible = false
-        this.viewer.scene.layers.remove(lyName, true)
+        this.viewer.scene.layers.remove(lyName, true);
       }
     }
   }

@@ -1,5 +1,5 @@
-import axios from 'axios'
-import { isPromise } from '../utils/IfUtility'
+import axios from 'axios';
+import { isPromise } from '../utils/IfUtility';
 
 export default class DataAccess {
   constructor() {}
@@ -17,22 +17,22 @@ export default class DataAccess {
         latitude: entity.position._value.y,
         height: entity.position._value.z,
       },
-    }
-    return data
+    };
+    return data;
   }
 
   dataFromPrimitive(primitive) {
-    let lyName = primitive.primitive.name
-    let oid = primitive.id
-    debugger
+    let lyName = primitive.primitive.name;
+    let oid = primitive.id;
+    debugger;
     let data = {
       sourceType: 'PRIMITIVE',
       object: {
         id: oid,
         layer: lyName,
       },
-    }
-    return data
+    };
+    return data;
   }
 
   dataFromSMFeature(feature, fields) {
@@ -48,16 +48,16 @@ export default class DataAccess {
         latitude: feature.geometry.position.y,
         height: feature.geometry.position.z,
       },
-    }
+    };
 
     for (let i = 0; i < feature.fieldNames.length; i++) {
-      let field = feature.fieldNames[i]
-      let value = feature.fieldValues[i]
-      data.object.attributes[field] = value
+      let field = feature.fieldNames[i];
+      let value = feature.fieldValues[i];
+      data.object.attributes[field] = value;
     }
 
-    this._deleteProperty(data.object.attributes, fields)
-    return data
+    this._deleteProperty(data.object.attributes, fields);
+    return data;
   }
 
   dataFromMVTFeature(feature, fields) {
@@ -69,9 +69,9 @@ export default class DataAccess {
         attributes: feature.properties,
       },
       position: {},
-    }
-    this._deleteProperty(data.object.attributes, fields)
-    return data
+    };
+    this._deleteProperty(data.object.attributes, fields);
+    return data;
   }
 
   dataFromDataset(options, fields) {
@@ -83,21 +83,21 @@ export default class DataAccess {
     ).then((response) => {
       return response.data.features.map((f) =>
         this.dataFromSMFeature(f, fields)
-      )
-    })
+      );
+    });
   }
 
   dataFromiQuery(options, position) {
     if (typeof options.getData === 'function') {
-      let res = options.getData(position)
+      let res = options.getData(position);
       if (isPromise(res)) {
         return res.then((result) => {
-          result.sourceType = 'IQUERY'
-          return result
-        })
+          result.sourceType = 'IQUERY';
+          return result;
+        });
       } else {
-        res.sourceType = 'IQUERY'
-        return Promise.resolve(res)
+        res.sourceType = 'IQUERY';
+        return Promise.resolve(res);
       }
     } else if (options.dataUrl) {
       return axios
@@ -110,20 +110,20 @@ export default class DataAccess {
         })
         .then((response) => {
           if (typeof options.transform === 'function') {
-            let result = options.transform(response.data)
-            result.sourceType = 'IQUERY'
-            return result
+            let result = options.transform(response.data);
+            result.sourceType = 'IQUERY';
+            return result;
           } else {
-            let result = response.data
-            result.sourceType = 'IQUERY'
-            return result
+            let result = response.data;
+            result.sourceType = 'IQUERY';
+            return result;
           }
-        })
+        });
     }
   }
 
   queryOverDataset(dataUrl, datasetName, sql, ids) {
-    let queryParameter = null
+    let queryParameter = null;
     if (sql && sql.length > 0) {
       queryParameter = {
         datasetNames: [datasetName],
@@ -131,24 +131,24 @@ export default class DataAccess {
         queryParameter: {
           attributeFilter: sql,
         },
-      }
+      };
     } else if (ids instanceof Array && ids.length > 0) {
       queryParameter = {
         datasetNames: [datasetName],
         getFeatureMode: 'ID',
         ids: ids,
-      }
+      };
     } else {
-      throw '暂不支持此查询'
+      throw '暂不支持此查询';
     }
-    return axios.post(dataUrl, queryParameter)
+    return axios.post(dataUrl, queryParameter);
   }
 
   _deleteProperty(obj, fields) {
     if (fields && fields instanceof Array && fields.length > 0) {
       for (let f of fields) {
         if (f in obj) {
-          delete obj[f]
+          delete obj[f];
         }
       }
     }
