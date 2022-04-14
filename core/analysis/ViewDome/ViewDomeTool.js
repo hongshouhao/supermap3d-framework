@@ -1,3 +1,13 @@
+/*
+ * @Author: zhangbo
+ * @Date: 2022-04-02 13:47:14
+ * @LastEditors: zhangbo
+ * @LastEditTime: 2022-04-14 08:52:54
+ * @FilePath: \supermap3d-framework\core\analysis\ViewDome\ViewDomeTool.js
+ * @Description: 
+ * 
+ * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
+ */
 export default class ViewDomeTool {
   constructor(viewer) {
     this.viewer = viewer;
@@ -22,7 +32,7 @@ export default class ViewDomeTool {
         height = 0;
       }
 
-      debugger;
+     
       _this.createViewDome();
       _this.viewDome.viewPosition = [longitude, latitude, height];
       _this.viewDome.build();

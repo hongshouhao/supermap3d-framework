@@ -2,7 +2,7 @@
  * @Author: zhangbo
  * @Date: 2022-04-06 15:44:08
  * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-06 15:44:08
+ * @LastEditTime: 2022-04-14 08:53:04
  * @FilePath: \supermap3d-framework\examples\sample-1\popupTemplate.js
  * @Description: 
  * 
@@ -13,7 +13,6 @@ export const popupTemplateWithCustomUI = {
     return data.object.layer + 'test'
   },
   getContent: function(data) {
-    debugger
     let div = document.createElement('div')
     div.innerHTML = data.object.layer
     return div

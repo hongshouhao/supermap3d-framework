@@ -2,7 +2,7 @@
  * @Author: zhangbo
  * @Date: 2022-04-02 13:47:15
  * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-08 11:03:07
+ * @LastEditTime: 2022-04-14 08:53:18
  * @FilePath: \supermap3d-framework\vue.config.js
  * @Description: 
  * 
@@ -14,7 +14,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-  lintOnSave: false,
+  // lintOnSave: false,
   publicPath: "./",
   chainWebpack: (config) => {
     config.module

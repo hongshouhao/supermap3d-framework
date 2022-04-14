@@ -130,7 +130,7 @@ export default {
             }
           } else {
             let pikObjs = window.s3d.pickObject(e.position);
-            debugger;
+            
             if (pikObjs.length === 0) {
               let unslctableLayers = window.s3d.layerManager.getAllLayers(
                 (x) => {
@@ -517,7 +517,6 @@ export default {
     enableDock() {
       this._setPopupStyle(true);
       if (this.removePostRenderHandler) {
-        debugger;
         this.removePostRenderHandler();
         this.removePostRenderHandler = null;
       }

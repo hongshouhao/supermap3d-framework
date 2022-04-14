@@ -24,7 +24,7 @@ export default class DataAccess {
   dataFromPrimitive(primitive) {
     let lyName = primitive.primitive.name;
     let oid = primitive.id;
-    debugger;
+    
     let data = {
       sourceType: 'PRIMITIVE',
       object: {

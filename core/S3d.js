@@ -621,13 +621,4 @@ export default class S3d {
       this.cameraUtility.flyToPointsLL(pts, flyOptions);
     }
   }
-
-  clearTempEntity() {
-    debugger
-    if (this.tempEntities) {
-      this.tempEntities.forEach((g) => {
-        g.remove();
-      });
-    }
-  }
 }
