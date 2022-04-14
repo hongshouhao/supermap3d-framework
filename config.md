@@ -249,13 +249,13 @@ export default {
               'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
           },
         },
-        //{
-          //   type: 'tianditu',
-          //   params: {
-          //     mapStyle: Cesium.TiandituMapsStyle['VEC_W'],
-          //     token: URL_CONFIG.TOKEN_TIANDITU,
-          //   },
-        //}
+        {
+            type: 'tianditu',
+            params: {
+              mapStyle: Cesium.TiandituMapsStyle['VEC_W'],
+              token: URL_CONFIG.TOKEN_TIANDITU,
+            },
+        }
       ]
     },
   },

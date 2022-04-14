@@ -2,7 +2,7 @@
  * @Author: zhangbo
  * @Date: 2022-04-06 09:40:44
  * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-08 14:32:55
+ * @LastEditTime: 2022-04-09 12:54:58
  * @FilePath: \supermap3d-framework\core\components\toolbar\index.vue
  * @Description: 
  * 
@@ -31,6 +31,7 @@ import ToolItem from './tool-item.vue';
 import ToolManager from './manager/index';
 
 export default {
+  name:"n-tool-bar",
   props: {
     tools: {
       type: Array,

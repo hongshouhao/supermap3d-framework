@@ -1,6 +1,6 @@
-import { isPromise } from '../utils/IfUtility';
-import LayerFactory from '../utils/LayerFactory';
-import LayerRenderer from './LayerRenderer';
+import { isPromise } from "../utils/IfUtility";
+import LayerFactory from "../utils/LayerFactory";
+import LayerRenderer from "./LayerRenderer";
 
 export default class LayerManager {
   constructor(viewer, config, eventBus) {
@@ -24,7 +24,7 @@ export default class LayerManager {
     }
   }
   getAllLayers(predicate) {
-    let getLayerNode = function(layers, list) {
+    let getLayerNode = function (layers, list) {
       for (let lyConfig of layers) {
         if (lyConfig.layer && lyConfig.cesiumLayer) {
           if (predicate) {
@@ -48,7 +48,8 @@ export default class LayerManager {
     return list;
   }
   setLayerVisible(layer, visible) {
-    this.eventBus.dispatch('layer-visible-changed', layer, visible);
+    console.log("setLayerVisible:" + visible);
+    this.eventBus.dispatch("layer-visible-changed", layer, visible);
     // let ly = this.getLayer(layer)
     // this._setLayerVisible(ly, visible)
   }
@@ -71,7 +72,7 @@ export default class LayerManager {
   }
 
   _getLayerNode(params) {
-    let getLayerNode = function(layers, predicate) {
+    let getLayerNode = function (layers, predicate) {
       for (let lyConfig of layers) {
         if (lyConfig.layer) {
           if (predicate(lyConfig)) {
@@ -85,9 +86,9 @@ export default class LayerManager {
         }
       }
     };
-    if (typeof params === 'function') {
+    if (typeof params === "function") {
       return getLayerNode(this.config.layers, params);
-    } else if (typeof params === 'string') {
+    } else if (typeof params === "string") {
       return getLayerNode(this.config.layers, (x) => x.name === params);
     } else {
       throw `getLayerNode 不支持的参数类型 ${typeof params}`;

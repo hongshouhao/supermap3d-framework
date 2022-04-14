@@ -2,7 +2,7 @@
  * @Author: zhangbo
  * @Date: 2022-04-07 12:48:38
  * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-08 14:27:39
+ * @LastEditTime: 2022-04-09 13:15:04
  * @FilePath: \supermap3d-framework\core\components\layer\tree\mixins\layer-tree.js
  * @Description:
  *
@@ -42,6 +42,9 @@ export default {
       if (checked && this.recentLayerStore) {
         this.recentLayerStore.set(data.id);
       }
+
+      console.log(data);
+      console.log(checked);
 
       if (data.cesiumLayer) {
         if (this.multiViewport) {

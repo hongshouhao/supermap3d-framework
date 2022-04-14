@@ -1,36 +1,36 @@
-import 'element-ui/lib/theme-chalk/index.css';
-import '@supermap/vue-iclient3d-webgl/dist/styles/vue-iclient3d-webgl.min.css';
-import './css/arcgis/themes/light/main.css';
-import './css/index.scss';
+import "element-ui/lib/theme-chalk/index.css";
+import "@supermap/vue-iclient3d-webgl/dist/styles/vue-iclient3d-webgl.min.css";
+import "./css/arcgis/themes/light/main.css";
+import "./css/index.scss";
 
-import Toolbar from './tools/Toolbar';
+import Toolbar from "./tools/Toolbar";
 
-import EventBus from 'eventbusjs';
-import ViewUtility from './utils/ViewUtility';
-import PickingUtility from './utils/PickingUtility';
-import CameraUtility from './utils/CameraUtility';
-import DebugUtility from './utils/DebugUtility';
-import DataUtility from './utils/DataUtility';
-import BasemapUtility from './utils/BasemapUtility';
+import EventBus from "eventbusjs";
+import ViewUtility from "./utils/ViewUtility";
+import PickingUtility from "./utils/PickingUtility";
+import CameraUtility from "./utils/CameraUtility";
+import DebugUtility from "./utils/DebugUtility";
+import DataUtility from "./utils/DataUtility";
+import BasemapUtility from "./utils/BasemapUtility";
 
-import PopupData from './components/popup/PopupData';
-import DataAccess from './data/DataAccess';
-import LayerManager from './data/LayerManager';
-import LayerFactory from './utils/LayerFactory';
-import { lonLatToCartesian } from './utils/CesiumMath';
-import { isS3mFeature } from './utils/IfUtility';
-import { setCursorStyle, resetCursorStyle } from './utils/CursorUtility';
+import PopupData from "./components/popup/PopupData";
+import DataAccess from "./data/DataAccess";
+import LayerManager from "./data/LayerManager";
+import LayerFactory from "./utils/LayerFactory";
+import { lonLatToCartesian } from "./utils/CesiumMath";
+import { isS3mFeature } from "./utils/IfUtility";
+import { setCursorStyle, resetCursorStyle } from "./utils/CursorUtility";
 // import { setLayerVisible } from './utils/LayerUtility'
 
-import SketchTool from './tools/Sketch/SketchTool';
+import SketchTool from "./tools/Sketch/SketchTool";
 // import LayersRenderer from './data/LayerRenderer'
 // import './materials'
 
 export default class S3d {
   constructor(config) {
-    if (!config.iServerBaseURL) throw '参数不能为空: iServerBaseURL';
-    if (!config.layers) throw '参数不能为空: layers';
-    if (!config.defaultCamera) throw '参数不能为空: defaultCamera';
+    if (!config.iServerBaseURL) throw "参数不能为空: iServerBaseURL";
+    if (!config.layers) throw "参数不能为空: layers";
+    if (!config.defaultCamera) throw "参数不能为空: defaultCamera";
 
     this.config = config;
     this.popupData = new PopupData();
@@ -39,6 +39,7 @@ export default class S3d {
     this.eventBus = EventBus;
     this.viewer = null;
     this.scene = null;
+    this.tempEntities = [];
 
     this._setLabel();
 
@@ -63,18 +64,22 @@ export default class S3d {
     this.pickingUtility = new PickingUtility(viewer.scene);
     this.dataUtility = new DataUtility(viewer);
     this.sketchTool = new SketchTool(viewer);
-    this.basemapUtility = new BasemapUtility(viewer, this.config, this.eventBus);
+    this.basemapUtility = new BasemapUtility(
+      viewer,
+      this.config,
+      this.eventBus
+    );
     this.layerFactory = new LayerFactory(viewer);
     this.layerManager = new LayerManager(viewer, this.config, this.eventBus);
 
     if (this.config.globalNightMap) {
-      this.config.globalNightMap.type = 'SMIMG';
+      this.config.globalNightMap.type = "SMIMG";
       this.config.globalNightMap.visible = true;
       this.layerFactory.createLayer(this.config.globalNightMap);
     }
 
     if (this.config.emptyMap) {
-      this.config.emptyMap.type = 'STIMG';
+      this.config.emptyMap.type = "STIMG";
       this.config.emptyMap.visible = true;
       this.layerFactory.createLayer(this.config.emptyMap);
     }
@@ -125,7 +130,8 @@ export default class S3d {
       this.viewer.scene.undergroundMode = this.config.undergroundMode;
     }
     if (this.config.minimumZoomDistance) {
-      this.viewer.scene.screenSpaceCameraController.minimumZoomDistance = this.config.minimumZoomDistance;
+      this.viewer.scene.screenSpaceCameraController.minimumZoomDistance =
+        this.config.minimumZoomDistance;
     }
 
     this.viewer.camera.flyTo(this.config.defaultCamera);
@@ -145,9 +151,9 @@ export default class S3d {
   }
 
   _setLayerVisibleByAltitude() {
-                 let _this = this
-                  let test =""
-    let setLayerVisible = function() {
+    let _this = this;
+    let test = "";
+    let setLayerVisible = function () {
       let altitude = _this.cameraUtility.getCameraHeight();
       for (let i = 0; i < _this.scene.imageryLayers.length; i++) {
         let imgLy = _this.scene.imageryLayers.get(i);
@@ -184,14 +190,14 @@ export default class S3d {
           source: Cesium.Material.PolylineTrailLinkSource,
         },
         // eslint-disable-next-line no-unused-vars
-        translucent: function(material) {
+        translucent: function (material) {
           return true;
         },
       }
     );
   }
   _setLabel() {
-    let setLabel = function(layers, nameList) {
+    let setLabel = function (layers, nameList) {
       for (let ln of layers) {
         if (ln.layer) {
           if (!ln.name) {
@@ -257,12 +263,12 @@ export default class S3d {
     let scene = this.viewer.scene;
     let blueSkyBox = new Cesium.SkyBox({
       sources: {
-        positiveX: './skyBox/bluesky/Right.jpg',
-        negativeX: './skyBox/bluesky/Left.jpg',
-        positiveY: './skyBox/bluesky/Front.jpg',
-        negativeY: './skyBox/bluesky/Back.jpg',
-        positiveZ: './skyBox/bluesky/Up.jpg',
-        negativeZ: './skyBox/bluesky/Down.jpg',
+        positiveX: "./skyBox/bluesky/Right.jpg",
+        negativeX: "./skyBox/bluesky/Left.jpg",
+        positiveY: "./skyBox/bluesky/Front.jpg",
+        negativeY: "./skyBox/bluesky/Back.jpg",
+        positiveZ: "./skyBox/bluesky/Up.jpg",
+        negativeZ: "./skyBox/bluesky/Down.jpg",
       },
     });
     function initialSkyBox() {
@@ -281,7 +287,7 @@ export default class S3d {
   }
   _gradualChange(skybox) {
     let scene = this.viewer.scene;
-    let skyListener = function() {
+    let skyListener = function () {
       let cameraHeight = scene.camera.positionCartographic.height;
 
       let skyAtmosphereH1 = 22e4; // 大气开始渐变的最大高度
@@ -412,7 +418,7 @@ export default class S3d {
     let dataFromiQuery = null;
     let _this = this;
     if (this.layerManager.getLayerConfig(layerName).iQuery) {
-      dataFromiQuery = function(lonlat) {
+      dataFromiQuery = function (lonlat) {
         return _this.popupData.dataFromiQuery(layerName, lonlat);
       };
     }
@@ -469,14 +475,14 @@ export default class S3d {
   flyTo(params, options) {
     if (params instanceof Array && params.length > 0) {
       let sample = params[0];
-      if (typeof sample === 'number') {
+      if (typeof sample === "number") {
         let pts = null;
         if (params.length % 2 === 0) {
           pts = Cesium.Cartesian3.fromDegreesArray(params);
         } else if (params.length % 3 === 0) {
           pts = Cesium.Cartesian3.fromDegreesArrayHeights(params);
         } else {
-          throw '参数错误';
+          throw "参数错误";
         }
         return this.cameraUtility.flyToPoints(pts, options);
       } else if (sample instanceof Cesium.Cartesian3) {
@@ -492,7 +498,7 @@ export default class S3d {
   }
   flyToLayer(layer, options) {
     if (layer) {
-      if (layer.type === 'MVT') {
+      if (layer.type === "MVT") {
         let duration = options?.duration ?? 2;
         let height = options?.height ?? 10000;
         let orientation = options?.orientation ?? {
@@ -511,14 +517,14 @@ export default class S3d {
           orientation: orientation,
           duration: duration,
         });
-      } else if (layer.type === 'S3M') {
+      } else if (layer.type === "S3M") {
         this._flyToBounds(layer.layerBounds, options);
         // this.viewer.flyTo(layer, options)
       } else {
         this.viewer.flyTo(layer, options);
       }
     } else {
-      throw '无法定位图层, 图层可能加载失败';
+      throw "无法定位图层, 图层可能加载失败";
     }
   }
   /*
@@ -531,7 +537,7 @@ export default class S3d {
   */
   flyToS3mFeatures(params, options) {
     let _this = this;
-    let fly = function(features) {
+    let fly = function (features) {
       let ids = features.map((x) => x.ID);
       _this.layerManager.getLayer(params.layer).setSelection(ids);
       return _this.cameraUtility.flyToS3mFeatures(features, options);
@@ -558,7 +564,7 @@ export default class S3d {
       if (
         pobj &&
         pobj.primitive &&
-        (typeof pobj.id === 'string' || pobj.id instanceof Cesium.Entity)
+        (typeof pobj.id === "string" || pobj.id instanceof Cesium.Entity)
       ) {
         pickedObjects.push(pobj);
       }
@@ -613,6 +619,15 @@ export default class S3d {
     if (fitView) {
       let pts = ptObjs.map((x) => x.position);
       this.cameraUtility.flyToPointsLL(pts, flyOptions);
+    }
+  }
+
+  clearTempEntity() {
+    debugger
+    if (this.tempEntities) {
+      this.tempEntities.forEach((g) => {
+        g.remove();
+      });
     }
   }
 }
