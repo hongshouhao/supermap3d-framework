@@ -1,30 +1,48 @@
 import axios from 'axios';
 import { isPromise } from '../utils/IfUtility';
+import { convertGeoJsonFromLL2Proj } from '../utils/CesiumMath';
+import * as turf from '@turf/turf';
 
 export default class DataAccess {
-  constructor() {}
+  constructor(viewer) {
+    this.viewer = viewer;
+  }
 
-  dataFromEntity(entity) {
-    let data = {
-      sourceType: 'ENTITY',
-      object: {
-        layer: entity.name,
-        id: entity.id,
-        attributes: entity.attributes,
-      },
-      position: {
-        longitude: entity.position._value.x,
-        latitude: entity.position._value.y,
-        height: entity.position._value.z,
-      },
-    };
-    return data;
+  dataFromEntity(entity, getPosition) {
+    let _this = this;
+    return entity.toGeoJson().then((geojson) => {
+      convertGeoJsonFromLL2Proj(_this.viewer.scene, geojson);
+      let attrs = {};
+      if (entity.attributes) {
+        attrs = entity.attributes;
+      } else if (entity.properties != null) {
+        for (let pName of entity.properties._propertyNames) {
+          attrs[pName] = entity.properties[pName]._value;
+        }
+      }
+      let center = turf.center(geojson);
+      let data = {
+        sourceType: 'ENTITY',
+        object: {
+          layer: entity.name,
+          id: entity.id,
+          attributes: attrs,
+          shape: geojson,
+        },
+        position: {
+          x: center.geometry.coordinates[0],
+          y: center.geometry.coordinates[1],
+          z: 0,
+        },
+      };
+      return data;
+    });
   }
 
   dataFromPrimitive(primitive) {
     let lyName = primitive.primitive.name;
     let oid = primitive.id;
-    
+
     let data = {
       sourceType: 'PRIMITIVE',
       object: {

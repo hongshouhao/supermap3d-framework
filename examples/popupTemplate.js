@@ -4,15 +4,15 @@
  * @LastEditors: zhangbo
  * @LastEditTime: 2022-04-14 08:53:07
  * @FilePath: \supermap3d-framework\examples\popupTemplate.js
- * @Description: 
- * 
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
+ * @Description:
+ *
+ * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved.
  */
 export const popupTemplateWithCustomUI = {
-  getHeader: function(data) {
+  getHeader: function (data) {
     return data.object.layer + 'test'
   },
-  getContent: function(data) {
+  getContent: function (data) {
     let div = document.createElement('div')
     div.innerHTML = data.object.layer
     return div
@@ -20,10 +20,10 @@ export const popupTemplateWithCustomUI = {
 }
 
 export const popupTemplateWithDefaultUI = {
-  getHeader: function(data) {
+  getHeader: function (data) {
     return data.object.layer + ' - ' + data.object.id
   },
-  getContent: function(data) {
+  getContent: function (data) {
     let arr = []
     arr.push({
       key: '对象',
@@ -34,15 +34,15 @@ export const popupTemplateWithDefaultUI = {
       value: data.object.id,
     })
     arr.push({
-      key: '经度',
+      key: 'X',
       value: data.position.longitude,
     })
     arr.push({
-      key: '纬度',
+      key: 'Y',
       value: data.position.latitude,
     })
     arr.push({
-      key: '高度',
+      key: 'Z',
       value: data.position.height,
     })
 

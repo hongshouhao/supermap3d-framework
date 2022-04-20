@@ -44,7 +44,7 @@ export default class SunlightTool {
 
     this.state = 'running';
     let _this = this;
-    this._nIntervId = setInterval(function() {
+    this._nIntervId = setInterval(function () {
       if (_this._shour < _this._ehour) {
         _this._start.setHours(_this._shour);
         _this._start.setMinutes(_this._nTimer);

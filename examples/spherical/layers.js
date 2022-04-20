@@ -3,8 +3,6 @@
 // S3M        三维图层
 // MVT        矢量瓦片图层
 
-import {} from './popupTemplate'
-
 export const layers = [
   {
     id: '2fasd',
@@ -33,58 +31,58 @@ export const layers = [
       //     url: `http://localhost:8090/iserver/services/3D-ShuiMian_3D-shuimian/rest/realspace/datas/%E6%B0%B4%E9%9D%A2_3D@shuimian/config`,
       //   },
       // },
-      {
-        id: '2a7',
-        name: '东沙湖-倾斜',
-        layer: {
-          type: 'S3M',
-          visible: false,
-          selectable: false,
-          url: `http://localhost:8090/iserver/services/3D-DSH/rest/realspace/datas/DSHPZ/config`,
-          iQuery: {
-            symbol: {
-              stroke: Cesium.Color.BLUE,
-              strokeWidth: 2,
-              fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
-            },
-            getData: function(p) {
-              console.log(p)
-              return {
-                object: {
-                  id: 1,
-                  shape: {
-                    type: 'FeatureCollection',
-                    features: [
-                      {
-                        type: 'Feature',
-                        properties: {},
-                        geometry: {
-                          type: 'Polygon',
-                          coordinates: [
-                            [
-                              [120.59053263900012, 31.194568653000033, 3],
-                              [120.59047571700012, 31.19460944900004, 3],
-                              [120.58735664000005, 31.194363434000024, 3],
-                              [120.58721493400003, 31.194216397000048, 3],
-                              [120.58736773800001, 31.19284602600004, 3],
-                              [120.59068445000003, 31.193111611000063, 3],
-                              [120.59053263900012, 31.194568653000033, 3],
-                            ],
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                  attributes: {
-                    a: 1,
-                    b: 2,
-                  },
-                },
-              }
-            },
-          },
-        },
-      },
+      // {
+      //   id: '2a7',
+      //   name: '东沙湖-倾斜',
+      //   layer: {
+      //     type: 'S3M',
+      //     visible: false,
+      //     selectable: false,
+      //     url: `http://localhost:8090/iserver/services/3D-DSH/rest/realspace/datas/DSHPZ/config`,
+      //     iQuery: {
+      //       symbol: {
+      //         stroke: Cesium.Color.BLUE,
+      //         strokeWidth: 2,
+      //         fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
+      //       },
+      //       getData: function(p) {
+      //         console.log(p)
+      //         return {
+      //           object: {
+      //             id: 1,
+      //             shape: {
+      //               type: 'FeatureCollection',
+      //               features: [
+      //                 {
+      //                   type: 'Feature',
+      //                   properties: {},
+      //                   geometry: {
+      //                     type: 'Polygon',
+      //                     coordinates: [
+      //                       [
+      //                         [120.59053263900012, 31.194568653000033, 3],
+      //                         [120.59047571700012, 31.19460944900004, 3],
+      //                         [120.58735664000005, 31.194363434000024, 3],
+      //                         [120.58721493400003, 31.194216397000048, 3],
+      //                         [120.58736773800001, 31.19284602600004, 3],
+      //                         [120.59068445000003, 31.193111611000063, 3],
+      //                         [120.59053263900012, 31.194568653000033, 3],
+      //                       ],
+      //                     ],
+      //                   },
+      //                 },
+      //               ],
+      //             },
+      //             attributes: {
+      //               a: 1,
+      //               b: 2,
+      //             },
+      //           },
+      //         }
+      //       },
+      //     },
+      //   },
+      // },
       // {
       //   id: '2a7as燃气d',
       //   name: '燃气',
@@ -93,7 +91,6 @@ export const layers = [
       //     visible: false,
       //     selectable: false,
       //     url: `http://106.14.242.98:8090/iserver/services/3D-DXGX/rest/realspace/datas/%E7%87%83%E6%B0%94/config`,
-
       //   },
       // },
       // {
@@ -105,57 +102,57 @@ export const layers = [
       //     url: `http://localhost:8090/iserver/services/map-mvt-DengJiDanYuanXianDSH44902/restjsr/v1/vectortile/maps/登记单元线%40DSH4490`,
       //   },
       // },
-      {
-        id: '1000',
-        name: 'MVT-TEST',
-        layer: {
-          type: 'MVT',
-          visible: false,
-          url: `http://106.14.242.98:8090/iserver/services/map-mvt-TDLYXZDLTB1/restjsr/v1/vectortile/maps/TDLYXZ_DLTB_1`,
-          iQuery: {
-            // symbol: {
-            //   stroke: Cesium.Color.fromCssColorString('#FF0000'),
-            //   fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
-            //   strokeWidth: 2,
-            // },
-            getData: function(p) {
-              console.log(p)
-              return {
-                object: {
-                  id: 1,
-                  shape: {
-                    type: 'FeatureCollection',
-                    features: [
-                      {
-                        type: 'Feature',
-                        properties: {},
-                        geometry: {
-                          type: 'Polygon',
-                          coordinates: [
-                            [
-                              [120.59053263900012, 31.194568653000033, 3],
-                              [120.59047571700012, 31.19460944900004, 3],
-                              [120.58735664000005, 31.194363434000024, 3],
-                              [120.58721493400003, 31.194216397000048, 3],
-                              [120.58736773800001, 31.19284602600004, 3],
-                              [120.59068445000003, 31.193111611000063, 3],
-                              [120.59053263900012, 31.194568653000033, 3],
-                            ],
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                  attributes: {
-                    a: 1,
-                    b: 2,
-                  },
-                },
-              }
-            },
-          },
-        },
-      },
+      // {
+      //   id: '1000',
+      //   name: 'MVT-TEST',
+      //   layer: {
+      //     type: 'MVT',
+      //     visible: false,
+      //     url: `http://106.14.242.98:8090/iserver/services/map-mvt-TDLYXZDLTB1/restjsr/v1/vectortile/maps/TDLYXZ_DLTB_1`,
+      //     iQuery: {
+      //       // symbol: {
+      //       //   stroke: Cesium.Color.fromCssColorString('#FF0000'),
+      //       //   fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
+      //       //   strokeWidth: 2,
+      //       // },
+      //       getData: function(p) {
+      //         console.log(p)
+      //         return {
+      //           object: {
+      //             id: 1,
+      //             shape: {
+      //               type: 'FeatureCollection',
+      //               features: [
+      //                 {
+      //                   type: 'Feature',
+      //                   properties: {},
+      //                   geometry: {
+      //                     type: 'Polygon',
+      //                     coordinates: [
+      //                       [
+      //                         [120.59053263900012, 31.194568653000033, 3],
+      //                         [120.59047571700012, 31.19460944900004, 3],
+      //                         [120.58735664000005, 31.194363434000024, 3],
+      //                         [120.58721493400003, 31.194216397000048, 3],
+      //                         [120.58736773800001, 31.19284602600004, 3],
+      //                         [120.59068445000003, 31.193111611000063, 3],
+      //                         [120.59053263900012, 31.194568653000033, 3],
+      //                       ],
+      //                     ],
+      //                   },
+      //                 },
+      //               ],
+      //             },
+      //             attributes: {
+      //               a: 1,
+      //               b: 2,
+      //             },
+      //           },
+      //         }
+      //       },
+      //     },
+      //   },
+      // },
       // {
       //   id: '2a72',
       //   name: '东沙湖-DEM1',
@@ -203,7 +200,7 @@ export const layers = [
       type: 'S3M',
       visible: true,
       enableFillAndWireFrame: true,
-      url: `http://106.14.242.98:8090/iserver/services/3D-GongDian/rest/realspace/datas/供电_1@供电/config`,
+      url: 'http://106.14.242.98:8090/iserver/services/3D-GongDian/rest/realspace/datas/供电_1@供电/config',
       datasetName: '供电:供电_1',
       outFields: ['*'],
     },
@@ -214,7 +211,7 @@ export const layers = [
     layer: {
       type: 'S3M',
       visible: false,
-      url: `http://106.14.242.98:8090/iserver/services/3D-CBDBM/rest/realspace/datas/CBDBM/config`,
+      url: 'http://106.14.242.98:8090/iserver/services/3D-CBDBM/rest/realspace/datas/CBDBM/config',
       // iQuery: {
       //   symbol: {
       //     stroke: Cesium.Color.BLUE,
@@ -262,4 +259,4 @@ export const layers = [
       selectColorType: Cesium.SelectColorType.SILHOUETTE,
     },
   },
-]
+];

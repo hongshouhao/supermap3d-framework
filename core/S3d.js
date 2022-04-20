@@ -1,40 +1,38 @@
-import "element-ui/lib/theme-chalk/index.css";
-import "@supermap/vue-iclient3d-webgl/dist/styles/vue-iclient3d-webgl.min.css";
-import "./css/arcgis/themes/light/main.css";
-import "./css/index.scss";
+import 'element-ui/lib/theme-chalk/index.css';
+import '@supermap/vue-iclient3d-webgl/dist/styles/vue-iclient3d-webgl.min.css';
+import './css/arcgis/themes/light/main.css';
+import './css/index.scss';
 
-import Toolbar from "./tools/Toolbar";
+import Toolbar from './tools/Toolbar';
 
-import EventBus from "eventbusjs";
-import ViewUtility from "./utils/ViewUtility";
-import PickingUtility from "./utils/PickingUtility";
-import CameraUtility from "./utils/CameraUtility";
-import DebugUtility from "./utils/DebugUtility";
-import DataUtility from "./utils/DataUtility";
-import BasemapUtility from "./utils/BasemapUtility";
+import EventBus from 'eventbusjs';
+import ViewUtility from './utils/ViewUtility';
+import PickingUtility from './utils/PickingUtility';
+import CameraUtility from './utils/CameraUtility';
+import DebugUtility from './utils/DebugUtility';
+import DataUtility from './utils/DataUtility';
+import BasemapUtility from './utils/BasemapUtility';
 
-import PopupData from "./components/popup/PopupData";
-import DataAccess from "./data/DataAccess";
-import LayerManager from "./data/LayerManager";
-import LayerFactory from "./utils/LayerFactory";
-import { lonLatToCartesian } from "./utils/CesiumMath";
-import { isS3mFeature } from "./utils/IfUtility";
-import { setCursorStyle, resetCursorStyle } from "./utils/CursorUtility";
+import PopupData from './components/popup/PopupData';
+import DataAccess from './data/DataAccess';
+import LayerManager from './data/LayerManager';
+import LayerFactory from './utils/LayerFactory';
+import { lonLatToCartesian, cartesianToLonlat } from './utils/CesiumMath';
+import { isS3mFeature } from './utils/IfUtility';
+import { setCursorStyle, resetCursorStyle } from './utils/CursorUtility';
 // import { setLayerVisible } from './utils/LayerUtility'
 
-import SketchTool from "./tools/Sketch/SketchTool";
+import SketchTool from './tools/Sketch/SketchTool';
 // import LayersRenderer from './data/LayerRenderer'
 // import './materials'
 
 export default class S3d {
   constructor(config) {
-    if (!config.iServerBaseURL) throw "参数不能为空: iServerBaseURL";
-    if (!config.layers) throw "参数不能为空: layers";
-    if (!config.defaultCamera) throw "参数不能为空: defaultCamera";
+    if (!config.iServerBaseURL) throw '参数不能为空: iServerBaseURL';
+    if (!config.layers) throw '参数不能为空: layers';
+    if (!config.defaultCamera) throw '参数不能为空: defaultCamera';
 
     this.config = config;
-    this.popupData = new PopupData();
-    this.dataAccess = new DataAccess();
     this.toolbar = new Toolbar();
     this.eventBus = EventBus;
     this.viewer = null;
@@ -42,14 +40,15 @@ export default class S3d {
     this.tempEntities = [];
 
     this._setLabel();
-
-    if (config.useEllipsoid) {
-      // 默认球体为圆球，修改为真实椭球体
-      Cesium.Ellipsoid.WGS84 = new Cesium.Ellipsoid(
-        6378137.0,
-        6378137.0,
-        6356752.3142451793
-      );
+    if (!config.usePlaneCoordinateSystem) {
+      if (config.useEllipsoid) {
+        // 默认球体为圆球，修改为真实椭球体
+        Cesium.Ellipsoid.WGS84 = new Cesium.Ellipsoid(
+          6378137.0,
+          6378137.0,
+          6356752.3142451793
+        );
+      }
     }
 
     // this._loadCustomMaterials()
@@ -58,6 +57,8 @@ export default class S3d {
   setViewer(viewer) {
     this.viewer = viewer;
     this.scene = viewer.scene;
+    this.dataAccess = new DataAccess(viewer);
+    this.popupData = new PopupData(viewer);
     this.viewUtility = new ViewUtility(viewer);
     this.cameraUtility = new CameraUtility(viewer);
     this.debugUtility = new DebugUtility(viewer);
@@ -72,14 +73,19 @@ export default class S3d {
     this.layerFactory = new LayerFactory(viewer);
     this.layerManager = new LayerManager(viewer, this.config, this.eventBus);
 
+    if (this.config.usePlaneCoordinateSystem) {
+      this.viewer.scene.mode = Cesium.SceneMode.COLUMBUS_VIEW;
+      this.viewer.imageryLayers.remove(this.viewer.imageryLayers._layers[0]);
+    }
+
     if (this.config.globalNightMap) {
-      this.config.globalNightMap.type = "SMIMG";
+      this.config.globalNightMap.type = 'SMIMG';
       this.config.globalNightMap.visible = true;
       this.layerFactory.createLayer(this.config.globalNightMap);
     }
 
     if (this.config.emptyMap) {
-      this.config.emptyMap.type = "STIMG";
+      this.config.emptyMap.type = 'STIMG';
       this.config.emptyMap.visible = true;
       this.layerFactory.createLayer(this.config.emptyMap);
     }
@@ -87,7 +93,6 @@ export default class S3d {
     this.viewer.scene.colorCorrection.show = true;
     this.viewer.scene.globe.enableLighting = true;
     this.viewer.scene.hdrEnabled = true;
-    // this.viewer.scene.mode = Cesium.SceneMode.COLUMBUS_VIEW
 
     // viewer.scene.fxaa = false
     // viewer.scene.postProcessStages.fxaa.enabled = false
@@ -134,9 +139,15 @@ export default class S3d {
         this.config.minimumZoomDistance;
     }
 
-    this.viewer.camera.flyTo(this.config.defaultCamera);
     this._setLayerVisibleByAltitude();
     this._setSkyBox();
+
+    if (this.config.usePlaneCoordinateSystem) {
+      this.viewer.camera.setView(this.config.defaultCamera);
+    } else {
+      this.viewer.camera.flyTo(this.config.defaultCamera);
+    }
+
     return this;
   }
   setCursor(className) {
@@ -152,7 +163,6 @@ export default class S3d {
 
   _setLayerVisibleByAltitude() {
     let _this = this;
-    let test = "";
     let setLayerVisible = function () {
       let altitude = _this.cameraUtility.getCameraHeight();
       for (let i = 0; i < _this.scene.imageryLayers.length; i++) {
@@ -263,27 +273,29 @@ export default class S3d {
     let scene = this.viewer.scene;
     let blueSkyBox = new Cesium.SkyBox({
       sources: {
-        positiveX: "./skyBox/bluesky/Right.jpg",
-        negativeX: "./skyBox/bluesky/Left.jpg",
-        positiveY: "./skyBox/bluesky/Front.jpg",
-        negativeY: "./skyBox/bluesky/Back.jpg",
-        positiveZ: "./skyBox/bluesky/Up.jpg",
-        negativeZ: "./skyBox/bluesky/Down.jpg",
+        positiveX: './skyBox/bluesky/Right.jpg',
+        negativeX: './skyBox/bluesky/Left.jpg',
+        positiveY: './skyBox/bluesky/Front.jpg',
+        negativeY: './skyBox/bluesky/Back.jpg',
+        positiveZ: './skyBox/bluesky/Up.jpg',
+        negativeZ: './skyBox/bluesky/Down.jpg',
       },
     });
-    function initialSkyBox() {
-      if (scene.frameState.passes.render) {
-        blueSkyBox.update(scene.frameState, true);
-        scene.postRender.removeEventListener(initialSkyBox);
-      }
-    }
-    scene.postRender.addEventListener(initialSkyBox);
-
-    blueSkyBox.WSpeed = 0.5;
-    blueSkyBox.show = true;
     scene.skyBox = blueSkyBox;
 
-    this._gradualChange(blueSkyBox);
+    if (!this.config.usePlaneCoordinateSystem) {
+      let initialSkyBox = function () {
+        if (scene.frameState.passes.render) {
+          blueSkyBox.update(scene.frameState, true);
+          scene.postRender.removeEventListener(initialSkyBox);
+        }
+      };
+      scene.postRender.addEventListener(initialSkyBox);
+
+      blueSkyBox.WSpeed = 0.5;
+      blueSkyBox.show = true;
+      this._gradualChange(blueSkyBox);
+    }
   }
   _gradualChange(skybox) {
     let scene = this.viewer.scene;
@@ -330,60 +342,19 @@ export default class S3d {
     scene.postRender.addEventListener(skyListener);
   }
 
-  // getLayerConfig(params) {
-  //   let lnode = this._getLayerNode(params)
-  //   if (lnode) {
-  //     return lnode.layer
-  //   }
-  // }
-  // getLayer(params) {
-  //   let lnode = this._getLayerNode(params)
-  //   if (lnode) {
-  //     return lnode.cesiumLayer
-  //   }
-  // }
-  // getAllLayers(predicate) {
-  //   let getLayerNode = function(layers, list) {
-  //     for (let lyConfig of layers) {
-  //       if (lyConfig.layer && lyConfig.cesiumLayer) {
-  //         if (predicate(lyConfig.cesiumLayer)) {
-  //           list.push(lyConfig.cesiumLayer)
-  //         }
-  //       } else if (lyConfig.children) {
-  //         let ln = getLayerNode(lyConfig.children, list)
-  //         if (ln) {
-  //           list.push(ln.cesiumLayer)
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   let list = []
-  //   getLayerNode(this.config.layers, list)
-  //   return list
-  // }
-  // setLayerVisible(layer, visible) {
-  //   let lyConf = this.getLayerConfig(layer)
-  //   this._setLayerVisible(lyConf, visible)
-  // }
-  // //layerOptions同layers.js配置
-  // addLayer(layerOptions, cameraOptions) {
-  //   let result = this.layerFactory.createLayer(layerOptions)
-  //   if (cameraOptions) {
-  //     if (isPromise(result)) {
-  //       return result.then((ly) => {
-  //         flyToLayer(ly, cameraOptions)
-  //         return ly
-  //       })
-  //     } else {
-  //       flyToLayer(result, cameraOptions)
-  //       return result
-  //     }
-  //   } else {
-  //     return result
-  //   }
-  // }
-
+  getCoordinate(mousePosition) {
+    if (this.config.usePlaneCoordinateSystem) {
+      return this.viewer.scene.pickPosition2D(mousePosition);
+    } else {
+      let cartesian = this.viewer.scene.pickPosition(mousePosition);
+      let lonlat = cartesianToLonlat(cartesian);
+      return {
+        x: lonlat.longitude,
+        y: lonlat.latitude,
+        z: lonlat.height,
+      };
+    }
+  }
   /* 
   data结构
   {
@@ -475,14 +446,14 @@ export default class S3d {
   flyTo(params, options) {
     if (params instanceof Array && params.length > 0) {
       let sample = params[0];
-      if (typeof sample === "number") {
+      if (typeof sample === 'number') {
         let pts = null;
         if (params.length % 2 === 0) {
           pts = Cesium.Cartesian3.fromDegreesArray(params);
         } else if (params.length % 3 === 0) {
           pts = Cesium.Cartesian3.fromDegreesArrayHeights(params);
         } else {
-          throw "参数错误";
+          throw '参数错误';
         }
         return this.cameraUtility.flyToPoints(pts, options);
       } else if (sample instanceof Cesium.Cartesian3) {
@@ -498,7 +469,7 @@ export default class S3d {
   }
   flyToLayer(layer, options) {
     if (layer) {
-      if (layer.type === "MVT") {
+      if (layer.type === 'MVT') {
         let duration = options?.duration ?? 2;
         let height = options?.height ?? 10000;
         let orientation = options?.orientation ?? {
@@ -517,14 +488,14 @@ export default class S3d {
           orientation: orientation,
           duration: duration,
         });
-      } else if (layer.type === "S3M") {
+      } else if (layer.type === 'S3M') {
         this._flyToBounds(layer.layerBounds, options);
         // this.viewer.flyTo(layer, options)
       } else {
         this.viewer.flyTo(layer, options);
       }
     } else {
-      throw "无法定位图层, 图层可能加载失败";
+      throw '无法定位图层, 图层可能加载失败';
     }
   }
   /*
@@ -564,7 +535,7 @@ export default class S3d {
       if (
         pobj &&
         pobj.primitive &&
-        (typeof pobj.id === "string" || pobj.id instanceof Cesium.Entity)
+        (typeof pobj.id === 'string' || pobj.id instanceof Cesium.Entity)
       ) {
         pickedObjects.push(pobj);
       }

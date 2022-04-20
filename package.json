@@ -16,6 +16,8 @@
     "registry": "http://106.15.107.191:8081/repository/npm-hosted/"
   },
   "scripts": {
+    "serve-dev-plane": "vue-cli-service serve ./examples/plane/main.js",
+    "serve-dev-spherical": "vue-cli-service serve ./examples/spherical/main.js",
     "serve-dev-json": "vue-cli-service serve ./examples/main-dev-json.js",
     "serve-dev-js": "vue-cli-service serve ./examples/main-dev-js.js",
     "serve-sample": "vue-cli-service serve ./examples/sample-1/main.js",

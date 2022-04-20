@@ -13,7 +13,7 @@ export default class ShadowQueryTool {
       0
     );
 
-    this.polygonDrawHandler.activeEvt.addEventListener(function(isActive) {
+    this.polygonDrawHandler.activeEvt.addEventListener(function (isActive) {
       if (isActive == true) {
         window.s3d.setCursor('cursor-crosshair');
       } else {
@@ -24,7 +24,7 @@ export default class ShadowQueryTool {
     let points = [];
 
     let _this = this;
-    this.polygonDrawHandler.drawEvt.addEventListener(function(result) {
+    this.polygonDrawHandler.drawEvt.addEventListener(function (result) {
       points.length = 0;
       let polygon = result.object;
       if (!polygon) {

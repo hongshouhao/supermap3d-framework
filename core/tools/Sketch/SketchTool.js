@@ -25,16 +25,16 @@ export default class SketchTool {
 
   addEvent(type, callback) {
     switch (type) {
-    case 'entityAdded':
-      this._lineDrawingTool.entityAdded = callback;
-      this._polygonDrawingTool.entityAdded = callback;
-      break;
-    case 'drawingFinished':
-      this._lineDrawingTool.drawingFinished = callback;
-      this._polygonDrawingTool.drawingFinished = callback;
-      break;
-    default:
-      throw '暂不支持此事件';
+      case 'entityAdded':
+        this._lineDrawingTool.entityAdded = callback;
+        this._polygonDrawingTool.entityAdded = callback;
+        break;
+      case 'drawingFinished':
+        this._lineDrawingTool.drawingFinished = callback;
+        this._polygonDrawingTool.drawingFinished = callback;
+        break;
+      default:
+        throw '暂不支持此事件';
     }
   }
 
@@ -44,15 +44,15 @@ export default class SketchTool {
       this._geoType = geoType;
     }
     switch (this._geoType) {
-    case 'polygon':
-      this._polygonDrawingTool.start();
-      break;
-    case 'polyline':
-      this._lineDrawingTool.start();
-      break;
-    default:
-      this._polygonDrawingTool.start();
-      break;
+      case 'polygon':
+        this._polygonDrawingTool.start();
+        break;
+      case 'polyline':
+        this._lineDrawingTool.start();
+        break;
+      default:
+        this._polygonDrawingTool.start();
+        break;
     }
   }
 

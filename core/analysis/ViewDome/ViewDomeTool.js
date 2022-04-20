@@ -4,40 +4,39 @@
  * @LastEditors: zhangbo
  * @LastEditTime: 2022-04-14 08:52:54
  * @FilePath: \supermap3d-framework\core\analysis\ViewDome\ViewDomeTool.js
- * @Description: 
- * 
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
+ * @Description:
+ *
+ * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved.
  */
 export default class ViewDomeTool {
   constructor(viewer) {
-    this.viewer = viewer;
+    this.viewer = viewer
 
-    this.handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+    this.handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
   }
 
   start() {
-    window.s3d.setCursor('cursor-crosshair');
+    window.s3d.setCursor('cursor-crosshair')
 
-    let _this = this;
-    this.handler.setInputAction(function(e) {
-      window.s3d.resetCursor();
+    let _this = this
+    this.handler.setInputAction(function (e) {
+      window.s3d.resetCursor()
 
-      let position = _this.viewer.scene.pickPosition(e.position);
-      let cartographic = Cesium.Cartographic.fromCartesian(position);
-      let longitude = Cesium.Math.toDegrees(cartographic.longitude);
-      let latitude = Cesium.Math.toDegrees(cartographic.latitude);
-      let height = cartographic.height;
+      let position = _this.viewer.scene.pickPosition(e.position)
+      let cartographic = Cesium.Cartographic.fromCartesian(position)
+      let longitude = Cesium.Math.toDegrees(cartographic.longitude)
+      let latitude = Cesium.Math.toDegrees(cartographic.latitude)
+      let height = cartographic.height
 
       if (height < 0) {
-        height = 0;
+        height = 0
       }
 
-     
-      _this.createViewDome();
-      _this.viewDome.viewPosition = [longitude, latitude, height];
-      _this.viewDome.build();
+      _this.createViewDome()
+      _this.viewDome.viewPosition = [longitude, latitude, height]
+      _this.viewDome.build()
 
-      _this.viewer.entities.removeAll();
+      _this.viewer.entities.removeAll()
       _this.viewer.entities.add(
         new Cesium.Entity({
           point: new Cesium.PointGraphics({
@@ -51,33 +50,35 @@ export default class ViewDomeTool {
             height + 0.5
           ),
         })
-      );
+      )
 
-      _this.handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      _this.handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK)
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
   }
 
   clear() {
-    this.viewer.entities.removeAll();
-    this.viewDome.destroy();
-    this.viewDome = null;
-    this.handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    this.viewer.entities.removeAll()
+    if (this.viewDome) {
+      this.viewDome.destroy()
+      this.viewDome = null
+    }
+    this.handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK)
   }
 
   createViewDome() {
-    this.viewDome = new Cesium.ViewDome(this.viewer.scene);
-    this.viewDome.distance = 200;
-    this.viewDome.domeType = Cesium.ViewDomeType.ALLDOME;
+    this.viewDome = new Cesium.ViewDome(this.viewer.scene)
+    this.viewDome.distance = 200
+    this.viewDome.domeType = Cesium.ViewDomeType.ALLDOME
     this.viewDome.visibleAreaColor = Cesium.Color.fromAlpha(
       Cesium.Color.fromCssColorString('#1891ba'),
       0.5
-    );
+    )
     this.viewDome.hiddenAreaColor = Cesium.Color.fromAlpha(
       Cesium.Color.fromCssColorString('#ce3839'),
       0.5
-    );
-    this.viewDome.startAngle = 0;
-    this.viewDome.endAngle = 360;
-    this.viewDome.isClosed = true;
+    )
+    this.viewDome.startAngle = 0
+    this.viewDome.endAngle = 360
+    this.viewDome.isClosed = true
   }
 }

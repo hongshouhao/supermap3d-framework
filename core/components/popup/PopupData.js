@@ -1,7 +1,7 @@
 import DataAccess from '../../data/DataAccess';
 export default class PopupData {
-  constructor() {
-    this.dataAccess = new DataAccess();
+  constructor(viewer) {
+    this.dataAccess = new DataAccess(viewer);
   }
 
   dataFromPrimitive(primitive) {
@@ -21,7 +21,7 @@ export default class PopupData {
       });
     } else {
       let _this = this;
-      return new Promise(function(resolve) {
+      return new Promise(function (resolve) {
         let result = _this.dataAccess.dataFromPrimitive(primitive);
         resolve(result);
       });
@@ -37,7 +37,7 @@ export default class PopupData {
       });
     } else {
       let _this = this;
-      return new Promise(function(resolve) {
+      return new Promise(function (resolve) {
         let result = _this.dataAccess.dataFromMVTFeature(
           feature,
           lconf.outFields
@@ -49,8 +49,7 @@ export default class PopupData {
   }
 
   dataFromEntity(entity) {
-    let result = this.dataAccess.dataFromEntity(entity);
-    return Promise.resolve(result);
+    return this.dataAccess.dataFromEntity(entity);
   }
 
   dataFromSMFeature(layerName, feature) {

@@ -4,7 +4,7 @@
 //DEM
 import // popupTemplateWithDefaultUI,
 // popupTemplateWithCustomUI,
-'./popupTemplate'
+'../popupTemplate'
 
 // let baseUrl = process.env.VUE_APP_ISERVER_BASE_URL
 
@@ -35,7 +35,7 @@ export const layers = [
           fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
           strokeWidth: 2,
         },
-        getData: function(p) {
+        getData: function (p) {
           console.log(p)
           return {
             object: {
@@ -88,26 +88,14 @@ export const layers = [
     layer: {
       type: 'S3M',
       visible: false,
-      url:
-        'http://192.168.175.70:8090/iserver/services/3D-local3DCache-THXCRYW1THXCRYW/rest/realspace/datas/THXCRYW_1@THXCRYW/config',
+      url: 'http://192.168.175.70:8090/iserver/services/3D-local3DCache-THXCRYW1THXCRYW/rest/realspace/datas/THXCRYW_1@THXCRYW/config',
 
       flattenRegions: [
         [
-          120.60176437339629,
-          31.184432532743152,
-          0,
-          120.60203936867242,
-          31.181754094638176,
-          0,
-          120.60324403847666,
-          31.181772259112677,
-          0,
-          120.60323994862907,
-          31.184236800529675,
-          0,
-          120.60176437339629,
-          31.184432532743152,
-          0,
+          120.60176437339629, 31.184432532743152, 0, 120.60203936867242,
+          31.181754094638176, 0, 120.60324403847666, 31.181772259112677, 0,
+          120.60323994862907, 31.184236800529675, 0, 120.60176437339629,
+          31.184432532743152, 0,
         ],
       ],
     },
@@ -254,8 +242,7 @@ export const layers = [
         layer: {
           type: 'SMIMG',
           visible: false,
-          url:
-            'http://192.168.175.70:8090/iserver/services/3D-CaiJianHouFanWei0713_1_1ZZ-DEM/rest/realspace/datas/裁剪后范围0713_1_1@DEM',
+          url: 'http://192.168.175.70:8090/iserver/services/3D-CaiJianHouFanWei0713_1_1ZZ-DEM/rest/realspace/datas/裁剪后范围0713_1_1@DEM',
           // iQuery: {
           //   // symbol: {
           //   //   stroke: Cesium.Color.fromCssColorString('#FF0000'),

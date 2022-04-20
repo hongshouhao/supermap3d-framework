@@ -1,22 +1,13 @@
-<!--
- * @Author: zhangbo
- * @Date: 2022-04-02 13:47:14
- * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-06 18:17:07
- * @FilePath: \supermap3d-framework\core\MapViewer.vue
- * @Description: 
- * 
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
--->
 <template>
-  <div class="cesium-container" ref="cesiumContainer">
-    <Popup ref="popup" v-show="false" />
+  <div class="cesium-container"
+       ref="cesiumContainer">
+    <Popup ref="popup"
+           v-show="false" />
   </div>
 </template>
 
 <script>
 import Popup from './components/popup/Popup.vue';
-// import { createImageryProvider } from './utils/ImageryUtility'
 import { enableCursorStyle } from './utils/CursorUtility';
 import EmitToMixin from './components/common/emit-to';
 
@@ -27,10 +18,10 @@ export default {
   },
   mixins: [EmitToMixin],
 
-  data() {
+  data () {
     return {};
   },
-  beforeMount() {
+  beforeMount () {
     if (!window.s3d || !window.s3d.config) {
       throw '配置未初始化: window.s3d.config';
     }
@@ -60,13 +51,13 @@ export default {
     this.$emit('viewer-created', viewer);
     this.$emitTo('smmap', 'viewer-created', viewer);
   },
-  mounted() {
+  mounted () {
     this.$refs.cesiumContainer.appendChild(this.sceneContainer.children[0]);
     this.$viewer.cesiumWidget.container.appendChild(this.$refs.popup.$el);
 
     enableCursorStyle(this.$viewer);
     window.s3d.popup = this.$refs.popup;
-   
+
     window.s3d.eventBus.dispatch('framework-initialized');
   },
 };

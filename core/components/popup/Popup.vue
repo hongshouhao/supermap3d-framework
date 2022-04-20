@@ -1,68 +1,60 @@
 <template>
-  <div
-    v-show="popupVisible"
-    ref="popup"
-    class="
+  <div v-show="popupVisible"
+       ref="popup"
+       class="
       my-popup
       esri-component
       esri-popup
       esri-popup--aligned-top-center
       esri-popup--shadow
-    "
-  >
-    <div
-      class="esri-popup__main-container esri-widget esri-popup--is-collapsible"
-    >
+    ">
+    <div class="esri-popup__main-container esri-widget esri-popup--is-collapsible">
       <header class="esri-popup__header">
         <div class="multi-header">
-          <el-select
-            v-show="multiable"
-            v-model="objIndex"
-            @change="_reRenderPopup"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="(title, idx) in objTitles"
-              :key="idx"
-              :label="title"
-              :value="idx"
-            >
+          <el-select v-show="multiable"
+                     v-model="objIndex"
+                     @change="_reRenderPopup"
+                     placeholder="请选择">
+            <el-option v-for="(title, idx) in objTitles"
+                       :key="idx"
+                       :label="title"
+                       :value="idx">
             </el-option>
           </el-select>
         </div>
-        <h2
-          v-show="!multiable"
-          class="esri-widget__heading esri-popup__header-title"
-        >
+        <h2 v-show="!multiable"
+            class="esri-widget__heading esri-popup__header-title">
           {{ title }}
         </h2>
         <div class="esri-popup__header-buttons">
-          <div
-            title="停靠"
-            class="esri-popup__button esri-popup__button--dock"
-            @click="dock"
-          >
-            <span
-              ref="dockIcon"
-              class="
+          <div title="停靠"
+               class="esri-popup__button esri-popup__button--dock"
+               @click="dock">
+            <span ref="dockIcon"
+                  class="
                 esri-popup__icon--dock-icon
                 esri-icon-dock-right
                 esri-popup__icon
-              "
-            ></span>
+              "></span>
           </div>
-          <div title="关闭" class="esri-popup__button" @click="hidePopup">
+          <div title="关闭"
+               class="esri-popup__button"
+               @click="hidePopup">
             <span class="esri-popup__icon esri-icon-close"></span>
           </div>
         </div>
       </header>
       <article class="esri-popup__content">
-        <PropertyGrid v-show="showPropGrid" :propArray="propArray" />
-        <div v-show="!showPropGrid" ref="content"></div>
+        <PropertyGrid v-show="showPropGrid"
+                      :propArray="propArray" />
+        <div v-show="!showPropGrid"
+             ref="content"></div>
       </article>
-      <div class="esri-popup__footer" ref="footer"></div>
+      <div class="esri-popup__footer"
+           ref="footer"></div>
     </div>
-    <div ref="popupPointer" class="esri-popup__pointer">
+    <div ref="popupPointer"
+         class="esri-popup__pointer">
       <div class="esri-popup__pointer-direction esri-popup--shadow"></div>
     </div>
   </div>
@@ -71,13 +63,12 @@
 <script>
 import $ from 'jquery';
 import Enumerable from 'linq';
-import { cartesianToLonlat } from '../../utils/CesiumMath';
 import PropertyGrid from '../popup/PropertyGrid.vue';
 import PopupData from '../popup/PopupData.js';
 import { isImageryLayer } from '../../utils/ImageryUtility';
 
 export default {
-  data() {
+  data () {
     return {
       enabled: false,
       propArray: [],
@@ -95,34 +86,34 @@ export default {
     PropertyGrid,
   },
   props: [],
-  mounted() {
-    this.popupData = new PopupData();
+  mounted () {
+    this.popupData = window.s3d.popupData;
     this.initIQuery();
     this.initIQueryForMVT();
   },
   methods: {
-    enable() {
+    enable () {
       this.enabled = true;
     },
-    disable() {
+    disable () {
       this.enabled = false;
       this._clearTempDataSources();
       this.hidePopup();
     },
-    initIQuery() {
+    initIQuery () {
       let _this = this;
       this.mouseEventHandler = new Cesium.ScreenSpaceEventHandler(
         _this.$viewer.scene.canvas
       );
       this.mouseEventHandler.setInputAction(function (e) {
-        let position = _this.$viewer.scene.pickPosition(e.position);
         if (_this.enabled) {
+          let position = _this.$viewer.scene.pickPosition(e.position);
+          let coordinate = window.s3d.getCoordinate(e.position);
           if (_this.mvtData) {
             let layerName = _this.mvtData.object.layer;
             let lconf = window.s3d.layerManager.getLayerConfig(layerName);
             if (lconf.iQuery) {
-              let lonlat = cartesianToLonlat(position);
-              _this.popupData.dataFromiQuery(layerName, lonlat).then((data) => {
+              _this.popupData.dataFromiQuery(layerName, coordinate).then((data) => {
                 _this.renderPopup(position, data);
               });
             } else {
@@ -130,7 +121,6 @@ export default {
             }
           } else {
             let pikObjs = window.s3d.pickObject(e.position);
-            
             if (pikObjs.length === 0) {
               let unslctableLayers = window.s3d.layerManager.getAllLayers(
                 (x) => {
@@ -155,9 +145,8 @@ export default {
                 return l2.config.iQuery.priority - l1.config.iQuery.priority;
               });
               if (unslctableLayers.length > 0) {
-                let lonlat = cartesianToLonlat(position);
                 let calls = unslctableLayers.map((l) => {
-                  return _this.popupData.dataFromiQuery(l.name, lonlat);
+                  return _this.popupData.dataFromiQuery(l.name, coordinate);
                 });
 
                 Promise.all(calls).then((result) => {
@@ -179,8 +168,7 @@ export default {
                   return _this.popupData.dataFromEntity(x.id);
                 } else if (x.primitive.config?.iQuery) {
                   let lname = x.primitive.config.name;
-                  let lonlat = cartesianToLonlat(position);
-                  return _this.popupData.dataFromiQuery(lname, lonlat);
+                  return _this.popupData.dataFromiQuery(lname, coordinate);
                 } else {
                   return _this.popupData.dataFromPrimitive(x);
                 }
@@ -190,7 +178,7 @@ export default {
                   if (result.length > 0) {
                     for (let item of result) {
                       if (!item.position) {
-                        item.position = cartesianToLonlat(position);
+                        item.position = coordinate;
                       }
                     }
                     _this.renderPopupMulti(position, result);
@@ -210,7 +198,7 @@ export default {
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     },
-    initIQueryForMVT() {
+    initIQueryForMVT () {
       let _this = this;
       _this.$viewer.selectedEntityChanged.addEventListener(function (entity) {
         if (!_this.enabled) {
@@ -234,14 +222,14 @@ export default {
         }
       });
     },
-    hidePopup() {
+    hidePopup () {
       if (this.removePostRenderHandler) {
         this.removePostRenderHandler();
         this.removePostRenderHandler = null;
       }
       this.popupVisible = false;
     },
-    renderPopupMulti(cartesian, data) {
+    renderPopupMulti (cartesian, data) {
       this.multiable = data.length > 1;
       this.dataObjs = data;
       this.objTitles = data.map((x) => this._getPopupHeader(x));
@@ -249,21 +237,21 @@ export default {
       this._reRenderPopup();
       this._showPopup(cartesian);
     },
-    renderPopup(cartesian, data) {
+    renderPopup (cartesian, data) {
       this.multiable = false;
       this._setHeader(this._getPopupHeader(data));
       this._setContent(this._getPopupContent(data));
       this._setFooter(this._getPopupFooter(data));
       this._showPopup(cartesian);
     },
-    _showPopup(cartesian) {
+    _showPopup (cartesian) {
       this.popupPosition = cartesian;
       this.popupVisible = true;
       if (!this.dockered) {
         this._enableStickRender();
       }
     },
-    _reRenderPopup() {
+    _reRenderPopup () {
       let obj = this.dataObjs[this.objIndex];
       let header = this._getPopupHeader(obj);
       this._setHeader(header);
@@ -272,21 +260,22 @@ export default {
       this._highlight(obj);
       $('.my-popup .multi-header input').css('width', this._textWidth(header));
     },
-    _highlight(obj) {
+    _highlight (obj) {
+      if (obj.sourceType == 'ENTITY') {
+        return;
+      }
+
       let grps = Enumerable.from(this.dataObjs)
         .groupBy((x) => x.object.layer)
         .toArray();
       for (let g of grps) {
         let ly = window.s3d.layerManager.getLayer(g.key());
         if (ly && ly.type === 'S3M') {
-          ly.setSelection([]);
+          // ly.setSelection([]);
         }
       }
-      this._clearTempDataSources();
 
-      if (obj.sourceType == 'ENTITY') {
-        return;
-      }
+      this._clearTempDataSources();
 
       let ly = window.s3d.layerManager.getLayer(obj.object.layer);
       if (
@@ -294,19 +283,31 @@ export default {
         (typeof ly.config.selectable === 'undefined' ||
           ly.config.selectable === true)
       ) {
-        ly.setSelection([obj.object.id]);
+        // ly.setSelection([obj.object.id]);
       } else if (
         isImageryLayer(ly.type) ||
         (ly.type === '3DTILES' && ly.config.selectable === false) ||
         (ly.type === 'S3M' && ly.config.selectable === false)
       ) {
+        if (obj.object.shape.type.toLowerCase() == 'featurecollection') {
+          for (let fitem of obj.object.shape.features) {
+            fitem.properties = obj.object.attributes
+          }
+        } else if (obj.object.shape.type.toLowerCase() == 'feature') {
+          obj.object.shape.properties = obj.object.attributes
+        }
+
         // 方案1
         let opts = ly.config.iQuery.symbol;
         window.s3d.dataUtility.loadGeoJson(
           obj.object.shape,
           opts,
           `temp_iquery_geometries_${ly.name}`
-        );
+        ).then(ds => {
+          for (let ent of ds.entities.values) {
+            ent.name = ly.name
+          }
+        });
 
         // //方案2
         // Cesium.GeoJsonDataSource.load(obj.object.shape).then((ds) => {
@@ -358,16 +359,10 @@ export default {
         // })
       }
     },
-    _clearTempDataSources() {
-      for (let i = 0; i < this.$viewer.dataSources.length; i++) {
-        let ds = this.$viewer.dataSources.get(i);
-        if (ds.name.startsWith('temp_iquery_geometries_')) {
-          ds.entities.removeAll();
-          this.$viewer.dataSources.remove(ds, true);
-        }
-      }
+    _clearTempDataSources () {
+      window.s3d.dataUtility.clearTempData("temp_iquery_geometries_")
     },
-    _enableStickRender() {
+    _enableStickRender () {
       if (this.removePostRenderHandler) {
         return;
       }
@@ -411,7 +406,7 @@ export default {
           }
         });
     },
-    _setPopupStyle(enableDockStyle) {
+    _setPopupStyle (enableDockStyle) {
       if (enableDockStyle) {
         this.$refs.popup.style.top = '60px';
         this.$refs.popup.style.right = '15px';
@@ -425,7 +420,7 @@ export default {
           'esri-popup__icon--dock-icon esri-icon-dock-right esri-popup__icon';
       }
     },
-    _getPopupContent(data) {
+    _getPopupContent (data) {
       let lconfig = window.s3d.layerManager.getLayerConfig(data.object.layer);
       if (lconfig && lconfig.popupTemplate) {
         if (!lconfig.popupTemplate.getContent) {
@@ -443,16 +438,16 @@ export default {
           value: data.object.id,
         });
         arr.push({
-          key: '经度',
-          value: data.position?.longitude,
+          key: 'X',
+          value: data.position?.x,
         });
         arr.push({
-          key: '纬度',
-          value: data.position?.latitude,
+          key: 'Y',
+          value: data.position?.y,
         });
         arr.push({
-          key: '高度',
-          value: data.position?.height,
+          key: 'Z',
+          value: data.position?.z,
         });
 
         for (let p in data.object.attributes) {
@@ -464,7 +459,7 @@ export default {
         return arr;
       }
     },
-    _getPopupHeader(data) {
+    _getPopupHeader (data) {
       let lconfig = window.s3d.layerManager.getLayerConfig(data.object.layer);
       if (lconfig && lconfig.popupTemplate) {
         if (!lconfig.popupTemplate.getHeader) {
@@ -475,7 +470,7 @@ export default {
         return data.object.layer + ' - ' + data.object.id;
       }
     },
-    _getPopupFooter(data) {
+    _getPopupFooter (data) {
       let lconfig = window.s3d.layerManager.getLayerConfig(data.object.layer);
       if (lconfig && lconfig.popupTemplate) {
         if (!lconfig.popupTemplate.getHeader) {
@@ -488,10 +483,10 @@ export default {
 
       return '';
     },
-    _setHeader(title) {
+    _setHeader (title) {
       this.title = title;
     },
-    _setContent(object) {
+    _setContent (object) {
       if (object instanceof HTMLElement) {
         this.showPropGrid = false;
         this.$refs.content.innerHTML = '';
@@ -501,20 +496,20 @@ export default {
         this.propArray = object;
       }
     },
-    _setFooter(object) {
+    _setFooter (object) {
       if (object instanceof HTMLElement) {
         this.$refs.footer.innerHTML = '';
         this.$refs.footer.appendChild(object);
       }
     },
-    _textWidth(value) {
+    _textWidth (value) {
       if (!value) {
         return '100%';
       } else {
         return value.length + 'rem';
       }
     },
-    enableDock() {
+    enableDock () {
       this._setPopupStyle(true);
       if (this.removePostRenderHandler) {
         this.removePostRenderHandler();
@@ -522,12 +517,12 @@ export default {
       }
       this.dockered = true;
     },
-    disableDock() {
+    disableDock () {
       this._setPopupStyle(false);
       this._enableStickRender();
       this.dockered = false;
     },
-    dock() {
+    dock () {
       if (this.dockered) {
         this.disableDock();
       } else {

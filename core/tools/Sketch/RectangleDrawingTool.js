@@ -8,8 +8,7 @@
  *
  * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved.
  */
-import Vue from "vue";
-import BaseDrawingTool from "./BaseDrawingTool";
+import BaseDrawingTool from './BaseDrawingTool';
 
 export default class RectangleDrawingTool extends BaseDrawingTool {
   constructor(viewer, options) {
@@ -18,9 +17,9 @@ export default class RectangleDrawingTool extends BaseDrawingTool {
     this.options = Object.assign(
       {},
       {
-        fillColor: "#ff0000",
+        fillColor: '#ff0000',
         fillOpacity: 0.5,
-        lineColor: "#ff0000",
+        lineColor: '#ff0000',
         lineOpacity: 1,
         clampToGround: true,
       },
@@ -40,10 +39,10 @@ export default class RectangleDrawingTool extends BaseDrawingTool {
   start() {
     const that = this;
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       that.isDrawing = false;
 
-      window.s3d.setCursor("cursor-crosshair");
+      window.s3d.setCursor('cursor-crosshair');
       that.stop();
 
       this.drawHandler.setInputAction(function (e) {
@@ -95,7 +94,7 @@ export default class RectangleDrawingTool extends BaseDrawingTool {
         }
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-      this.drawHandler.setInputAction(function (e) {
+      this.drawHandler.setInputAction(function () {
         that.isDrawing = false;
         that.stop();
 

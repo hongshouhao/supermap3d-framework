@@ -148,12 +148,15 @@ export function getPointOnPlane1(
 }
 
 export function lonLatToCartesian(lng, lat, height) {
-  let cartographic = Cesium.Cartographic.fromDegrees(lng, lat, height);
-  return Cesium.Ellipsoid.WGS84.cartographicToCartesian(cartographic);
+  return Cesium.Cartesian3.fromDegrees(lng, lat, height);
+  // let cartographic = Cesium.Cartographic.fromDegrees(lng, lat, height)
+  // return Cesium.Ellipsoid.WGS84.cartographicToCartesian(cartographic)
 }
 
 export function cartesianToLonlat(cartesian) {
-  let cartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesian);
+  let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+  // let cartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesian)
+
   let lat = Cesium.Math.toDegrees(cartographic.latitude);
   let lng = Cesium.Math.toDegrees(cartographic.longitude);
   let alt = cartographic.height;
@@ -228,4 +231,84 @@ export function vectorToHeadingPitchRoll(origin, target) {
   return Cesium.HeadingPitchRoll.fromQuaternion(
     vectorToQuaternion(origin, target)
   );
+}
+
+//平面坐标系转经纬度, 用于显示
+export function convertGeoJsonFromProj2LL(scene, geojson) {
+  if (scene.mode != Cesium.SceneMode.COLUMBUS_VIEW) {
+    return;
+  }
+  let setCoord = function (feature) {
+    for (let gitem of feature.geometry.coordinates) {
+      for (let citem of gitem) {
+        var projP = new Cesium.Cartesian3(citem[0], citem[1], citem[2]);
+        let cartesianP = convertProjToCartesian(scene, projP);
+        let llP = cartesianToLonlat(cartesianP);
+        citem[0] = llP.longitude;
+        citem[1] = llP.latitude;
+        citem[2] = llP.height;
+      }
+    }
+  };
+  if (geojson.type.toLowerCase() == 'featurecollection') {
+    for (let fitem of geojson.features) {
+      setCoord(fitem);
+    }
+  } else if (geojson.type.toLowerCase() == 'feature') {
+    setCoord(feature);
+  }
+}
+
+export function convertGeoJsonFromLL2Proj(scene, geojson) {
+  if (scene.mode != Cesium.SceneMode.COLUMBUS_VIEW) {
+    return;
+  }
+  let setCoord = function (feature) {
+    for (let gitem of feature.geometry.coordinates) {
+      for (let citem of gitem) {
+        let cartesianP = Cesium.Cartesian3.fromDegrees(
+          citem[0],
+          citem[1],
+          citem[2]
+        );
+        let projP = convertCartesianToProj(scene, cartesianP);
+        citem[0] = projP.x;
+        citem[1] = projP.y;
+        citem[2] = projP.z;
+      }
+    }
+  };
+  if (geojson.type.toLowerCase() == 'featurecollection') {
+    for (let fitem of geojson.features) {
+      setCoord(fitem);
+    }
+  } else if (geojson.type.toLowerCase() == 'feature') {
+    setCoord(geojson);
+  }
+}
+
+//原始平面坐标转场景笛卡尔坐标
+export function convertProjToCartesian(scene, cartesian) {
+  if (scene.mode != Cesium.SceneMode.COLUMBUS_VIEW) {
+    throw '此函数只适用平面坐标系';
+  }
+  var convertPos = Cesium.SceneTransforms.convert2DToCartesian(
+    scene,
+    cartesian
+  );
+  return convertPos;
+}
+
+//与convertProjToCartesian过程相反
+export function convertCartesianToProj(scene, cartesian) {
+  debugger;
+  if (scene.mode != Cesium.SceneMode.COLUMBUS_VIEW) {
+    throw '此函数只适用平面坐标系';
+  }
+  let screenPosition = Cesium.SceneTransforms.wgs84ToDrawingBufferCoordinates(
+    scene,
+    cartesian
+  );
+  let projPosition = scene.pickPosition2D(screenPosition);
+  return projPosition;
 }

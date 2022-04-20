@@ -25,13 +25,13 @@ export function enableCursorStyle(viewer) {
   setCursorStyle('cursor-default');
   let md = false;
   let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-  handler.setInputAction(function() {
+  handler.setInputAction(function () {
     md = true;
   }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
-  handler.setInputAction(function() {
+  handler.setInputAction(function () {
     md = false;
   }, Cesium.ScreenSpaceEventType.LEFT_UP);
-  handler.setInputAction(function() {
+  handler.setInputAction(function () {
     if (viewer.enableCursorStyle) {
       if (md) {
         setCursorStyle('cursor-grabbing');

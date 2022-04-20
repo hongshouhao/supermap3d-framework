@@ -1,14 +1,3 @@
-<!--
- * @Author: zhangbo
- * @Date: 2022-04-02 13:47:14
- * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-08 14:32:08
- * @FilePath: \supermap3d-framework\core\Map.vue
- * @Description: 
- * 
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
--->
-
 <template>
   <div class="cesium-core-container">
     <slot name="tool-bar">
@@ -37,15 +26,15 @@ export default {
     TopLeftBar,
     TopRightBar,
   },
-  data() {
+  data () {
     return {
       viewer: null,
     };
   },
-  beforeMount() {},
-  mounted() {},
+  beforeMount () { },
+  mounted () { },
   methods: {
-    onViewerCreated(viewer) {
+    onViewerCreated (viewer) {
       this.viewer = viewer;
     },
   },

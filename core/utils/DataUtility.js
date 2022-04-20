@@ -1,4 +1,9 @@
 var shapefile = require('shapefile');
+import {
+  cartesianToLonlat,
+  convertGeoJsonFromProj2LL,
+  convertGeoJsonFromLL2Proj,
+} from './CesiumMath';
 export default class DataUtility {
   constructor(viewer) {
     this.viewer = viewer;
@@ -10,6 +15,10 @@ export default class DataUtility {
   dsName: 用来管理datasource
    */
   loadGeoJson(geojson, options, dsName) {
+    if (this.viewer.scene.mode == Cesium.SceneMode.COLUMBUS_VIEW) {
+      this.convertGeoJsonFromProj2LL(geojson);
+    }
+
     let opt = options ?? {
       stroke: Cesium.Color.RED,
       fill: Cesium.Color.BLUE.withAlpha(0.3),
@@ -53,10 +62,72 @@ export default class DataUtility {
     });
   }
 
-  clearTempData() {
+  //平面坐标系转经纬度, 用于显示
+  convertGeoJsonFromProj2LL(geojson) {
+    convertGeoJsonFromProj2LL(this.viewer.scene, geojson);
+  }
+
+  convertGeoJsonFromLL2Proj(geojson) {
+    if (this.viewer.scene.mode != Cesium.SceneMode.COLUMBUS_VIEW) {
+      return;
+    }
+    let _this = this;
+    let setCoord = function (feature) {
+      for (let gitem of feature.geometry.coordinates) {
+        for (let citem of gitem) {
+          let cartesianP = Cesium.Cartesian3.fromDegrees(
+            citem[0],
+            citem[1],
+            citem[2]
+          );
+          let projP = _this.convertCartesianToProj(cartesianP);
+          citem[0] = projP.x;
+          citem[1] = projP.y;
+          citem[2] = projP.z;
+        }
+      }
+    };
+    if (geojson.type.toLowerCase() == 'featurecollection') {
+      for (let fitem of geojson.features) {
+        setCoord(fitem);
+      }
+    } else if (geojson.type.toLowerCase() == 'feature') {
+      setCoord(geojson);
+    }
+  }
+
+  //原始平面坐标转场景笛卡尔坐标
+  convertProjToCartesian(cartesian) {
+    if (this.viewer.scene.mode != Cesium.SceneMode.COLUMBUS_VIEW) {
+      throw '此函数只适用平面坐标系';
+    }
+    var convertPos = Cesium.SceneTransforms.convert2DToCartesian(
+      this.viewer.scene,
+      cartesian
+    );
+    return convertPos;
+  }
+
+  //与convertProjToCartesian过程相反
+  convertCartesianToProj(cartesian) {
+    if (this.viewer.scene.mode != Cesium.SceneMode.COLUMBUS_VIEW) {
+      throw '此函数只适用平面坐标系';
+    }
+    let screenPosition = Cesium.SceneTransforms.wgs84ToDrawingBufferCoordinates(
+      this.viewer.scene,
+      cartesian
+    );
+    let projPosition = this.viewer.scene.pickPosition2D(screenPosition);
+    return projPosition;
+  }
+
+  clearTempData(prefix) {
+    if (!prefix) {
+      prefix = 'temp_';
+    }
     for (let i = 0; i < this.viewer.dataSources.length; i++) {
       let ds = this.viewer.dataSources.get(i);
-      if (ds.name.startsWith('temp_')) {
+      if (ds.name.startsWith(prefix)) {
         this.viewer.dataSources.remove(ds, true);
       }
     }
@@ -111,7 +182,7 @@ export default class DataUtility {
     if (!(ptObjs && ptObjs.length > 0)) return;
 
     let dataSource = new Cesium.CustomDataSource('temp_points_label');
-    let getFileName = function(o) {
+    let getFileName = function (o) {
       var slashPos = o.lastIndexOf('/');
       var dotPos = o.lastIndexOf('.');
       return o.substring(slashPos + 1, dotPos);

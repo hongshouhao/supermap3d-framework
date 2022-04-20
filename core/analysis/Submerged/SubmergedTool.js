@@ -4,7 +4,7 @@ import { toSimplePolygon } from '../../utils/GeoJsonUtility';
 export default class SubmergedTool {
   constructor(viewer) {
     this.viewer = viewer;
-    this.maxHeight = 20;
+    this.maxHeight = 10;
     this.minHeight = 0;
     this.speed = 3;
     this.layerNames = [];
@@ -60,7 +60,8 @@ export default class SubmergedTool {
     }
 
     if (!this.defaultGlobeHypsometricSetting) {
-      this.defaultGlobeHypsometricSetting = this.viewer.scene.globe.HypsometricSetting;
+      this.defaultGlobeHypsometricSetting =
+        this.viewer.scene.globe.HypsometricSetting;
     }
 
     let currentHeight = 0;
@@ -133,7 +134,8 @@ export default class SubmergedTool {
     }
 
     if (this._includingGlobe) {
-      this.viewer.scene.globe.HypsometricSetting = this.defaultGlobeHypsometricSetting;
+      this.viewer.scene.globe.HypsometricSetting =
+        this.defaultGlobeHypsometricSetting;
     }
   }
 }
