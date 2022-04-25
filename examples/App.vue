@@ -2,20 +2,20 @@
   <smmap></smmap>
 </template>
 <script>
-import { addMessageListener } from '../core/IframeMessage'
+import { addMessageListener } from '../core/IframeMessage';
 
 export default {
   data () {
     return {
-    }
+    };
   },
   components: {
   },
   mounted () {
-    addMessageListener()
+    addMessageListener();
     // window.s3d.enableBloom()
-    window.s3d.topLeftBar.highLimitTool.setTargetLayers(['建筑'])
-    window.s3d.topLeftBar.submergedTool.setTargetLayers(['建筑'])
+    window.s3d.topLeftBar.highLimitTool.setTargetLayers(['建筑']);
+    window.s3d.topLeftBar.submergedTool.setTargetLayers(['建筑']);
     // .includingGlobe()
     // //园区
     // .setCoverageArea([
@@ -25,7 +25,7 @@ export default {
     //   120.6794, 31.3251, 3,
     //   120.6550, 31.3219, 3,
     // ])
-    //东沙湖
+    // 东沙湖
     // .setCoverageArea([
     //   120.7658,
     //   31.3345,
@@ -44,5 +44,5 @@ export default {
     //   3,
     // ])
   },
-}
+};
 </script>

@@ -4,16 +4,16 @@
  * @LastEditors: zhangbo
  * @LastEditTime: 2022-04-06 15:40:09
  * @FilePath: \supermap3d-framework\examples\custombar-sample\layers.js
- * @Description: 
- * 
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
+ * @Description:
+ *
+ * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved.
  */
 // Terrain    地形图
 // MapImagery 影像图层
 // S3M        三维图层
 // MVT        矢量瓦片图层
 
-import {} from './popupTemplate'
+import {} from './popupTemplate';
 
 export const layers = [
   {
@@ -50,15 +50,15 @@ export const layers = [
           type: 'S3M',
           visible: false,
           selectable: false,
-          url: `http://localhost:8090/iserver/services/3D-DSH/rest/realspace/datas/DSHPZ/config`,
+          url: 'http://localhost:8090/iserver/services/3D-DSH/rest/realspace/datas/DSHPZ/config',
           iQuery: {
             symbol: {
               stroke: Cesium.Color.BLUE,
               strokeWidth: 2,
               fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
             },
-            getData: function(p) {
-              console.log(p)
+            getData: function (p) {
+              console.log(p);
               return {
                 object: {
                   id: 1,
@@ -90,7 +90,7 @@ export const layers = [
                     b: 2,
                   },
                 },
-              }
+              };
             },
           },
         },
@@ -121,15 +121,15 @@ export const layers = [
         layer: {
           type: 'MVT',
           visible: false,
-          url: `http://106.14.242.98:8090/iserver/services/map-mvt-TDLYXZDLTB1/restjsr/v1/vectortile/maps/TDLYXZ_DLTB_1`,
+          url: 'http://106.14.242.98:8090/iserver/services/map-mvt-TDLYXZDLTB1/restjsr/v1/vectortile/maps/TDLYXZ_DLTB_1',
           iQuery: {
             // symbol: {
             //   stroke: Cesium.Color.fromCssColorString('#FF0000'),
             //   fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
             //   strokeWidth: 2,
             // },
-            getData: function(p) {
-              console.log(p)
+            getData: function (p) {
+              console.log(p);
               return {
                 object: {
                   id: 1,
@@ -161,7 +161,7 @@ export const layers = [
                     b: 2,
                   },
                 },
-              }
+              };
             },
           },
         },
@@ -213,7 +213,7 @@ export const layers = [
       type: 'S3M',
       visible: true,
       enableFillAndWireFrame: true,
-      url: `http://106.14.242.98:8090/iserver/services/3D-GongDian/rest/realspace/datas/供电_1@供电/config`,
+      url: 'http://106.14.242.98:8090/iserver/services/3D-GongDian/rest/realspace/datas/供电_1@供电/config',
       datasetName: '供电:供电_1',
       outFields: ['*'],
     },
@@ -224,7 +224,7 @@ export const layers = [
     layer: {
       type: 'S3M',
       visible: false,
-      url: `http://106.14.242.98:8090/iserver/services/3D-CBDBM/rest/realspace/datas/CBDBM/config`,
+      url: 'http://106.14.242.98:8090/iserver/services/3D-CBDBM/rest/realspace/datas/CBDBM/config',
       // iQuery: {
       //   symbol: {
       //     stroke: Cesium.Color.BLUE,
@@ -272,4 +272,4 @@ export const layers = [
       selectColorType: Cesium.SelectColorType.SILHOUETTE,
     },
   },
-]
+];

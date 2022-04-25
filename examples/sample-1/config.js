@@ -1050,4 +1050,4 @@ export const config = {
     contrast: 1.05,
     hue: 0.05,
   },
-}
+};

@@ -13,16 +13,16 @@
   </div>
 </template>
 <script>
-import { addMessageListener } from '../core/IframeMessage'
+import { addMessageListener } from '../core/IframeMessage';
 export default {
   data () {
-    return {}
+    return {};
   },
   mounted () {
-    addMessageListener()
-    window.s3d.topLeftBar.highLimitTool.setTargetLayers(['楼幢'])
+    addMessageListener();
+    window.s3d.topLeftBar.highLimitTool.setTargetLayers(['楼幢']);
   },
-}
+};
 </script>
 <style scoped>
 .map-content-container {

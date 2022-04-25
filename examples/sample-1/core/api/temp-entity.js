@@ -1,5 +1,5 @@
-import uuid from "@/utils/uuid";
-import { parse, stringify } from "wellknown";
+import uuid from '@/utils/uuid';
+import { parse, stringify } from 'wellknown';
 
 export default class TempEntity {
   constructor(option, viewer) {
@@ -12,7 +12,7 @@ export default class TempEntity {
 
   addToMap() {
     if (this.option.data) {
-      if (typeof this.option.data == "string") {
+      if (typeof this.option.data == 'string') {
         this.option.data = parse(this.option.data);
       }
       let DataSource = Cesium.GeoJsonDataSource.load(this.option.data, {
@@ -32,10 +32,10 @@ export default class TempEntity {
           entity.polyline = {
             positions: entity.polygon.hierarchy._value.positions,
             width: 2,
-            material: Cesium.Color.fromCssColorString("#ff0000"),
+            material: Cesium.Color.fromCssColorString('#ff0000'),
           };
           entity.label = {
-            text: "测试",
+            text: '测试',
           };
         }
 

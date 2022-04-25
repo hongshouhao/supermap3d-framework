@@ -1,8 +1,8 @@
 export const popupTemplateWithCustomUI = {
-  getHeader: function(data) {
+  getHeader: function (data) {
     return data.object.layer + 'test';
   },
-  getContent: function(data) {
+  getContent: function (data) {
     let div = document.createElement('div');
     div.innerHTML = data.object.layer;
     return div;
@@ -10,10 +10,10 @@ export const popupTemplateWithCustomUI = {
 };
 
 export const popupTemplateWithDefaultUI = {
-  getHeader: function(data) {
+  getHeader: function (data) {
     return data.object.id;
   },
-  getContent: function(data) {
+  getContent: function (data) {
     let arr = [];
     // arr.push({
     //   key: '对象',

@@ -1,10 +1,10 @@
-//SMIMG 影像图层
-//S3M        三维图层
-//MVT        矢量瓦片图层
-//DEM
+// SMIMG 影像图层
+// S3M        三维图层
+// MVT        矢量瓦片图层
+// DEM
 import // popupTemplateWithDefaultUI,
 // popupTemplateWithCustomUI,
-'../popupTemplate'
+'../popupTemplate';
 
 // let baseUrl = process.env.VUE_APP_ISERVER_BASE_URL
 
@@ -27,7 +27,7 @@ export const layers = [
     layer: {
       type: '3DTILES',
       visible: true,
-      url: `http://127.0.0.1:5501/tileset.json`,
+      url: 'http://127.0.0.1:5501/tileset.json',
       zOffset: -19.206,
       iQuery: {
         symbol: {
@@ -36,7 +36,7 @@ export const layers = [
           strokeWidth: 2,
         },
         getData: function (p) {
-          console.log(p)
+          console.log(p);
           return {
             object: {
               id: 1,
@@ -66,7 +66,7 @@ export const layers = [
                 b: 2,
               },
             },
-          }
+          };
         },
       },
     },
@@ -107,7 +107,7 @@ export const layers = [
     layer: {
       type: 'S3M',
       visible: false,
-      url: `http://192.168.175.70:8090/iserver/services/3D-local3DCache-szgx44902/rest/realspace/datas/Config_3/config`,
+      url: 'http://192.168.175.70:8090/iserver/services/3D-local3DCache-szgx44902/rest/realspace/datas/Config_3/config',
     },
   },
   {
@@ -116,7 +116,7 @@ export const layers = [
     layer: {
       type: 'S3M',
       visible: false,
-      url: `http://192.168.175.70:8090/iserver/services/3D-local3DCache-gusuGuSuQu/rest/realspace/datas/gusu@姑苏区/config`,
+      url: 'http://192.168.175.70:8090/iserver/services/3D-local3DCache-gusuGuSuQu/rest/realspace/datas/gusu@姑苏区/config',
     },
   },
   {
@@ -131,7 +131,7 @@ export const layers = [
         layer: {
           type: 'S3M',
           visible: false,
-          url: `http://106.14.242.98:8090/iserver/services/3D-XCGX/rest/realspace/datas/GX/config`,
+          url: 'http://106.14.242.98:8090/iserver/services/3D-XCGX/rest/realspace/datas/GX/config',
         },
       },
       // {
@@ -149,7 +149,7 @@ export const layers = [
         layer: {
           type: 'MVT',
           visible: false,
-          url: `http://192.168.175.70:8090/iserver/services/map-mvt-DLTB2016/restjsr/v1/vectortile/maps/DLTB2016`,
+          url: 'http://192.168.175.70:8090/iserver/services/map-mvt-DLTB2016/restjsr/v1/vectortile/maps/DLTB2016',
           outFields: ['*'],
         },
       },
@@ -318,4 +318,4 @@ export const layers = [
       },
     ],
   },
-]
+];

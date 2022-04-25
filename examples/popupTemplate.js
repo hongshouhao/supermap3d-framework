@@ -10,48 +10,48 @@
  */
 export const popupTemplateWithCustomUI = {
   getHeader: function (data) {
-    return data.object.layer + 'test'
+    return data.object.layer + 'test';
   },
   getContent: function (data) {
-    let div = document.createElement('div')
-    div.innerHTML = data.object.layer
-    return div
+    let div = document.createElement('div');
+    div.innerHTML = data.object.layer;
+    return div;
   },
-}
+};
 
 export const popupTemplateWithDefaultUI = {
   getHeader: function (data) {
-    return data.object.layer + ' - ' + data.object.id
+    return data.object.layer + ' - ' + data.object.id;
   },
   getContent: function (data) {
-    let arr = []
+    let arr = [];
     arr.push({
       key: '对象',
       value: data.object.layer,
-    })
+    });
     arr.push({
       key: '标识',
       value: data.object.id,
-    })
+    });
     arr.push({
       key: 'X',
       value: data.position.longitude,
-    })
+    });
     arr.push({
       key: 'Y',
       value: data.position.latitude,
-    })
+    });
     arr.push({
       key: 'Z',
       value: data.position.height,
-    })
+    });
 
     for (let p in data.object.attributes) {
       arr.push({
         key: p,
         value: data.object.attributes[p],
-      })
+      });
     }
-    return arr
+    return arr;
   },
-}
+};

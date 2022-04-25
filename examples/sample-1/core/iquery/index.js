@@ -4,9 +4,9 @@
  * @LastEditors: ZhangBo
  * @LastEditTime: 2022-03-29 13:51:27
  * @FilePath: \wz_thxc\src\core\iquery\index.js
- * @Description: 
- * 
- * Copyright (c) 2022 by ZhangBo/SIPSD, All Rights Reserved. 
+ * @Description:
+ *
+ * Copyright (c) 2022 by ZhangBo/SIPSD, All Rights Reserved.
  */
 import {
   popupTemplateWithDefaultUI,
@@ -15,8 +15,8 @@ import {
 import { parse } from 'wellknown';
 // import App from "../const.js";
 
-export default function(Vue, config) {
-  const getIQueryConfig = function(layerId) {
+export default function (Vue, config) {
+  const getIQueryConfig = function (layerId) {
     return {
       // 图形渲染样式
       symbol: {
@@ -24,7 +24,7 @@ export default function(Vue, config) {
         strokeWidth: 2,
         fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
       },
-      getData: function(position) {
+      getData: function (position) {
         return Vue.prototype.$api.jonemap
           .iQuery({
             method: 'post',
@@ -59,11 +59,13 @@ export default function(Vue, config) {
                 id: data[0].name,
                 shape: {
                   type: 'FeatureCollection',
-                  features: [{
-                    type: 'Feature',
-                    properties: {},
-                    geometry: parse(data[0].shape),
-                  }, ],
+                  features: [
+                    {
+                      type: 'Feature',
+                      properties: {},
+                      geometry: parse(data[0].shape),
+                    },
+                  ],
                 },
                 attributes: newObj,
               },
@@ -74,11 +76,10 @@ export default function(Vue, config) {
   };
 
   // 递归树 设置iquery配置
-  const setIQuery = function(layers) {
+  const setIQuery = function (layers) {
     for (const key in layers) {
       // name作为主键，将id赋值给name
       if (layers[key].name) {
-
         layers[key].label = layers[key].name;
         layers[key].name = layers[key].id;
       }

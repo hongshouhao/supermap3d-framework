@@ -8,9 +8,9 @@
  *
  * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved.
  */
-const path = require('path')
+const path = require('path');
 function resolve(dir) {
-  return path.join(__dirname, dir)
+  return path.join(__dirname, dir);
 }
 
 module.exports = {
@@ -23,23 +23,23 @@ module.exports = {
       .end()
       .use('eslint')
       .loader('eslint-loader')
-      .end()
+      .end();
 
     config.module
       .rule('url-loader')
       .test(/\.(cur)$/)
       .use('url-loader')
       .loader('url-loader')
-      .end()
+      .end();
 
     config.plugin('copy').use(require('copy-webpack-plugin'), [
       [
         { from: resolve('public/Cesium'), to: resolve('lib/Cesium') },
         { from: resolve('README.md'), to: resolve('lib/README.md') },
       ],
-    ])
+    ]);
 
-    config.resolve.alias.set('@', resolve('core'))
+    config.resolve.alias.set('@', resolve('core'));
   },
   configureWebpack: {
     output: {
@@ -53,4 +53,4 @@ module.exports = {
       },
     },
   },
-}
+};

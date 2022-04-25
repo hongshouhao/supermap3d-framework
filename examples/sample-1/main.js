@@ -8,12 +8,12 @@
  *
  * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved.
  */
-import Vue from "vue";
-import App from "./App.vue";
-import supermap3d from "../../core/index";
-import "../../core/css/index.scss";
+import Vue from 'vue';
+import App from './App.vue';
+import supermap3d from '../../core/index';
+import '../../core/css/index.scss';
 
-import { config } from "./config";
+import { config } from './config';
 
 const setLabel = function (layers) {
   for (const key in layers) {
@@ -34,4 +34,4 @@ Vue.use(supermap3d, config);
 Vue.config.productionTip = false;
 new Vue({
   render: (h) => h(App),
-}).$mount("#app");
+}).$mount('#app');
