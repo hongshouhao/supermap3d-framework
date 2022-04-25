@@ -23,15 +23,14 @@ export const config = {
   },
   layers: layers,
   defaultCamera: {
-    convert: false,
     destination: {
       x: 447574.224648742,
       y: 4429766.392444081,
       z: 991.1165208122693,
     },
     orientation: {
-      heading: 4.673354691663904,
-      pitch: -0.8192462906974112,
+      heading: 0,
+      pitch: -0.4806052349744063,
       roll: 6.283185307179586,
     },
     duration: 2,

@@ -16,15 +16,15 @@ export default {
     // window.s3d.enableBloom()
     window.s3d.topLeftBar.highLimitTool.setTargetLayers(['建筑'])
     window.s3d.topLeftBar.submergedTool.setTargetLayers(['建筑'])
-      .includingGlobe()
-      //园区
-      .setCoverageArea([
-        120.6550, 31.3219, 3,
-        120.6581, 31.3069, 3,
-        120.6794, 31.3081, 3,
-        120.6794, 31.3251, 3,
-        120.6550, 31.3219, 3,
-      ])
+    // .includingGlobe()
+    // //园区
+    // .setCoverageArea([
+    //   120.6550, 31.3219, 3,
+    //   120.6581, 31.3069, 3,
+    //   120.6794, 31.3081, 3,
+    //   120.6794, 31.3251, 3,
+    //   120.6550, 31.3219, 3,
+    // ])
     //东沙湖
     // .setCoverageArea([
     //   120.7658,

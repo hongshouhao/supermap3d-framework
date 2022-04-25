@@ -143,6 +143,7 @@ export default class S3d {
     this._setSkyBox();
 
     if (this.config.usePlaneCoordinateSystem) {
+      this.config.defaultCamera.convert = false;
       this.viewer.camera.setView(this.config.defaultCamera);
     } else {
       this.viewer.camera.flyTo(this.config.defaultCamera);

@@ -92,7 +92,8 @@
               <span aria-hidden="true"
                     class="esri-icon esri-icon-slice"></span>
             </div>
-            <div class="esri-widget--button esri-widget"
+            <div v-if="!usePlaneCoordinateSystem"
+                 class="esri-widget--button esri-widget"
                  title="日照分析"
                  @click="startSunlight">
               <span aria-hidden="true"
@@ -116,13 +117,15 @@
               <span aria-hidden="true"
                     class="esri-icon esri-icon-line-of-sight"></span>
             </div>
-            <div class="esri-widget--button esri-widget "
+            <div v-if="!usePlaneCoordinateSystem"
+                 class="esri-widget--button esri-widget "
                  title="限高分析"
                  @click="startHighLimit">
               <span aria-hidden="true"
                     class="esri-icon esri-icon-elevation-profile"></span>
             </div>
-            <div class="esri-widget--button esri-widget "
+            <div v-if="!usePlaneCoordinateSystem"
+                 class="esri-widget--button esri-widget "
                  title="淹没分析"
                  @click="startSubmerged">
               <span aria-hidden="true"
@@ -189,7 +192,7 @@
       <span class="esri-icon-font-fallback-text">重置罗盘仪方向</span>
     </div>
 
-    <WidgetInfoPanel v-show="currentTool == 'ViewshedTool'"
+    <WidgetInfoPanel v-show="currentTool == 'ViewshedTool' && !usePlaneCoordinateSystem"
                      title="视域分析参数"
                      ref="viewshedSettingPanel"
                      @closed="stopViewshedTool()">
@@ -280,6 +283,9 @@ export default {
     developing () {
       return process.env.VUE_APP_MODE === 'dev' ? true : false;
     },
+    usePlaneCoordinateSystem () {
+      return window.s3d.config.usePlaneCoordinateSystem
+    }
   },
   beforeMount () { },
   mounted () {
@@ -326,6 +332,7 @@ export default {
   },
   methods: {
     globeView () {
+      window.s3d.config.defaultCamera.convert = this.$viewer.scene.mode != Cesium.SceneMode.COLUMBUS_VIEW;
       this.$viewer.camera.flyTo(window.s3d.config.defaultCamera);
     },
     toggleView () {

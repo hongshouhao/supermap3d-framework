@@ -63,7 +63,6 @@ export default class SubmergedTool {
       this.defaultGlobeHypsometricSetting =
         this.viewer.scene.globe.HypsometricSetting;
     }
-
     let currentHeight = 0;
     let _this = this;
     this._interval_Id = setInterval(() => {

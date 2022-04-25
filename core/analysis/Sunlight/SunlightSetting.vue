@@ -49,6 +49,9 @@ export default {
       inited: false
     };
   },
+  computed: {
+
+  },
   beforeMount () {
     this.date = new Date().toLocaleDateString();
     for (let i = this.startHour; i <= this.endHour; i++) {

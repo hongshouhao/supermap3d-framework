@@ -76,6 +76,13 @@ export const config = {
     normal: {
       maps: [
         // {
+        //   type: 'tianditu',
+        //   params: {
+        //     mapStyle: Cesium.TiandituMapsStyle['VEC_W'],
+        //     token: URL_CONFIG.TOKEN_TIANDITU,
+        //   },
+        // },
+        // {
         //   type: 'bing',
         //   params: {
         //     url: 'https://dev.virtualearth.net',

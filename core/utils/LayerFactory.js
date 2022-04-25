@@ -178,16 +178,16 @@ export default class LayerFactory {
   }
   _createImageryProvider(options) {
     switch (options.type) {
-    case 'ARCGISEXIMG':
-      return new Cesium.CGCS2000MapServerImageryProvider(options);
-    case 'ARCGISIMG':
-      return new Cesium.ArcGisMapServerImageryProvider(options);
-    case 'SMIMG':
-      return new Cesium.SuperMapImageryProvider(options);
-    case 'STIMG':
-      return new Cesium.SingleTileImageryProvider(options);
-    default:
-      throw `暂不支持类型为${options.type}的栅格图层`;
+      case 'ARCGISEXIMG':
+        return new Cesium.CGCS2000MapServerImageryProvider(options);
+      case 'ARCGISIMG':
+        return new Cesium.ArcGisMapServerImageryProvider(options);
+      case 'SMIMG':
+        return new Cesium.SuperMapImageryProvider(options);
+      case 'STIMG':
+        return new Cesium.SingleTileImageryProvider(options);
+      default:
+        throw `暂不支持类型为${options.type}的栅格图层`;
     }
   }
 

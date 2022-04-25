@@ -462,6 +462,7 @@ export default class HighLimitTool {
       this.clippingRectangleOutlinePositions[2]
     );
 
+    console.log(position);
     for (let lname of this.layers) {
       let ly1 = this.scene.layers.find(lname);
       if (ly1) {

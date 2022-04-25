@@ -301,7 +301,6 @@ export function convertProjToCartesian(scene, cartesian) {
 
 //与convertProjToCartesian过程相反
 export function convertCartesianToProj(scene, cartesian) {
-  debugger;
   if (scene.mode != Cesium.SceneMode.COLUMBUS_VIEW) {
     throw '此函数只适用平面坐标系';
   }
