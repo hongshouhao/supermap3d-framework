@@ -112,7 +112,7 @@ export default class CameraUtility {
         pitch: this.camera.pitch,
         roll: this.camera.roll,
       },
-      duration: duration ?? 0,
+      duration: duration == null ? 0 : duration,
       convert: this.viewer.scene.mode != Cesium.SceneMode.COLUMBUS_VIEW,
     };
 
@@ -213,7 +213,7 @@ export default class CameraUtility {
       // )
 
       _this.viewer.camera.flyToBoundingSphere(boundingSphere, {
-        duration: options?.duration ?? 2,
+        duration: options?.duration == null ? 2 : options?.duration,
         complete: function () {
           resolve();
         },

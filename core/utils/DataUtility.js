@@ -19,12 +19,15 @@ export default class DataUtility {
       this.convertGeoJsonFromProj2LL(geojson);
     }
 
-    let opt = options ?? {
-      stroke: Cesium.Color.RED,
-      fill: Cesium.Color.BLUE.withAlpha(0.3),
-      strokeWidth: 1,
-      clampToGround: true,
-    };
+    let opt =
+      options == null
+        ? {
+            stroke: Cesium.Color.RED,
+            fill: Cesium.Color.BLUE.withAlpha(0.3),
+            strokeWidth: 1,
+            clampToGround: true,
+          }
+        : options;
     if (dsName) {
       if (!dsName.startsWith('temp_')) {
         dsName = `temp_${dsName}`;
@@ -251,7 +254,7 @@ export default class DataUtility {
         dataSource.entities.add({
           polyline: {
             positions: ent.polyline.positions._value,
-            width: materialOptions.width ?? 4,
+            width: materialOptions.width == null ? 4 : materialOptions.width,
             material: new Cesium.PolylineTrailMaterialProperty(materialOptions),
           },
         });

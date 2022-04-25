@@ -471,13 +471,16 @@ export default class S3d {
   flyToLayer(layer, options) {
     if (layer) {
       if (layer.type === 'MVT') {
-        let duration = options?.duration ?? 2;
-        let height = options?.height ?? 10000;
-        let orientation = options?.orientation ?? {
-          heading: 0,
-          roll: 0,
-          pitch: -1.57,
-        };
+        let duration = options?.duration == null ? 2 : options?.duration;
+        let height = options?.height == null ? 10000 : options?.duration;
+        let orientation =
+          options?.orientation == null
+            ? {
+                heading: 0,
+                roll: 0,
+                pitch: -1.57,
+              }
+            : options?.orientation;
         let bounds = layer.rectangle;
         // this._flyTo(layer.rectangle, options)
         this.viewer.camera.flyTo({
@@ -529,7 +532,7 @@ export default class S3d {
     if (this.config.drillPick?.enable) {
       pickedObjects = this.pickingUtility.drillPickByDepth(
         mousePosition,
-        this.config.drillPick.depth ?? 0.5
+        this.config.drillPick.depth == null ? 0.5 : this.config.drillPick.depth
       );
     } else {
       let pobj = this.scene.pick(mousePosition, 3);

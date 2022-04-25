@@ -48,7 +48,7 @@ export default class ViewUtility {
         pitch: this.camera.pitch,
         roll: this.camera.roll,
       },
-      duration: duration ?? 2,
+      duration: duration == null ? 2 : duration,
       convert: this.viewer.scene.mode != Cesium.SceneMode.COLUMBUS_VIEW,
     };
 
