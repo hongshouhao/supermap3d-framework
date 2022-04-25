@@ -233,7 +233,7 @@ export function vectorToHeadingPitchRoll(origin, target) {
   );
 }
 
-//平面坐标系转经纬度, 用于显示
+// 平面坐标系转经纬度, 用于显示
 export function convertGeoJsonFromProj2LL(scene, geojson) {
   if (scene.mode != Cesium.SceneMode.COLUMBUS_VIEW) {
     return;
@@ -287,7 +287,7 @@ export function convertGeoJsonFromLL2Proj(scene, geojson) {
   }
 }
 
-//原始平面坐标转场景笛卡尔坐标
+// 原始平面坐标转场景笛卡尔坐标
 export function convertProjToCartesian(scene, cartesian) {
   if (scene.mode != Cesium.SceneMode.COLUMBUS_VIEW) {
     throw '此函数只适用平面坐标系';
@@ -299,7 +299,7 @@ export function convertProjToCartesian(scene, cartesian) {
   return convertPos;
 }
 
-//与convertProjToCartesian过程相反
+// 与convertProjToCartesian过程相反
 export function convertCartesianToProj(scene, cartesian) {
   if (scene.mode != Cesium.SceneMode.COLUMBUS_VIEW) {
     throw '此函数只适用平面坐标系';

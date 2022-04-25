@@ -6,9 +6,9 @@ export default class PolygonDrawingTool {
       {},
       {
         multiable: true,
-        fillColor: "#ff0000",
+        fillColor: '#ff0000',
         fillOpacity: 0.5,
-        lineColor: "#ff0000",
+        lineColor: '#ff0000',
         lineOpacity: 1,
         clampToGround: true,
       },
@@ -20,10 +20,10 @@ export default class PolygonDrawingTool {
     // this.clampToGround = true;
 
     this.entityAdded = function (geo) {
-      console.log("entityAdded", geo);
+      console.log('entityAdded', geo);
     };
     this.drawingFinished = function (geoms) {
-      console.log("drawingFinished", geoms);
+      console.log('drawingFinished', geoms);
     };
 
     this._drawHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -36,7 +36,7 @@ export default class PolygonDrawingTool {
 
   start() {
     this.stop();
-    window.s3d.setCursor("cursor-crosshair");
+    window.s3d.setCursor('cursor-crosshair');
 
     let _this = this;
 
@@ -132,7 +132,7 @@ export default class PolygonDrawingTool {
     let curEntVers = [point, point.clone(), point.clone()];
     this._entityVertexes.push(curEntVers);
     this._currentEntityOutline = this.viewer.entities.add({
-      name: "sketch_polygon_outline",
+      name: 'sketch_polygon_outline',
       polyline: {
         positions: curEntVers,
         material: Cesium.Color.fromAlpha(
@@ -148,7 +148,7 @@ export default class PolygonDrawingTool {
     //   ? Cesium.HeightReference.CLAMP_TO_GROUND
     //   : Cesium.HeightReference.NONE
     this._currentEntityFill = this.viewer.entities.add({
-      name: "sketch_polygon_fill",
+      name: 'sketch_polygon_fill',
       polygon: {
         // heightReference: Cesium.HeightReference.NONE,
         hierarchy: curEntVers.slice(0, -1),

@@ -284,7 +284,7 @@ export default {
       return process.env.VUE_APP_MODE === 'dev' ? true : false;
     },
     usePlaneCoordinateSystem () {
-      return window.s3d.config.usePlaneCoordinateSystem
+      return window.s3d.config.usePlaneCoordinateSystem;
     }
   },
   beforeMount () { },

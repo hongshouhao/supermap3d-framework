@@ -8,9 +8,9 @@
  *
  * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved.
  */
-import * as turf from "@turf/turf";
-import { lonLatToCartesian, cartesianToLonlat } from "@/utils/CesiumMath";
-import BaseDrawingTool from "./BaseDrawingTool";
+import * as turf from '@turf/turf';
+import { lonLatToCartesian, cartesianToLonlat } from '@/utils/CesiumMath';
+import BaseDrawingTool from './BaseDrawingTool';
 
 export default class CircleDrawingTool extends BaseDrawingTool {
   constructor(viewer, options) {
@@ -19,9 +19,9 @@ export default class CircleDrawingTool extends BaseDrawingTool {
     this.options = Object.assign(
       {},
       {
-        fillColor: "#ff0000",
+        fillColor: '#ff0000',
         fillOpacity: 0.5,
-        lineColor: "#ff0000",
+        lineColor: '#ff0000',
         lineOpacity: 1,
         clampToGround: true,
       },
@@ -42,7 +42,7 @@ export default class CircleDrawingTool extends BaseDrawingTool {
     const that = this;
 
     return new Promise((resolve, reject) => {
-      window.s3d.setCursor("cursor-crosshair");
+      window.s3d.setCursor('cursor-crosshair');
       that.stop();
 
       that.isDrawing = false;
@@ -118,11 +118,11 @@ export default class CircleDrawingTool extends BaseDrawingTool {
     let from = turf.point([center.longitude, center.latitude]);
     let to = turf.point([end.longitude, end.latitude]);
 
-    let distance = turf.distance(from, to, { units: "kilometers" });
+    let distance = turf.distance(from, to, { units: 'kilometers' });
 
     let data = turf.circle([center.longitude, center.latitude], distance, {
       steps: 60,
-      units: "kilometers",
+      units: 'kilometers',
     });
 
     data.geometry.coordinates.forEach((g) => {

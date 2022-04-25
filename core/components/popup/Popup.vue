@@ -291,10 +291,10 @@ export default {
       ) {
         if (obj.object.shape.type.toLowerCase() == 'featurecollection') {
           for (let fitem of obj.object.shape.features) {
-            fitem.properties = obj.object.attributes
+            fitem.properties = obj.object.attributes;
           }
         } else if (obj.object.shape.type.toLowerCase() == 'feature') {
-          obj.object.shape.properties = obj.object.attributes
+          obj.object.shape.properties = obj.object.attributes;
         }
 
         // 方案1
@@ -305,7 +305,7 @@ export default {
           `temp_iquery_geometries_${ly.name}`
         ).then(ds => {
           for (let ent of ds.entities.values) {
-            ent.name = ly.name
+            ent.name = ly.name;
           }
         });
 
@@ -360,7 +360,7 @@ export default {
       }
     },
     _clearTempDataSources () {
-      window.s3d.dataUtility.clearTempData("temp_iquery_geometries_")
+      window.s3d.dataUtility.clearTempData('temp_iquery_geometries_');
     },
     _enableStickRender () {
       if (this.removePostRenderHandler) {

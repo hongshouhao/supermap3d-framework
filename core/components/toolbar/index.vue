@@ -31,7 +31,7 @@ import ToolItem from './tool-item.vue';
 import ToolManager from './manager/index';
 
 export default {
-  name:"n-tool-bar",
+  name:'n-tool-bar',
   props: {
     tools: {
       type: Array,

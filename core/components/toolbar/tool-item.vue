@@ -41,7 +41,7 @@
 
 <script>
 export default {
-  name: "n-tool-item",
+  name: 'n-tool-item',
   props: {
     code: {
       type: String,
@@ -50,7 +50,7 @@ export default {
     icon: {
       type: String,
       default() {
-        return "icon-hammer";
+        return 'icon-hammer';
       },
     },
   },
@@ -60,21 +60,21 @@ export default {
     };
   },
   mounted() {
-    if (this.$refs["tool-extra-component"]) {
+    if (this.$refs['tool-extra-component']) {
       this.$viewer.cesiumWidget.container.appendChild(
-        this.$refs["tool-extra-component"].$el
+        this.$refs['tool-extra-component'].$el
       );
     }
   },
   inject: {
     toolbar: {
-      from: "toolbar",
+      from: 'toolbar',
       default() {
         return null;
       },
     },
     toolitem: {
-      from: "toolitem",
+      from: 'toolitem',
       default() {
         return null;
       },
@@ -87,8 +87,8 @@ export default {
       enable: false,
       showExtraSetting: false,
       toolDescriptor: null,
-      extraComponentLabel: "",
-      extraComponent: "",
+      extraComponentLabel: '',
+      extraComponent: '',
     };
   },
   created() {
@@ -109,8 +109,8 @@ export default {
           this.showExtraSetting = true;
         } else {
           this.showExtraSetting = false;
-          this.extraComponent = "";
-          this.extraComponentLabel = "";
+          this.extraComponent = '';
+          this.extraComponentLabel = '';
         }
       }
     },
@@ -129,7 +129,7 @@ export default {
       return false;
     },
     popPlacement() {
-      return this.toolbar.horizonal ? "bottom" : "right";
+      return this.toolbar.horizonal ? 'bottom' : 'right';
     },
   },
 };

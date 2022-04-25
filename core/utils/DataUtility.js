@@ -22,11 +22,11 @@ export default class DataUtility {
     let opt =
       options == null
         ? {
-            stroke: Cesium.Color.RED,
-            fill: Cesium.Color.BLUE.withAlpha(0.3),
-            strokeWidth: 1,
-            clampToGround: true,
-          }
+          stroke: Cesium.Color.RED,
+          fill: Cesium.Color.BLUE.withAlpha(0.3),
+          strokeWidth: 1,
+          clampToGround: true,
+        }
         : options;
     if (dsName) {
       if (!dsName.startsWith('temp_')) {
@@ -65,7 +65,7 @@ export default class DataUtility {
     });
   }
 
-  //平面坐标系转经纬度, 用于显示
+  // 平面坐标系转经纬度, 用于显示
   convertGeoJsonFromProj2LL(geojson) {
     convertGeoJsonFromProj2LL(this.viewer.scene, geojson);
   }
@@ -99,7 +99,7 @@ export default class DataUtility {
     }
   }
 
-  //原始平面坐标转场景笛卡尔坐标
+  // 原始平面坐标转场景笛卡尔坐标
   convertProjToCartesian(cartesian) {
     if (this.viewer.scene.mode != Cesium.SceneMode.COLUMBUS_VIEW) {
       throw '此函数只适用平面坐标系';
@@ -111,7 +111,7 @@ export default class DataUtility {
     return convertPos;
   }
 
-  //与convertProjToCartesian过程相反
+  // 与convertProjToCartesian过程相反
   convertCartesianToProj(cartesian) {
     if (this.viewer.scene.mode != Cesium.SceneMode.COLUMBUS_VIEW) {
       throw '此函数只适用平面坐标系';

@@ -20,71 +20,71 @@ import CircleDrawingTool from '../../../tools/Sketch/CircleDrawingTool';
 import RectangleDrawingTool from '../../../tools/Sketch/RectangleDrawingTool';
 
 export default class ToolManager {
-    constructor(viewer, options) {
-        this.viewer = viewer;
-        this.options = options;
+  constructor(viewer, options) {
+    this.viewer = viewer;
+    this.options = options;
 
-        this.toolList = [
-            { code: 'measure-angle', constructor: AngleMeasurement },
-            { code: 'measure-point', constructor: PointMeasurement },
-            {
-                code: 'draw-polygon',
-                constructor: PolygonDrawingTool,
-            },
-            { code: 'draw-polyline', constructor: PolylineDrawingTool },
-            { code: 'draw-circle', constructor: CircleDrawingTool },
-            { code: 'draw-rectangle', constructor: RectangleDrawingTool },
-            {
-                code: 'split-screen',
-                handler: () => {
-                    window.s3d.layerTree.toggleViewportMode();
-                },
-            },
-            {
-                code: 'iquery',
-                handler: () => {
-                    window.s3d.popup.enable();
-                },
-            },
-            {
-                code: 'setting',
-                handler: () => {},
-                extraComponent: 'common-setting',
-                extraComponentLabel: '设置',
-            },
-            {
-                code: 'clear',
-                handler: () => {},
-            },
-        ];
+    this.toolList = [
+      { code: 'measure-angle', constructor: AngleMeasurement },
+      { code: 'measure-point', constructor: PointMeasurement },
+      {
+        code: 'draw-polygon',
+        constructor: PolygonDrawingTool,
+      },
+      { code: 'draw-polyline', constructor: PolylineDrawingTool },
+      { code: 'draw-circle', constructor: CircleDrawingTool },
+      { code: 'draw-rectangle', constructor: RectangleDrawingTool },
+      {
+        code: 'split-screen',
+        handler: () => {
+          window.s3d.layerTree.toggleViewportMode();
+        },
+      },
+      {
+        code: 'iquery',
+        handler: () => {
+          window.s3d.popup.enable();
+        },
+      },
+      {
+        code: 'setting',
+        handler: () => {},
+        extraComponent: 'common-setting',
+        extraComponentLabel: '设置',
+      },
+      {
+        code: 'clear',
+        handler: () => {},
+      },
+    ];
 
-        this.toolInstanceList = [];
+    this.toolInstanceList = [];
 
-        Vue.component('common-setting', CommonSetting);
-        Vue.component('widget-panel', WidgetPanel);
+    Vue.component('common-setting', CommonSetting);
+    Vue.component('widget-panel', WidgetPanel);
+  }
+
+  execute(code, invoker) {
+    let toolItem = this.toolList.filter((f) => f.code == code)[0];
+    if (toolItem) {
+      if (toolItem.handler) {
+        toolItem.handler();
+      } else {
+        let instance = new toolItem.constructor(this.viewer, { invoker: invoker });
+        instance.start();
+        this.toolInstanceList.push(instance);
+      }
+      return toolItem;
     }
+    return null;
+  }
 
-    execute(code, invoker) {
-        let toolItem = this.toolList.filter((f) => f.code == code)[0];
-        if (toolItem) {
-            if (toolItem.handler) {
-                toolItem.handler();
-            } else {
-                let instance = new toolItem.constructor(this.viewer, { invoker: invoker });
-                instance.start();
-                this.toolInstanceList.push(instance);
-            }
-            return toolItem;
-        }
-        return null;
-    }
-
-    clear() {
-        this.toolInstanceList.forEach((f) => {
-            if (f.clear) {
-                f.clear();
-            }
-        });
-        this.toolInstanceList = [];
-    }
+  clear() {
+    this.toolInstanceList.forEach((f) => {
+      if (f.clear) {
+        f.clear();
+      }
+    });
+    this.toolInstanceList = [];
+  }
 }
