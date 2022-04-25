@@ -477,7 +477,11 @@ export default class S3d {
         if (options?.orientation) {
           orientation = options.orientation;
         } else {
-          orientation = { heading: 0, roll: 0, pitch: -1.57 };
+          orientation = {
+            heading: 0,
+            roll: 0,
+            pitch: -1.57,
+          };
         }
 
         let bounds = layer.rectangle;
