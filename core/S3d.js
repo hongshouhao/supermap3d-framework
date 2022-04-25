@@ -473,10 +473,13 @@ export default class S3d {
       if (layer.type === 'MVT') {
         let duration = options?.duration == null ? 2 : options?.duration;
         let height = options?.height == null ? 10000 : options?.duration;
-        let orientation =
-          options?.orientation == null
-            ? { heading: 0, roll: 0, pitch: -1.57 }
-            : options?.orientation;
+        let orientation = null;
+        if (options?.orientation) {
+          orientation = options.orientation;
+        } else {
+          orientation = { heading: 0, roll: 0, pitch: -1.57 };
+        }
+
         let bounds = layer.rectangle;
         // this._flyTo(layer.rectangle, options)
         this.viewer.camera.flyTo({
