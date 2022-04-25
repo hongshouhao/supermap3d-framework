@@ -18,7 +18,7 @@ export const config = {
   undergroundMode: false,
   minimumZoomDistance: -1000,
   colorCorrection: {
-    brightness: 1.5,
+    brightness: 1,
     hue: 0.05,
     saturation: 1.1,
     contrast: 1.05,
@@ -75,13 +75,23 @@ export const config = {
     },
     normal: {
       maps: [
-        // {
-        //   type: 'tianditu',
-        //   params: {
-        //     mapStyle: Cesium.TiandituMapsStyle['VEC_W'],
-        //     token: URL_CONFIG.TOKEN_TIANDITU,
-        //   },
-        // },
+        {
+          type: 'tianditu',
+          params: {
+            highResolution: true,
+            mapStyle: 'vec_w',
+            token: '6e6c4794820bd4fd1b196af3f328d82d',
+          },
+        },
+        {
+          type: 'tianditu',
+          params: {
+            highResolution: true,
+            mapStyle: 'cva_c',
+            token: '6e6c4794820bd4fd1b196af3f328d82d',
+          },
+        },
+
         // {
         //   type: 'bing',
         //   params: {

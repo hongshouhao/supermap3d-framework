@@ -92,7 +92,7 @@ export default class S3d {
 
     this.viewer.scene.colorCorrection.show = true;
     this.viewer.scene.globe.enableLighting = true;
-    this.viewer.scene.hdrEnabled = true;
+    // this.viewer.scene.hdrEnabled = true;
 
     // viewer.scene.fxaa = false
     // viewer.scene.postProcessStages.fxaa.enabled = false
@@ -475,11 +475,7 @@ export default class S3d {
         let height = options?.height == null ? 10000 : options?.duration;
         let orientation =
           options?.orientation == null
-            ? {
-                heading: 0,
-                roll: 0,
-                pitch: -1.57,
-              }
+            ? { heading: 0, roll: 0, pitch: -1.57 }
             : options?.orientation;
         let bounds = layer.rectangle;
         // this._flyTo(layer.rectangle, options)
