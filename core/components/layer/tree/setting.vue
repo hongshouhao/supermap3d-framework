@@ -2,6 +2,8 @@
   <div class="layer-settings"
        v-if="cesiumLayerLoaded">
     <el-row>
+    </el-row>
+    <el-row>
       <el-col :span="8">
         <span class="layer-settings-item-label">透明度</span>
       </el-col>
@@ -79,7 +81,7 @@
         </el-slider>
       </el-col>
     </el-row>
-    <el-row>
+    <!-- <el-row>
       <el-col :span="8">
         <span class="layer-settings-item-label">光照</span>
       </el-col>
@@ -90,7 +92,7 @@
                    @change="toogleLight">
         </el-switch>
       </el-col>
-    </el-row>
+    </el-row> -->
     <el-row>
       <div v-if="showRenderer">
         <el-col :span="8">
@@ -145,7 +147,8 @@ export default {
           this.gamma = this.cesiumLayer.gamma;
           this.hasLight = !this.cesiumLayer.hasLight;
         }
-      }
+      },
+      immediate: true
     }
   },
   mounted () {
@@ -161,10 +164,14 @@ export default {
   },
   methods: {
     setOpacity (opacity) {
-      setLayerOpacity(this.cesiumLayer, opacity);
+      if (this.cesiumLayer) {
+        setLayerOpacity(this.cesiumLayer, opacity);
+      }
     },
     setLayerProperty (value, key) {
-      this.cesiumLayer[key] = value;
+      if (this.cesiumLayer) {
+        this.cesiumLayer[key] = value;
+      }
     },
     toogleLight (val) {
       this.lyElModel.cesiumLayer.hasLight = !val;

@@ -4,6 +4,8 @@ export const config = {
   iServerBaseURL: process.env.VUE_APP_ISERVER_BASE_URL,
   useEllipsoid: true,
   usePlaneCoordinateSystem: false,
+  initViewMode: '2D',
+
   // dem: URL_CONFIG.SiChuan_TERRAIN,
   // dem: 'http://www.supermapol.com/realspace/services/3D-OlympicGreen_Plan/rest/realspace/datas/beijingdem',
   // globalNightMap: {
@@ -75,23 +77,6 @@ export const config = {
     },
     normal: {
       maps: [
-        {
-          type: 'tianditu',
-          params: {
-            highResolution: true,
-            mapStyle: 'vec_w',
-            token: '6e6c4794820bd4fd1b196af3f328d82d',
-          },
-        },
-        {
-          type: 'tianditu',
-          params: {
-            highResolution: true,
-            mapStyle: 'cva_c',
-            token: '6e6c4794820bd4fd1b196af3f328d82d',
-          },
-        },
-
         // {
         //   type: 'bing',
         //   params: {
@@ -108,13 +93,13 @@ export const config = {
         //       'http://58.210.9.133/geoserver/rest/services/ZK_DLTB2020/MapServer',
         //   },
         // },
-        // {
-        //   type: 'supermap',
-        //   // mode: 'day',
-        //   params: {
-        //     url: URL_CONFIG.SUPERMAP_IMG_MEC,
-        //   },
-        // },
+        {
+          type: 'supermap',
+          // mode: 'day',
+          params: {
+            url: URL_CONFIG.SUPERMAP_IMG_MEC,
+          },
+        },
       ],
     },
   },

@@ -22,7 +22,11 @@ export default class ViewUtility {
       );
       return intersection;
     } else {
-      return rayEarthIntersection(this.camera.position, this.camera.direction);
+      let intersection = rayEarthIntersection(
+        this.camera.position,
+        this.camera.direction
+      );
+      return intersection;
     }
   }
 

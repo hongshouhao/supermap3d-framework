@@ -1,77 +1,60 @@
 <template>
   <div class="layer-tree">
-    <div class="layer-tabs" v-show="!multiViewport">
-      <div
-        class="tab-item"
-        :class="{ active: curTab == 'layer' }"
-        @click="curTab = 'layer'"
-      >
+    <div class="layer-tabs"
+         v-show="!multiViewport">
+      <div class="tab-item"
+           :class="{ active: curTab == 'layer' }"
+           @click="curTab = 'layer'">
         图层
       </div>
-      <div
-        class="tab-item"
-        :class="{ active: curTab == 'recent' }"
-        @click="curTab = 'recent'"
-      >
+      <div class="tab-item"
+           :class="{ active: curTab == 'recent' }"
+           @click="curTab = 'recent'">
         最近
       </div>
-      <div
-        class="tab-item"
-        :class="{ active: curTab == 'favour' }"
-        @click="curTab = 'favour'"
-      >
+      <div class="tab-item"
+           :class="{ active: curTab == 'favour' }"
+           @click="curTab = 'favour'">
         收藏
       </div>
     </div>
 
     <div class="layer-filter">
-      <el-input
-        class="layer-filter"
-        size="mini"
-        clearable
-        placeholder="输入图层名"
-        v-model="filterText"
-      >
+      <el-input class="layer-filter"
+                size="mini"
+                clearable
+                placeholder="输入图层名"
+                v-model="filterText">
       </el-input>
     </div>
     <div class="layer-tree-container">
-      <el-scrollbar
-        style="height: 100%"
-        class="tree-wrapper main"
-        v-show="curTab == 'layer'"
-      >
-        <el-tree
-          show-checkbox
-          node-key="id"
-          ref="tree"
-          :expand-on-click-node="false"
-          :filter-node-method="filterNode"
-          :render-after-expand="false"
-          :data="layersData"
-          :props="{ disabled: disableNode }"
-          :default-expanded-keys="defaultExpandedKeys"
-          :default-checked-keys="defaultCheckedKeys"
-          :render-content="renderExtButton"
-          @check-change="onCheckLayer"
-        >
+      <el-scrollbar style="height: 100%"
+                    class="tree-wrapper main"
+                    v-show="curTab == 'layer'">
+        <el-tree show-checkbox
+                 node-key="id"
+                 ref="tree"
+                 :expand-on-click-node="false"
+                 :filter-node-method="filterNode"
+                 :render-after-expand="false"
+                 :data="layersData"
+                 :props="{ disabled: disableNode }"
+                 :default-expanded-keys="defaultExpandedKeys"
+                 :default-checked-keys="defaultCheckedKeys"
+                 :render-content="renderExtButton"
+                 @check-change="onCheckLayer">
         </el-tree>
       </el-scrollbar>
-      <compare-tree
-        v-if="multiViewport"
-        :filter-text="filterText"
-      ></compare-tree>
-      <fav-tree
-        v-if="curTab == 'favour'"
-        :layerData="layersData"
-        :filter-text="filterText"
-        ref="favourite"
-      ></fav-tree>
-      <recent-tree
-        ref="recent"
-        :layerData="layersData"
-        :filter-text="filterText"
-        v-if="curTab == 'recent'"
-      ></recent-tree>
+      <compare-tree v-if="multiViewport"
+                    :filter-text="filterText"></compare-tree>
+      <fav-tree v-if="curTab == 'favour'"
+                :layerData="layersData"
+                :filter-text="filterText"
+                ref="favourite"></fav-tree>
+      <recent-tree ref="recent"
+                   :layerData="layersData"
+                   :filter-text="filterText"
+                   v-if="curTab == 'recent'"></recent-tree>
     </div>
   </div>
 </template>
@@ -90,7 +73,7 @@ export default {
     CompareTree,
   },
   mixins: [LayerMixin],
-  data() {
+  data () {
     return {
       layersData: [],
       multiViewport: false,
@@ -98,9 +81,9 @@ export default {
       curTab: 'layer',
     };
   },
-  created() {},
+  created () { },
   props: [],
-  mounted() {
+  mounted () {
     window.s3d.layerTree = this;
 
     let _this = this;
@@ -122,7 +105,7 @@ export default {
     );
   },
   methods: {
-    toggleViewportMode() {
+    toggleViewportMode () {
       if (this.multiViewport) {
         this.$viewer.scene.multiViewportMode = Cesium.MultiViewportMode.NONE;
         this.multiViewport = false;
@@ -132,7 +115,7 @@ export default {
         this.multiViewport = true;
       }
     },
-    init() {
+    init () {
       if (this.$viewer) {
         this.addLayers(window.s3d.config.layers, -1);
         this.layersData = window.s3d.config.layers;
@@ -157,7 +140,7 @@ export default {
       }
     },
 
-    addLayers(layersData) {
+    addLayers (layersData) {
       let _this = this;
       for (let lyElModel of layersData) {
         let lyOptions = lyElModel.layer;
@@ -172,9 +155,9 @@ export default {
             this.favourLayerIds.indexOf(lyElModel.id) > -1
           );
 
-          this.$set(lyElModel, 'cesiumLayerLoaded', false);
+          // this.$set(lyElModel, 'cesiumLayerLoaded', false);
 
-          // lyElModel.cesiumLayerLoaded = false;
+          lyElModel.cesiumLayerLoaded = false;
 
           if (lyOptions.visible) {
             _this.defaultCheckedKeys.push(lyElModel.id);
@@ -193,7 +176,7 @@ export default {
       }
     },
 
-    onCheckLayer(data, checked) {
+    onCheckLayer (data, checked) {
       // if (this.$refs.recent) {
       //   this.$refs.recent.$refs.tree.setChecked(data.id, checked);
       // }
@@ -348,7 +331,7 @@ export default {
     height: 1px;
     width: 26px;
     background: #dbdee2;
-    content: "";
+    content: '';
     position: absolute;
     left: 4px;
     top: 0px;

@@ -78,16 +78,21 @@ export default class S3d {
       this.viewer.imageryLayers.remove(this.viewer.imageryLayers._layers[0]);
     }
 
+    if (this.config.emptyMap) {
+      this.config.emptyMap.name = 'empty';
+      this.config.emptyMap.type = 'STIMG';
+      this.config.emptyMap.visible = true;
+      this.layerFactory.createLayer(this.config.emptyMap);
+    }
+
     if (this.config.globalNightMap) {
       this.config.globalNightMap.type = 'SMIMG';
       this.config.globalNightMap.visible = true;
       this.layerFactory.createLayer(this.config.globalNightMap);
     }
 
-    if (this.config.emptyMap) {
-      this.config.emptyMap.type = 'STIMG';
-      this.config.emptyMap.visible = true;
-      this.layerFactory.createLayer(this.config.emptyMap);
+    for (let imgLy of this.viewer.imageryLayers._layers) {
+      imgLy.isBaseMap = true;
     }
 
     this.viewer.scene.colorCorrection.show = true;
@@ -145,7 +150,12 @@ export default class S3d {
     if (this.config.usePlaneCoordinateSystem) {
       this.config.defaultCamera.convert = false;
       this.viewer.camera.setView(this.config.defaultCamera);
+      this.eventBus.dispatch('default-camera-settled');
     } else {
+      this.config.defaultCamera.complete = () => {
+        this.eventBus.dispatch('default-camera-settled');
+      };
+
       this.viewer.camera.flyTo(this.config.defaultCamera);
     }
 

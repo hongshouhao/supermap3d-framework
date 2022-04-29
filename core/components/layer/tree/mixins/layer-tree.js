@@ -43,9 +43,6 @@ export default {
         this.recentLayerStore.set(data.id);
       }
 
-      console.log(data);
-      console.log(checked);
-
       if (data.cesiumLayer) {
         if (this.multiViewport) {
           this.setVisibleInViewport(data.cesiumLayer, viewport, checked);
@@ -138,32 +135,6 @@ export default {
               </span>
             </span>
           );
-          // return (
-          //   <span class={this.getDirNodeClass(lyElModel)}>
-          //     <i class={lyElModel.icon ? 'layer-node-icon ' + lyElModel.icon : ''} />
-          //     <span class="over-ellipsis">
-          //       <span on-dblclick={() => {
-          //         if (lyElModel.cesiumLayer) {
-          //           window.s3d.flyToLayer(
-          //             lyElModel.cesiumLayer,
-          //             lyElModel.layer.defaultCamera
-          //           )
-          //         }
-          //       }} title={node.label}>{node.label}</span>
-          //     </span>
-          //     <el-popover
-          //       placement="bottom"
-          //       popper-class="layer-setting-popup"
-          //       trigger="hover"
-          //     >
-          //       <LayerSetting lyElModel={lyElModel} />
-          //       <i
-          //         slot="reference"
-          //         class={node.checked ? 'layer-settings my-icon-more' : ''}
-          //       />
-          //     </el-popover>
-          //   </span>
-          // )
         } else {
           return (
             <span class={this.getDirNodeClass(lyElModel)}>
@@ -211,6 +182,22 @@ export default {
                 </span>
               </span>
               <span class="layer-tool">
+                <i
+                  class="my-icon-top"
+                  on-click={() => {
+                    lyElModel.cesiumLayer = window.s3d.layerManager.topLayer(
+                      lyElModel.layer.name
+                    );
+                  }}
+                />
+                <i
+                  class="my-icon-bottom"
+                  on-click={() => {
+                    lyElModel.cesiumLayer = window.s3d.layerManager.bottomLayer(
+                      lyElModel.layer.name
+                    );
+                  }}
+                />
                 <el-popover
                   placement="bottom"
                   popper-class="layer-setting-popup"
@@ -339,12 +326,10 @@ export default {
     },
     _createLayer(lyElModel) {
       let result = this.layerFactory.createLayer(lyElModel.layer);
-
       if (isPromise(result)) {
         return result.then((ly) => {
           lyElModel.cesiumLayer = ly;
           lyElModel.cesiumLayerLoaded = true;
-
           window.s3d.eventBus.dispatch('layer-added', 'layers-tree', ly);
         });
       } else if (lyElModel.layer.type === 'DEM') {
@@ -353,7 +338,6 @@ export default {
       } else {
         lyElModel.cesiumLayer = result;
         lyElModel.cesiumLayerLoaded = true;
-
         window.s3d.eventBus.dispatch('layer-added', 'layers-tree', result);
       }
       return lyElModel.cesiumLayer;

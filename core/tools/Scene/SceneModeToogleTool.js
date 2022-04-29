@@ -7,6 +7,19 @@ export default class SceneModeToogleTool {
     this.viewUtility = window.s3d.viewUtility;
   }
 
+  toogleTo(targMode) {
+    if (targMode != '2D' && targMode != '3D') {
+      throw '输入参数不合法: 2D|3D';
+    }
+
+    if (targMode == '2D') {
+      this.mode === '3D';
+    } else {
+      this.mode === '2D';
+    }
+    this.toogle();
+  }
+
   toogle() {
     if (this.mode === '3D') {
       let center = this.viewUtility.getViewCenter();
@@ -77,7 +90,7 @@ export default class SceneModeToogleTool {
         );
         options.convert = false;
       } else {
-        destination = reCalculateCartesian(destination, this.preHeight);
+        options.destination = reCalculateCartesian(destination, this.preHeight);
       }
       this.viewer.camera.flyTo(options);
       this.mode = '3D';

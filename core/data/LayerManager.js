@@ -94,6 +94,42 @@ export default class LayerManager {
       throw `getLayerNode 不支持的参数类型 ${typeof params}`;
     }
   }
+
+  bottomLayer(layer) {
+    debugger;
+    let baseLys = this.viewer.imageryLayers._layers.filter(
+      (x) => x.isBaseMap == true
+    );
+    let theLy = this.getLayer(layer);
+
+    if (this.viewer.imageryLayers._layers[baseLys.length].name == layer) {
+      return;
+    }
+
+    let lyConf = this.getLayerConfig(layer);
+    lyConf.index = baseLys.length;
+
+    this.layerFactory.removeLayer(theLy);
+    let newLy = this.layerFactory.createLayer(lyConf);
+    lyConf.index = null;
+    return newLy;
+  }
+
+  topLayer(layer) {
+    let imgLys = this.viewer.imageryLayers._layers;
+    if (layer == imgLys[imgLys.length - 1].name) {
+      return;
+    }
+
+    let theLy = this.getLayer(layer);
+    let lyConf = theLy.config;
+    lyConf.index = null;
+
+    this.layerFactory.removeLayer(theLy);
+    let newLy = this.layerFactory.createLayer(lyConf);
+    return newLy;
+  }
+
   // _setLayerVisible(layer, visible) {
   //   this.eventBus.dispatch('layer-visible-changed', layer.name, visible)
   //   // if (!visible) {

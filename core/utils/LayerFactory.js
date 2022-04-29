@@ -99,6 +99,7 @@ export default class LayerFactory {
       viewer: this.viewer,
     });
     cly.type = options.type;
+    cly.name = options.name;
     cly.config = options;
     cly.show = options.visible;
 
@@ -132,7 +133,7 @@ export default class LayerFactory {
   }
   createImageLayer(options) {
     let imgp = this._createImageryProvider(options);
-    let ly = this.viewer.imageryLayers.addImageryProvider(imgp);
+    let ly = this.viewer.imageryLayers.addImageryProvider(imgp, options.index);
     ly.type = options.type;
     ly.config = options;
     ly.show = options.visible;

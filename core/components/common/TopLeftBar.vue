@@ -290,6 +290,7 @@ export default {
   beforeMount () { },
   mounted () {
     window.s3d.topLeftBar = this;
+
     let _viewer = this.$viewer;
     _viewer.cesiumWidget.container.appendChild(
       this.$refs.viewshedSettingPanel.$el
@@ -328,9 +329,18 @@ export default {
       _this.submergedTool = new SubmergedTool(_viewer);
       _this.excavationTool = new ExcavationTool(_viewer);
       _this.viewshedTool.bindUI(_this.$refs.viewshedSettingPanel.$el);
+      _this.init();
     });
   },
   methods: {
+    init () {
+      window.s3d.eventBus.addEventListener('default-camera-settled', () => {
+        if (window.s3d.config.initViewMode == '2D') {
+          this.sceneModeToogleTool.toogleTo(window.s3d.config.initViewMode);
+          this.viewMode = this.sceneModeToogleTool.mode;
+        }
+      });
+    },
     globeView () {
       window.s3d.config.defaultCamera.convert = this.$viewer.scene.mode != Cesium.SceneMode.COLUMBUS_VIEW;
       this.$viewer.camera.flyTo(window.s3d.config.defaultCamera);

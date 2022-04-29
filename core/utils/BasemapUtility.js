@@ -6,6 +6,7 @@ export default class BasemapUtility {
     this.eventBus = eventBus;
     this.mapsConfig = config.baseMaps;
     this._initMapConfig();
+
     // 白天还是夜晚
     // this.mode = 'night'
   }
@@ -184,8 +185,16 @@ export default class BasemapUtility {
   }
 
   createMap(mapParams) {
+    let lys = this.viewer.imageryLayers._layers.filter(
+      (x) => x.isBaseMap == true
+    );
+
     let mapProvider = createImageryProvider(mapParams);
-    let map = this.viewer.imageryLayers.addImageryProvider(mapProvider);
+    let map = this.viewer.imageryLayers.addImageryProvider(
+      mapProvider,
+      lys.length
+    );
+    map.isBaseMap = true;
     map.type = mapParams.type;
     map.mode = mapParams.mode;
     map.name = mapParams.name;
