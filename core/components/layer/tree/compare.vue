@@ -2,7 +2,7 @@
  * @Author: zhangbo
  * @Date: 2022-04-07 08:51:33
  * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-08 14:14:38
+ * @LastEditTime: 2022-05-12 09:12:45
  * @FilePath: \supermap3d-framework\core\components\layer\tree\compare.vue
  * @Description: 
  * 
@@ -53,7 +53,7 @@ export default {
     },
   },
   mounted() {
-    let ids = that.$parent.$refs.tree.getCheckedKeys();
+    let ids = this.$parent.$refs.tree.getCheckedKeys();
     this.$refs.tree.setCheckedKeys(ids);
   },
 };

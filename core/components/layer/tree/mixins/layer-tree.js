@@ -16,7 +16,7 @@ import LayerStore from '../store/layer-store';
 export default {
   data() {
     return {
-      layerFactory: null,
+      // layerFactory: null,
       defaultExpandedKeys: [],
       defaultCheckedKeys: [],
     };
@@ -331,6 +331,7 @@ export default {
           lyElModel.cesiumLayer = ly;
           lyElModel.cesiumLayerLoaded = true;
           window.s3d.eventBus.dispatch('layer-added', 'layers-tree', ly);
+          return ly;
         });
       } else if (lyElModel.layer.type === 'DEM') {
         Object.assign(lyElModel, result);
