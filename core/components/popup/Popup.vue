@@ -298,16 +298,21 @@ export default {
         }
 
         // 方案1
-        let opts = ly.config.iQuery.symbol;
-        window.s3d.dataUtility.loadGeoJson(
-          obj.object.shape,
-          opts,
-          `temp_iquery_geometries_${ly.name}`
-        ).then(ds => {
-          for (let ent of ds.entities.values) {
-            ent.name = ly.name;
-          }
-        });
+        if(window.s3d.config.customPopupRender){
+            window.s3d.config.customPopupRender(obj.object.shape)
+        }
+        else{
+          let opts = ly.config.iQuery.symbol;
+          window.s3d.dataUtility.loadGeoJson(
+            obj.object.shape,
+            opts,
+            `temp_iquery_geometries_${ly.name}`
+          ).then(ds => {
+            for (let ent of ds.entities.values) {
+              ent.name = ly.name;
+            }
+          });
+        }
 
         // //方案2
         // Cesium.GeoJsonDataSource.load(obj.object.shape).then((ds) => {
