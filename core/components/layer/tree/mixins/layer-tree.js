@@ -183,7 +183,7 @@ export default {
               </span>
               <span class="layer-tool">
                 <i
-                  class="my-icon-top"
+                  class="esri-icon icon-top"
                   on-click={() => {
                     lyElModel.cesiumLayer = window.s3d.layerManager.topLayer(
                       lyElModel.layer.name
@@ -191,7 +191,7 @@ export default {
                   }}
                 />
                 <i
-                  class="my-icon-bottom"
+                  class="esri-icon icon-bottom"
                   on-click={() => {
                     lyElModel.cesiumLayer = window.s3d.layerManager.bottomLayer(
                       lyElModel.layer.name
@@ -207,7 +207,9 @@ export default {
                   <LayerSetting lyElModel={lyElModel} />
                   <i
                     slot="reference"
-                    class={node.checked ? 'layer-settings my-icon-more' : ''}
+                    class={
+                      node.checked ? 'layer-settings esri-icon icon-more' : ''
+                    }
                   />
                 </el-popover>
                 <a

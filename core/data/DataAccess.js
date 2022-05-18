@@ -162,6 +162,20 @@ export default class DataAccess {
     return axios.post(dataUrl, queryParameter);
   }
 
+  spatialQueryOverDataset(dataUrl, datasetName, geometry, spatialRelation) {
+    let queryParameter = {
+      datasetNames: [datasetName],
+      getFeatureMode: 'SPATIAL',
+      spatialQueryMode: spatialRelation,
+      geometry: geometry,
+    };
+    return axios.post(dataUrl, queryParameter);
+  }
+
+  queryOver(dataUrl, parameters) {
+    return axios.post(dataUrl, parameters);
+  }
+
   _deleteProperty(obj, fields) {
     if (fields && fields instanceof Array && fields.length > 0) {
       for (let f of fields) {

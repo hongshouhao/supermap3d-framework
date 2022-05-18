@@ -4,7 +4,7 @@ export const config = {
   iServerBaseURL: process.env.VUE_APP_ISERVER_BASE_URL,
   useEllipsoid: true,
   usePlaneCoordinateSystem: false,
-  initViewMode: '2D',
+  // initViewMode: '2D',
 
   // dem: URL_CONFIG.SiChuan_TERRAIN,
   // dem: 'http://www.supermapol.com/realspace/services/3D-OlympicGreen_Plan/rest/realspace/datas/beijingdem',

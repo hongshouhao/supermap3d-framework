@@ -31,6 +31,9 @@ export default class ViewshedTool {
 
     let _this = this;
     let viewPosition = null;
+
+    window.s3d.eventBus.dispatch('tool-started', 'viewshed');
+
     // 鼠标移动时间回调
     _this.drawHandler.setInputAction(function (e) {
       // 若此标记为false，则激活对可视域分析对象的操作
@@ -73,6 +76,7 @@ export default class ViewshedTool {
         window.s3d.cameraUtility.lookAt(start, end);
       }
 
+      window.s3d.eventBus.dispatch('tool-stopped', 'viewshed');
       _this.drawHandler.removeInputAction(
         Cesium.ScreenSpaceEventType.MOUSE_MOVE
       );

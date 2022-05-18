@@ -20,9 +20,9 @@ export default class AngleMeasurement {
     _this.legLength = 0;
 
     window.s3d.setCursor('cursor-crosshair');
-
+    window.s3d.eventBus.dispatch('tool-started', 'measure-angle');
     _this.anglePositions = [];
-    _this.angleDrawHandler.setInputAction(function(e) {
+    _this.angleDrawHandler.setInputAction(function (e) {
       let point = window.s3d.viewUtility.screenPositionToCartesian(e.position);
       if (step === 0) {
         _this.anglePositions.push(point);
@@ -38,7 +38,7 @@ export default class AngleMeasurement {
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
-    _this.angleDrawHandler.setInputAction(function(e) {
+    _this.angleDrawHandler.setInputAction(function (e) {
       let point = window.s3d.viewUtility.screenPositionToCartesian(
         e.endPosition
       );
@@ -61,8 +61,9 @@ export default class AngleMeasurement {
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-    _this.angleDrawHandler.setInputAction(function() {
+    _this.angleDrawHandler.setInputAction(function () {
       window.s3d.resetCursor();
+      window.s3d.eventBus.dispatch('tool-stopped', 'measure-angle');
 
       _this.angleDrawHandler.removeInputAction(
         Cesium.ScreenSpaceEventType.MOUSE_MOVE
@@ -169,10 +170,8 @@ export default class AngleMeasurement {
     angleAuxiliary.push(p);
 
     if (this.angleAuxiliaryEntity) {
-      this.angleAuxiliaryEntity.polyline.positions = new Cesium.CallbackProperty(
-        () => angleAuxiliary,
-        false
-      );
+      this.angleAuxiliaryEntity.polyline.positions =
+        new Cesium.CallbackProperty(() => angleAuxiliary, false);
     } else {
       this.angleAuxiliaryEntity = this.viewer.entities.add({
         name: 'angle_measure_auxiliary',
@@ -196,7 +195,8 @@ export default class AngleMeasurement {
 
     if (this.textEntity) {
       this.textEntity.position = new Cesium.CallbackProperty(() => p, false);
-      this.textEntity.label.text = Cesium.Math.toDegrees(angle).toFixed(2) + '°';
+      this.textEntity.label.text =
+        Cesium.Math.toDegrees(angle).toFixed(2) + '°';
     } else {
       this.textEntity = this.viewer.entities.add({
         position: p,
