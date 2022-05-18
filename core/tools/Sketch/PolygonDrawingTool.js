@@ -142,6 +142,7 @@ export default class PolygonDrawingTool {
         width: 2.0,
         clampToGround: this.options.clampToGround,
       },
+      ignorePopup: true,
     });
 
     // let heightReference = this.clampToGround
@@ -157,6 +158,7 @@ export default class PolygonDrawingTool {
           this.options.fillOpacity
         ),
       },
+      ignorePopup: true,
     });
 
     this.entities.push(this._currentEntityFill);

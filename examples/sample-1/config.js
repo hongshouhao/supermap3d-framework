@@ -2,7 +2,7 @@
  * @Author: zhangbo
  * @Date: 2022-04-06 15:43:18
  * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-07 19:32:38
+ * @LastEditTime: 2022-05-18 15:40:36
  * @FilePath: \supermap3d-framework\examples\sample-1\config.js
  * @Description:
  *
@@ -25,7 +25,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/GHFW',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/GHFW',
               },
               parentId: 'e5bdad1840df415c83f46afe592817a2',
             },
@@ -44,7 +44,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscache-Layers/rest/maps/Layers',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscache-Layers/rest/maps/Layers',
               },
               parentId: 'c9ca453820d94f7db47db78b137dfb43',
             },
@@ -55,7 +55,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscache-THXCHPYX2018/rest/maps/THXC_HPYX2018',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscache-THXCHPYX2018/rest/maps/THXC_HPYX2018',
               },
               parentId: 'c9ca453820d94f7db47db78b137dfb43',
             },
@@ -66,7 +66,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscache-THXCHPYX2017/rest/maps/THXC_HPYX2017',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscache-THXCHPYX2017/rest/maps/THXC_HPYX2017',
               },
               parentId: 'c9ca453820d94f7db47db78b137dfb43',
             },
@@ -77,7 +77,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscache-THXCHPYX2014/rest/maps/THXC_HPYX2014',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscache-THXCHPYX2014/rest/maps/THXC_HPYX2014',
               },
               parentId: 'c9ca453820d94f7db47db78b137dfb43',
             },
@@ -88,7 +88,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscache-THXCHPYX2012/rest/maps/THXC_HPYX2012',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscache-THXCHPYX2012/rest/maps/THXC_HPYX2012',
               },
               parentId: 'c9ca453820d94f7db47db78b137dfb43',
             },
@@ -99,7 +99,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscache-THXCHPYX2008/rest/maps/THXC_HPYX2008',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscache-THXCHPYX2008/rest/maps/THXC_HPYX2008',
               },
               parentId: 'c9ca453820d94f7db47db78b137dfb43',
             },
@@ -110,7 +110,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCHPYX2005/rest/maps/THXC_HPYX2005',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCHPYX2005/rest/maps/THXC_HPYX2005',
               },
               parentId: 'c9ca453820d94f7db47db78b137dfb43',
             },
@@ -130,7 +130,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscache-THXCWXYX2020/rest/maps/THXC_WXYX2020',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscache-THXCWXYX2020/rest/maps/THXC_WXYX2020',
               },
               parentId: '3d7192f055d84ba4a2d57eb7455c4c76',
             },
@@ -141,7 +141,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscache-THXCWXYX2019/rest/maps/THXC_WXYX2019',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscache-THXCWXYX2019/rest/maps/THXC_WXYX2019',
               },
               parentId: '3d7192f055d84ba4a2d57eb7455c4c76',
             },
@@ -152,7 +152,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscache-THXCWXYX2018/rest/maps/THXC_WXYX2018',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscache-THXCWXYX2018/rest/maps/THXC_WXYX2018',
               },
               parentId: '3d7192f055d84ba4a2d57eb7455c4c76',
             },
@@ -163,7 +163,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscache-THXCWXYX2017/rest/maps/THXC_WXYX2017',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscache-THXCWXYX2017/rest/maps/THXC_WXYX2017',
               },
               parentId: '3d7192f055d84ba4a2d57eb7455c4c76',
             },
@@ -174,7 +174,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCWXYX2016/rest/maps/THXC_WXYX2016',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCWXYX2016/rest/maps/THXC_WXYX2016',
               },
               parentId: '3d7192f055d84ba4a2d57eb7455c4c76',
             },
@@ -185,7 +185,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCWXYX2015/rest/maps/THXC_WXYX2015',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCWXYX2015/rest/maps/THXC_WXYX2015',
               },
               parentId: '3d7192f055d84ba4a2d57eb7455c4c76',
             },
@@ -196,7 +196,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCWXYX2014/rest/maps/THXC_WXYX2014',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCWXYX2014/rest/maps/THXC_WXYX2014',
               },
               parentId: '3d7192f055d84ba4a2d57eb7455c4c76',
             },
@@ -207,7 +207,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCWXYX2013/rest/maps/THXC_WXYX2013',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCWXYX2013/rest/maps/THXC_WXYX2013',
               },
               parentId: '3d7192f055d84ba4a2d57eb7455c4c76',
             },
@@ -218,7 +218,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCWXYX2012/rest/maps/THXC_WXYX2012',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCWXYX2012/rest/maps/THXC_WXYX2012',
               },
               parentId: '3d7192f055d84ba4a2d57eb7455c4c76',
             },
@@ -229,7 +229,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCWXYX2011/rest/maps/THXC_WXYX2011',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCWXYX2011/rest/maps/THXC_WXYX2011',
               },
               parentId: '3d7192f055d84ba4a2d57eb7455c4c76',
             },
@@ -240,7 +240,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'SMIMG',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCWXYX2010/rest/maps/THXC_WXYX2010',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCWXYX2010/rest/maps/THXC_WXYX2010',
               },
               parentId: '3d7192f055d84ba4a2d57eb7455c4c76',
             },
@@ -262,7 +262,7 @@ export const config = {
                 legend: 'legend/ZG.png',
                 type: 'SMIMG',
                 fastQuery: 'KC1646306379146',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCZGYQGH2030/rest/maps/THXC_ZG_YQGH2030',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCZGYQGH2030/rest/maps/THXC_ZG_YQGH2030',
               },
               parentId: '5',
             },
@@ -275,7 +275,7 @@ export const config = {
                 legend: 'legend/ZG.png',
                 type: 'SMIMG',
                 fastQuery: 'KC1646306606716',
-                url: 'http://58.210.9.131:8066/iserver55//services/map-agscachev2-THXCZGJQGH2020/rest/maps/THXC_ZG_JQGH2020',
+                url: 'http://58.210.9.131:8280/iserver55//services/map-agscachev2-THXCZGJQGH2020/rest/maps/THXC_ZG_JQGH2020',
               },
               parentId: '5',
             },
@@ -299,7 +299,7 @@ export const config = {
                 legend: 'legend/KG.png',
                 type: 'SMIMG',
                 fastQuery: 'KC1646306720424',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCKGTHXC/rest/maps/THXC_KG_THXC',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCKGTHXC/rest/maps/THXC_KG_THXC',
               },
               parentId: '5',
             },
@@ -317,7 +317,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646306720424',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCCZJSKZQ2021/rest/maps/THXC_CZJSKZQ2021',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCCZJSKZQ2021/rest/maps/THXC_CZJSKZQ2021',
               },
             },
             {
@@ -328,7 +328,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646307149625',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCDZZDJSXM2021/rest/maps/THXC_DZZDJSXM2021',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCDZZDJSXM2021/rest/maps/THXC_DZZDJSXM2021',
               },
               parentId: '3000',
             },
@@ -340,7 +340,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646307334796',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCMZZDJSXM2021/rest/maps/THXC_MZZDJSXM2021',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCMZZDJSXM2021/rest/maps/THXC_MZZDJSXM2021',
               },
               parentId: '3000',
             },
@@ -352,7 +352,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646307445720',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCXZZDJSXM2021/rest/maps/THXC_XZZDJSXM2021',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCXZZDJSXM2021/rest/maps/THXC_XZZDJSXM2021',
               },
               parentId: '3000',
             },
@@ -364,7 +364,7 @@ export const config = {
                 legend: 'legend/JSYDGZQ.png',
                 type: 'SMIMG',
                 fastQuery: 'KC1646307579202',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCJSYDGZQ2021/rest/maps/THXC_JSYDGZQ2021',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCJSYDGZQ2021/rest/maps/THXC_JSYDGZQ2021',
               },
             },
             {
@@ -376,7 +376,7 @@ export const config = {
                 legend: 'legend/TDYTQ.png',
                 type: 'SMIMG',
                 fastQuery: 'KC1646307701934',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCTDYTQ2021/rest/maps/THXC_TDYTQ2021',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCTDYTQ2021/rest/maps/THXC_TDYTQ2021',
               },
               parentId: '3000',
             },
@@ -388,7 +388,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646306720424',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/GHJBNTTZ',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/GHJBNTTZ',
               },
               parentId: '3000',
             },
@@ -407,7 +407,7 @@ export const config = {
                 legend: 'legend/SDDLTB.png',
                 type: 'SMIMG',
                 fastQuery: 'KC1646305471513',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCTDLYXZSDZFB/rest/maps/THXC_TDLYXZSDZFB',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCTDLYXZSDZFB/rest/maps/THXC_TDLYXZSDZFB',
               },
               parentId: 'ba594fd206aa45d7bf1deac66bddba08',
             },
@@ -420,7 +420,7 @@ export const config = {
                 legend: 'legend/SDDLTB.png',
                 type: 'SMIMG',
                 fastQuery: 'KC1646306013921',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCTDLYXZ2020/rest/maps/THXC_TDLYXZ2020',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCTDLYXZ2020/rest/maps/THXC_TDLYXZ2020',
               },
               parentId: 'ba594fd206aa45d7bf1deac66bddba08',
             },
@@ -432,7 +432,7 @@ export const config = {
                 legend: 'legend/EDDLTB.png',
                 type: 'SMIMG',
                 fastQuery: 'KC1646306139130',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-agscachev2-THXCTDLYXZ2018/rest/maps/THXC_TDLYXZ_2018',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-agscachev2-THXCTDLYXZ2018/rest/maps/THXC_TDLYXZ_2018',
               },
             },
           ],
@@ -452,7 +452,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/LD_XZ2020',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/LD_XZ2020',
                   },
                 },
                 {
@@ -462,7 +462,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/LD_XZ2019',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/LD_XZ2019',
                   },
                   parentId: 'b838deaeecb94b9eab93887aaaa21d6e',
                 },
@@ -473,7 +473,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/LD_DC2019',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/LD_DC2019',
                   },
                   parentId: 'b838deaeecb94b9eab93887aaaa21d6e',
                 },
@@ -484,7 +484,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/LD_XZ2017',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/LD_XZ2017',
                   },
                   parentId: 'b838deaeecb94b9eab93887aaaa21d6e',
                 },
@@ -504,7 +504,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/LD_SJSD202003',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/LD_SJSD202003',
                   },
                 },
                 {
@@ -513,7 +513,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/LD_SZSJSD202005',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/LD_SZSJSD202005',
                   },
                 },
                 {
@@ -522,7 +522,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/LD_SDBHXQ202010',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/LD_SDBHXQ202010',
                   },
                 },
                 {
@@ -531,7 +531,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/LD_YBSD',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/LD_YBSD',
                   },
                 },
               ],
@@ -556,7 +556,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/STGKQ2021',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/STGKQ2021',
                   },
                 },
               ],
@@ -571,7 +571,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/KFBJ',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/KFBJ',
                   },
                 },
               ],
@@ -590,7 +590,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/GYBZX',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/GYBZX',
                   },
                 },
                 {
@@ -599,7 +599,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/GYBZX10',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/GYBZX10',
                   },
                 },
               ],
@@ -622,7 +622,7 @@ export const config = {
                 legend: 'legend/YDHX.png',
                 type: 'SMIMG',
                 fastQuery: 'KC1646357769589',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/XMHX_YD',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/XMHX_YD',
               },
               parentId: '0ac859908e7243c49a90545a40e36b35',
             },
@@ -634,7 +634,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646360973048',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/XMHX_DL',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/XMHX_DL',
               },
               parentId: '0ac859908e7243c49a90545a40e36b35',
             },
@@ -655,7 +655,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646361221262',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/YSDK',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/YSDK',
               },
             },
             {
@@ -665,7 +665,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646361593237',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/JSYDBP',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/JSYDBP',
               },
             },
             {
@@ -675,7 +675,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646370448535',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/TDGY',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/TDGY',
               },
             },
             {
@@ -685,7 +685,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646370992266',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/TDSH',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/TDSH',
               },
             },
             {
@@ -695,7 +695,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646371253806',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/TDCB',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/TDCB',
               },
             },
           ],
@@ -714,7 +714,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/GX_GD',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/GX_GD',
                   },
                   parentId: 'eaa52f2e89b448f2b9aec3a64b4077c7',
                 },
@@ -725,7 +725,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/GX_JS',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/GX_JS',
                   },
                   parentId: 'eaa52f2e89b448f2b9aec3a64b4077c7',
                 },
@@ -736,7 +736,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/GX_TR',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/GX_TR',
                   },
                   parentId: 'eaa52f2e89b448f2b9aec3a64b4077c7',
                 },
@@ -747,7 +747,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/GX_WS',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/GX_WS',
                   },
                   parentId: 'eaa52f2e89b448f2b9aec3a64b4077c7',
                 },
@@ -758,7 +758,7 @@ export const config = {
                   type: 'FILE',
                   layer: {
                     type: 'SMIMG',
-                    url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/GX_YS',
+                    url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/GX_YS',
                   },
                   parentId: 'eaa52f2e89b448f2b9aec3a64b4077c7',
                 },
@@ -785,7 +785,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646371756547',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/TDZZ_GK',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/TDZZ_GK',
               },
               parentId: '7cc9e91b5cc04208b35a754dbf2a8cde',
             },
@@ -797,7 +797,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646372096478',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/TDZZ_ZB',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/TDZZ_ZB',
               },
               parentId: '7cc9e91b5cc04208b35a754dbf2a8cde',
             },
@@ -818,7 +818,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646371425177',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/ZDHJH',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/ZDHJH',
               },
               parentId: '25919a84b1384933842a65f10a32565f',
             },
@@ -830,7 +830,7 @@ export const config = {
               layer: {
                 type: 'SMIMG',
                 fastQuery: 'KC1646371561718',
-                url: 'http://58.210.9.131:8066/iserver55/services/map-THXC/rest/maps/BDCZH',
+                url: 'http://58.210.9.131:8280/iserver55/services/map-THXC/rest/maps/BDCZH',
               },
               parentId: '25919a84b1384933842a65f10a32565f',
             },
@@ -858,7 +858,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'S3M',
-                url: 'http://58.210.9.131:8066/iserver55/services/3D-local3DCache-DL1YIQI/rest/realspace/datas/DL_1@YIQI/config',
+                url: 'http://58.210.9.131:8280/iserver55/services/3D-local3DCache-DL1YIQI/rest/realspace/datas/DL_1@YIQI/config',
               },
               parentId: '661b1d838720496e9fab3505cdfc1aad',
             },
@@ -869,7 +869,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'S3M',
-                url: 'http://58.210.9.131:8066/iserver55/services/3D-local3DCache-DM1YIQI/rest/realspace/datas/DM_1@YIQI/config',
+                url: 'http://58.210.9.131:8280/iserver55/services/3D-local3DCache-DM1YIQI/rest/realspace/datas/DM_1@YIQI/config',
               },
               parentId: '661b1d838720496e9fab3505cdfc1aad',
             },
@@ -880,7 +880,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'S3M',
-                url: 'http://58.210.9.131:8066/iserver55/services/3D-local3DCache-JZHBXZ1YIQI/rest/realspace/datas/JZHB_XZ_1@YIQI/config',
+                url: 'http://58.210.9.131:8280/iserver55/services/3D-local3DCache-JZHBXZ1YIQI/rest/realspace/datas/JZHB_XZ_1@YIQI/config',
               },
               parentId: '661b1d838720496e9fab3505cdfc1aad',
             },
@@ -891,7 +891,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'S3M',
-                url: 'http://58.210.9.131:8066/iserver55/services/3D-local3DCache-JZHBGHZJ1YIQI/rest/realspace/datas/JZHB_GHZJ_1@YIQI/config',
+                url: 'http://58.210.9.131:8280/iserver55/services/3D-local3DCache-JZHBGHZJ1YIQI/rest/realspace/datas/JZHB_GHZJ_1@YIQI/config',
               },
               parentId: '661b1d838720496e9fab3505cdfc1aad',
             },
@@ -902,7 +902,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'S3M',
-                url: 'http://58.210.9.131:8066/iserver55/services/3D-local3DCache-JZHBGHWJ1YIQI/rest/realspace/datas/JZHB_GHWJ_1@YIQI/config',
+                url: 'http://58.210.9.131:8280/iserver55/services/3D-local3DCache-JZHBGHWJ1YIQI/rest/realspace/datas/JZHB_GHWJ_1@YIQI/config',
               },
               parentId: '661b1d838720496e9fab3505cdfc1aad',
             },
@@ -922,7 +922,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'S3M',
-                url: 'http://58.210.9.131:8066/iserver55/services/3D-local3DCache-B1F44903/rest/realspace/datas/B1F_4490/config',
+                url: 'http://58.210.9.131:8280/iserver55/services/3D-local3DCache-B1F44903/rest/realspace/datas/B1F_4490/config',
               },
               parentId: 'adba662f60b147de8dc2eec31bac5649',
             },
@@ -933,7 +933,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'S3M',
-                url: 'http://58.210.9.131:8066/iserver55/services/3D-local3DCache-B2F4490/rest/realspace/datas/B2F_4490/config',
+                url: 'http://58.210.9.131:8280/iserver55/services/3D-local3DCache-B2F4490/rest/realspace/datas/B2F_4490/config',
               },
               parentId: 'adba662f60b147de8dc2eec31bac5649',
             },
@@ -944,7 +944,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'S3M',
-                url: 'http://58.210.9.131:8066/iserver55/services/3D-local3DCache-B3F4490/rest/realspace/datas/B3F_4490/config',
+                url: 'http://58.210.9.131:8280/iserver55/services/3D-local3DCache-B3F4490/rest/realspace/datas/B3F_4490/config',
               },
               parentId: 'adba662f60b147de8dc2eec31bac5649',
             },
@@ -964,7 +964,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'S3M',
-                url: 'http://58.210.9.131:8066/iserver55/services/3D-local3DCache-JSTHXCGX/rest/realspace/datas/JS@THXC%E2%80%94%E2%80%94GX/config',
+                url: 'http://58.210.9.131:8280/iserver55/services/3D-local3DCache-JSTHXCGX/rest/realspace/datas/JS@THXC%E2%80%94%E2%80%94GX/config',
               },
               parentId: '037dc43e0b5f468fa966f9812f9b24b6',
             },
@@ -975,7 +975,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'S3M',
-                url: 'http://58.210.9.131:8066/iserver55/services/3D-local3DCache-WSTHXCGX/rest/realspace/datas/WS@THXC%E2%80%94%E2%80%94GX/config',
+                url: 'http://58.210.9.131:8280/iserver55/services/3D-local3DCache-WSTHXCGX/rest/realspace/datas/WS@THXC%E2%80%94%E2%80%94GX/config',
               },
               parentId: '037dc43e0b5f468fa966f9812f9b24b6',
             },
@@ -986,7 +986,7 @@ export const config = {
               type: 'FILE',
               layer: {
                 type: 'S3M',
-                url: 'http://58.210.9.131:8066/iserver55/services/3D-local3DCache-GDTHXCGX/rest/realspace/datas/GD@THXC%E2%80%94%E2%80%94GX/config',
+                url: 'http://58.210.9.131:8280/iserver55/services/3D-local3DCache-GDTHXCGX/rest/realspace/datas/GD@THXC%E2%80%94%E2%80%94GX/config',
               },
               parentId: '037dc43e0b5f468fa966f9812f9b24b6',
             },
@@ -1021,7 +1021,7 @@ export const config = {
         {
           type: 'supermap',
           params: {
-            url: 'http://58.210.9.131:8066/iserver55/services/map-agscache-Layers/rest/maps/Layers',
+            url: 'http://58.210.9.131:8280/iserver55/services/map-agscache-Layers/rest/maps/Layers',
           },
         },
       ],
