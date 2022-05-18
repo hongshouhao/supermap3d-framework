@@ -28,14 +28,14 @@ export default {
   },
   data () {
     return {
-      viewer: null,
+      // viewer: null,
     };
   },
   beforeMount () { },
   mounted () { },
   methods: {
     onViewerCreated (viewer) {
-      this.viewer = viewer;
+      // this.viewer = viewer;
     },
   },
 };
