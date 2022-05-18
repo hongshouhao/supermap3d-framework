@@ -22,12 +22,14 @@ export default class SliceTool {
     this.editHandler = new Cesium.ScreenSpaceEventHandler(
       this.viewer.scene.canvas
     );
+    this.working = false;
   }
 
   start() {
     let _this = this;
+    _this.working = true;
     _this.resetState();
-    _this.createHandler.setInputAction(function(e) {
+    _this.createHandler.setInputAction(function (e) {
       if (!_this.clippingRectangle) {
         _this.createRectangle(e.endPosition);
       } else {
@@ -38,7 +40,7 @@ export default class SliceTool {
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-    _this.createHandler.setInputAction(function() {
+    _this.createHandler.setInputAction(function () {
       _this.rotate(0, 90, 0);
       _this.createHandler.removeInputAction(
         Cesium.ScreenSpaceEventType.MOUSE_MOVE
@@ -48,6 +50,7 @@ export default class SliceTool {
       );
 
       _this.onEditEvent();
+      _this.working = false;
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
   }
 
@@ -64,12 +67,10 @@ export default class SliceTool {
       }
 
       let _this = this;
-      this.clippingRectangleOutline.polyline.positions = new Cesium.CallbackProperty(
-        function() {
+      this.clippingRectangleOutline.polyline.positions =
+        new Cesium.CallbackProperty(function () {
           return _this.clippingRectangleOutlinePositions;
-        },
-        false
-      );
+        }, false);
 
       this.updateClipBox();
     }
@@ -116,6 +117,7 @@ export default class SliceTool {
     }
 
     this.resetState();
+    this.working = false;
   }
 
   resetState() {
@@ -124,7 +126,9 @@ export default class SliceTool {
     this.clippingRectangle = null;
     this.clippingRectangleOutline = null;
 
-    this.createHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+    this.createHandler.removeInputAction(
+      Cesium.ScreenSpaceEventType.MOUSE_MOVE
+    );
     this.createHandler.removeInputAction(
       Cesium.ScreenSpaceEventType.RIGHT_CLICK
     );
@@ -225,16 +229,12 @@ export default class SliceTool {
     //   false
     // )
 
-    this.clippingRectangle.polygon.hierarchy = _this.clippingRectangleOutlinePositions.slice(
-      0,
-      4
-    );
-    this.clippingRectangleOutline.polyline.positions = new Cesium.CallbackProperty(
-      function() {
+    this.clippingRectangle.polygon.hierarchy =
+      _this.clippingRectangleOutlinePositions.slice(0, 4);
+    this.clippingRectangleOutline.polyline.positions =
+      new Cesium.CallbackProperty(function () {
         return _this.clippingRectangleOutlinePositions;
-      },
-      false
-    );
+      }, false);
   }
 
   moveDefaultectangle(mousePosition) {
@@ -261,10 +261,8 @@ export default class SliceTool {
       true
     );
 
-    this.clippingRectangle.polygon.hierarchy = _this.clippingRectangleOutlinePositions.slice(
-      0,
-      4
-    );
+    this.clippingRectangle.polygon.hierarchy =
+      _this.clippingRectangleOutlinePositions.slice(0, 4);
 
     // new Cesium.CallbackProperty(
     //   function() {
@@ -273,12 +271,10 @@ export default class SliceTool {
     //   false
     // )
 
-    this.clippingRectangleOutline.polyline.positions = new Cesium.CallbackProperty(
-      function() {
+    this.clippingRectangleOutline.polyline.positions =
+      new Cesium.CallbackProperty(function () {
         return _this.clippingRectangleOutlinePositions;
-      },
-      false
-    );
+      }, false);
   }
 
   onEditEvent() {
@@ -286,7 +282,7 @@ export default class SliceTool {
     _this.editHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOWN);
     _this.editHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_UP);
     _this.editHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-    _this.editHandler.setInputAction(function(e) {
+    _this.editHandler.setInputAction(function (e) {
       if (_this.ifMouseOnOutline(e.position)) {
         _this.state = 'scale';
         _this.saveScaleStartPoint(e.position);
@@ -297,14 +293,14 @@ export default class SliceTool {
       }
     }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
 
-    _this.editHandler.setInputAction(function() {
+    _this.editHandler.setInputAction(function () {
       if (_this.state === 'scale' || _this.state === 'move') {
         _this.viewer.scene.screenSpaceCameraController.enableInputs = true;
         _this.state = '';
       }
     }, Cesium.ScreenSpaceEventType.LEFT_UP);
 
-    _this.editHandler.setInputAction(function(e) {
+    _this.editHandler.setInputAction(function (e) {
       if (_this.state === 'scale') {
         _this.scaleRectangle(e.endPosition);
         _this.updateClipBox();
@@ -313,21 +309,17 @@ export default class SliceTool {
         _this.updateClipBox();
       } else {
         if (_this.ifMouseOnOutline(e.endPosition)) {
-          _this.clippingRectangleOutline.polyline.width = new Cesium.CallbackProperty(
-            function() {
+          _this.clippingRectangleOutline.polyline.width =
+            new Cesium.CallbackProperty(function () {
               return 2;
-            },
-            false
-          );
+            }, false);
 
           window.s3d.setCursor('cursor-crosshair');
         } else {
-          _this.clippingRectangleOutline.polyline.width = new Cesium.CallbackProperty(
-            function() {
+          _this.clippingRectangleOutline.polyline.width =
+            new Cesium.CallbackProperty(function () {
               return 1;
-            },
-            false
-          );
+            }, false);
           window.s3d.resetCursor();
         }
       }
@@ -384,9 +376,8 @@ export default class SliceTool {
       _this.clippingRectangleOutlinePositions[0] = pt2;
       _this.clippingRectangleOutlinePositions[4] = pt2;
     } else {
-      _this.clippingRectangleOutlinePositions[
-        _this.scalePickedLine.idx + 1
-      ] = pt2;
+      _this.clippingRectangleOutlinePositions[_this.scalePickedLine.idx + 1] =
+        pt2;
     }
 
     // this.clippingRectangle.rectangle.coordinates = new Cesium.CallbackProperty(
@@ -399,17 +390,13 @@ export default class SliceTool {
     //   false
     // )
 
-    this.clippingRectangle.polygon.hierarchy = _this.clippingRectangleOutlinePositions.slice(
-      0,
-      4
-    );
+    this.clippingRectangle.polygon.hierarchy =
+      _this.clippingRectangleOutlinePositions.slice(0, 4);
 
-    _this.clippingRectangleOutline.polyline.positions = new Cesium.CallbackProperty(
-      function() {
+    _this.clippingRectangleOutline.polyline.positions =
+      new Cesium.CallbackProperty(function () {
         return _this.clippingRectangleOutlinePositions;
-      },
-      false
-    );
+      }, false);
   }
 
   updateClipBox() {

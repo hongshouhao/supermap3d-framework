@@ -94,11 +94,13 @@ export default {
   methods: {
     enable () {
       this.enabled = true;
+      window.s3d.eventBus.dispatch('tool-started', 'iquery');
     },
     disable () {
       this.enabled = false;
       this._clearTempDataSources();
       this.hidePopup();
+      window.s3d.eventBus.dispatch('tool-stopped', 'iquery');
     },
     initIQuery () {
       let _this = this;

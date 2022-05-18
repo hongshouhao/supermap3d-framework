@@ -12,6 +12,10 @@ export default class SceneModeToogleTool {
       throw '输入参数不合法: 2D|3D';
     }
 
+    if (this.mode == targMode) {
+      return;
+    }
+
     if (targMode == '2D') {
       this.mode === '3D';
     } else {

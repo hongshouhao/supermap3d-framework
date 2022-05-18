@@ -17,10 +17,11 @@ export default class Test {
   }
 
   doTest() {
+    window.s3d.topLeftBar.toggleViewTo('2D');
     // this.labelPolygonsTest()
     // this.flyToPointsTest()
     // this.labelPointsTest()
-    this.setLayerVisibleTest();
+    // this.setLayerVisibleTest();
     // this.addLayerTest()
     // this.submergedTest()
     // this.highLimitTest()
@@ -136,7 +137,7 @@ export default class Test {
       },
     };
     window.s3d.dataUtility.loadGeoJson(geojson);
-    let geoJsonToPt = function(polygon) {
+    let geoJsonToPt = function (polygon) {
       let center = centerOfMass(polygon);
       let x = center.geometry.coordinates[0];
       let y = center.geometry.coordinates[1];
@@ -236,14 +237,9 @@ export default class Test {
       .setTargetLayers(['楼幢'])
       .setHeight(60)
       .setRectangle([
-        120.6014997708723,
-        31.180936477517143,
-        120.60515662761527,
-        31.180896259318505,
-        120.60575593261512,
-        31.186082838897974,
-        120.60050207082269,
-        31.186380190938625,
+        120.6014997708723, 31.180936477517143, 120.60515662761527,
+        31.180896259318505, 120.60575593261512, 31.186082838897974,
+        120.60050207082269, 31.186380190938625,
       ]);
 
     highLimitTool.start();
@@ -255,21 +251,8 @@ export default class Test {
       .includingGlobe()
       // 园区
       .setCoverageArea([
-        120.655,
-        31.3219,
-        3,
-        120.6657,
-        31.3131,
-        3,
-        120.6794,
-        31.3081,
-        3,
-        120.6794,
-        31.3251,
-        3,
-        120.655,
-        31.3219,
-        3,
+        120.655, 31.3219, 3, 120.6657, 31.3131, 3, 120.6794, 31.3081, 3,
+        120.6794, 31.3251, 3, 120.655, 31.3219, 3,
       ]);
     // .setCoverageArea([
     //   120.7658,
@@ -332,8 +315,8 @@ export default class Test {
   insertToolButton() {
     window.s3d.toolbar.insertButton([2, 0], {
       title: '测试',
-      icon: 'my-icon-mea-point',
-      click: function() {
+      icon: 'icon-mea-point',
+      click: function () {
         alert('click');
       },
     });
@@ -345,7 +328,7 @@ export default class Test {
       })
     );
 
-    tileset.readyPromise.then(function(tileset) {
+    tileset.readyPromise.then(function (tileset) {
       // window.s3d.viewer.zoomTo(
       //   tileset,
       //   new Cesium.HeadingPitchRange(

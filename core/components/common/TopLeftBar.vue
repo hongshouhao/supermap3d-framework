@@ -41,33 +41,38 @@
     <div class="esri-component esri-widget">
       <div class="esri-widget--button esri-widget"
            title="点标注"
+           :class="{'active-tool':activeTool == 'measure-coordinate'}"
            @click="annotatePoint">
+
         <span aria-hidden="true"
-              class="esri-icon my-icon-mea-point"></span>
+              class="esri-icon icon-mea-point"></span>
       </div>
       <div class="esri-widget--button esri-widget"
            title="长度测量"
+           :class="{'active-tool':activeTool == 'measure-distance'}"
            @click="startDistanceMeasure">
         <span aria-hidden="true"
               class="esri-icon esri-icon-measure"></span>
       </div>
       <div class="esri-widget--button esri-widget"
            title="面积测量"
+           :class="{'active-tool':activeTool == 'measure-area'}"
            @click="startAreaMeasure">
         <span aria-hidden="true"
               class="esri-icon esri-icon-measure-area"></span>
       </div>
       <div class="esri-widget--button esri-widget"
            title="角度测量"
+           :class="{'active-tool':activeTool == 'measure-angle'}"
            @click="startAngleMeasure">
         <span aria-hidden="true"
-              class="esri-icon my-icon-mea-angle"></span>
+              class="esri-icon icon-mea-angle"></span>
       </div>
       <div class="esri-widget--button esri-widget"
            title="模型观察"
            @click="startModelObservation">
         <span aria-hidden="true"
-              class="esri-icon my-icon-model-rotate"></span>
+              class="esri-icon icon-model-rotate"></span>
       </div>
     </div>
 
@@ -80,7 +85,7 @@
              style="border-top:none"
              title="分析">
           <span aria-hidden="true"
-                class="esri-icon my-icon-analysis"></span>
+                class="esri-icon icon-analysis"></span>
         </div>
 
         <div class="top-left-popover-toolbar">
@@ -103,13 +108,13 @@
                  title="开敞度分析"
                  @click="startViewDome">
               <span aria-hidden="true"
-                    class="esri-icon my-icon-kaichangdu"></span>
+                    class="esri-icon icon-kaichangdu"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span><span class="path6"></span></span>
             </div>
             <div class="esri-widget--button esri-widget"
                  title="天际线分析"
                  @click="startSkyline">
               <span aria-hidden="true"
-                    class="esri-icon my-icon-skyline"></span>
+                    class="esri-icon icon-skyline"></span>
             </div>
             <div class="esri-widget--button esri-widget "
                  title="视域分析"
@@ -129,14 +134,14 @@
                  title="淹没分析"
                  @click="startSubmerged">
               <span aria-hidden="true"
-                    class="esri-icon my-icon-submerged"></span>
+                    class="esri-icon icon-submerged"></span>
             </div>
 
             <div class="esri-widget--button esri-widget "
                  title="开挖分析"
                  @click="startExcavation">
               <span aria-hidden="true"
-                    class="esri-icon my-icon-excavation"></span>
+                    class="esri-icon icon-excavation"></span>
             </div>
           </div>
         </div>
@@ -145,13 +150,14 @@
            title="分屏"
            @click="multiViewport">
         <span aria-hidden="true"
-              class="esri-icon my-icon-split-screen"></span>
+              class="esri-icon icon-split-screen"></span>
       </div>
     </div>
 
     <div class="esri-component esri-widget">
       <div class="esri-widget--button esri-widget"
            title="i查询"
+           :class="{'active-tool':activeTool == 'iquery'}"
            @click="startIQuery">
         <span aria-hidden="true"
               class="esri-icon esri-icon-description"></span>
@@ -276,6 +282,7 @@ export default {
     return {
       viewMode: '',
       currentTool: '',
+      activeTool: ''
     };
   },
   props: [],
@@ -331,6 +338,13 @@ export default {
       _this.viewshedTool.bindUI(_this.$refs.viewshedSettingPanel.$el);
       _this.init();
     });
+
+    window.s3d.eventBus.addEventListener('tool-started', (caller) => {
+      _this.activeTool = caller.target;
+    });
+    window.s3d.eventBus.addEventListener('tool-stopped', () => {
+      _this.activeTool = '';
+    });
   },
   methods: {
     init () {
@@ -347,6 +361,10 @@ export default {
     },
     toggleView () {
       this.sceneModeToogleTool.toogle();
+      this.viewMode = this.sceneModeToogleTool.mode;
+    },
+    toggleViewTo (mode) {
+      this.sceneModeToogleTool.toogleTo(mode);
       this.viewMode = this.sceneModeToogleTool.mode;
     },
     setViewNorthUp () {
@@ -521,6 +539,9 @@ export default {
   display: none;
 }
 
+.active-tool {
+  color: #4279e4 !important;
+}
 .small-pop {
   width: 38px !important;
   .el-popper {

@@ -25,10 +25,13 @@ export default class PointMeasurement {
       );
       this.editHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOWN);
       this.editHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_UP);
-      this.editHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+      this.editHandler.removeInputAction(
+        Cesium.ScreenSpaceEventType.MOUSE_MOVE
+      );
     }
 
     let _this = this;
+    window.s3d.eventBus.dispatch('tool-started', 'measure-coordinate');
     window.s3d.setCursor('cursor-crosshair');
     _this.createHandler.setInputAction(function (e) {
       if (_this.status === 'none') {
@@ -48,6 +51,7 @@ export default class PointMeasurement {
         Cesium.ScreenSpaceEventType.RIGHT_CLICK
       );
       _this.status = 'none';
+      window.s3d.eventBus.dispatch('tool-stopped', 'measure-coordinate');
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 
     _this.editHandler.setInputAction(function (e) {
@@ -83,7 +87,9 @@ export default class PointMeasurement {
     for (let ent of this.pointEntities) {
       this.viewer.entities.remove(ent);
     }
-    this.createHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+    this.createHandler.removeInputAction(
+      Cesium.ScreenSpaceEventType.MOUSE_MOVE
+    );
     this.createHandler.removeInputAction(
       Cesium.ScreenSpaceEventType.RIGHT_CLICK
     );
