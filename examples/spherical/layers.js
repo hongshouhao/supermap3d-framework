@@ -201,4 +201,13 @@ export const layers = [
       url: 'http://www.supermapol.com/realspace/services/map-mvt-JingJinDiQuDiTu/restjsr/v1/vectortile/maps/%E4%BA%AC%E6%B4%A5%E5%9C%B0%E5%8C%BA%E5%9C%B0%E5%9B%BE',
     },
   },
+  {
+    id: '影像4',
+    name: '影像4',
+    layer: {
+      type: '3DTILES',
+      visible: false,
+      url: 'http://127.0.0.1:5500/tileset.json',
+    },
+  },
 ];
