@@ -9,18 +9,17 @@
  * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
 -->
 <template>
-  <el-scrollbar style="height: 100%" class="tree-wrapper recent">
-    <el-tree
-      show-checkbox
-      node-key="id"
-      ref="tree"
-      :expand-on-click-node="false"
-      :filter-node-method="filterNode"
-      :render-after-expand="false"
-      :data="recentLayerData"
-      :render-content="renderExtButton"
-      @check-change="onCheckLayer"
-    >
+  <el-scrollbar style="height: 100%"
+                class="tree-wrapper recent">
+    <el-tree show-checkbox
+             node-key="id"
+             ref="tree"
+             :expand-on-click-node="false"
+             :filter-node-method="filterNode"
+             :render-after-expand="false"
+             :data="recentLayerData"
+             :render-content="renderExtButton"
+             @check-change="onCheckLayer">
     </el-tree>
   </el-scrollbar>
 </template>
@@ -37,20 +36,20 @@ export default {
       type: Array,
     },
   },
-  data() {
+  data () {
     return {
       recentLayerData: [],
     };
   },
   mixins: [LayerMixin],
-  created() {},
+  created () { },
   methods: {
-    onCheckLayer(data, checked) {
+    onCheckLayer (data, checked) {
       if (this.$parent && this.$parent.$refs && this.$parent.$refs.tree) {
         this.$parent.$refs.tree.setChecked(data.id, checked);
       }
     },
-    updateLayer() {
+    updateLayer () {
       this.recentLayerData.splice(0, this.recentLayerData.length);
 
       const findNode = function (arr, id) {
@@ -79,7 +78,7 @@ export default {
       });
     },
   },
-  mounted() {
+  mounted () {
     const that = this;
     this.updateLayer().then(() => {
       that.$nextTick(function () {

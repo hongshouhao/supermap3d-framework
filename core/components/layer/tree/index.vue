@@ -45,7 +45,8 @@
                  @check-change="onCheckLayer">
         </el-tree>
       </el-scrollbar>
-      <compare-tree v-if="multiViewport"
+      <compare-tree ref="compareTree"
+                    v-if="multiViewport"
                     :filter-text="filterText"></compare-tree>
       <fav-tree v-if="curTab == 'favour'"
                 :layerData="layersData"
@@ -109,15 +110,20 @@ export default {
       if (this.multiViewport) {
         this.$viewer.scene.multiViewportMode = Cesium.MultiViewportMode.NONE;
         this.multiViewport = false;
+        this.updatePopper();
+        this.resetLayerVisible(this.layersData);
+        this.resetLayerData();
+        window.s3d.eventBus.dispatch('tool-stopped', 'split-screen');
       } else {
-        this.$viewer.scene.multiViewportMode =
-          Cesium.MultiViewportMode.HORIZONTAL;
+        this.$viewer.scene.multiViewportMode = Cesium.MultiViewportMode.HORIZONTAL;
         this.multiViewport = true;
+        this.updatePopper();
+        window.s3d.eventBus.dispatch('tool-started', 'split-screen');
       }
     },
     init () {
       if (this.$viewer) {
-        this.addLayers(window.s3d.config.layers, -1);
+        this.addLayers(window.s3d.config.layers);
         this.layersData = window.s3d.config.layers;
 
         this.$nextTick(() => {
@@ -186,6 +192,33 @@ export default {
       // }
 
       this.setLayerVisible(data, checked);
+    },
+    updatePopper () {
+      window.s3d.layersTreePopover.destroyPopper();
+      window.s3d.layersTreePopover.createPopper();
+    },
+    resetLayerVisible (layersData) {
+      for (let lyElModel of layersData) {
+        if (lyElModel.children) {
+          this.resetLayerVisible(lyElModel.children);
+        } else {
+          if (lyElModel.cesiumLayerLoaded) {
+            this.setVisibleInViewport(lyElModel.cesiumLayer, 0, true);
+            this.setVisibleInViewport(lyElModel.cesiumLayer, 1, true);
+          }
+        }
+      }
+    },
+    resetLayerData () {
+      let ids = this.$refs.tree.getCheckedKeys();
+      let cids = this.$refs.compareTree.$refs.tree.getCheckedKeys();
+
+      for (let ly of cids) {
+        if (ids.indexOf(ly) < 0) {
+          ids.push(ly);
+        }
+      }
+      this.$refs.tree.setCheckedKeys(ids);
     },
   },
 };
