@@ -96,7 +96,6 @@ export default class LayerManager {
   }
 
   bottomLayer(layer) {
-    debugger;
     let baseLys = this.viewer.imageryLayers._layers.filter(
       (x) => x.isBaseMap == true
     );

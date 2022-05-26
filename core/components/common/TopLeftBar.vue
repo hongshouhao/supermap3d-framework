@@ -148,6 +148,7 @@
       </el-popover>
       <div class="esri-widget--button esri-widget"
            title="分屏"
+           :class="{'active-tool':activeTool == 'split-screen'}"
            @click="multiViewport">
         <span aria-hidden="true"
               class="esri-icon icon-split-screen"></span>

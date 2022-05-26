@@ -11,23 +11,18 @@
 <template>
   <div class="top-right-bar">
     <BasemapToggle />
-    <el-popover
-      placement="bottom"
-      trigger="manual"
-      v-model="visible"
-      popper-class="layer-popup"
-    >
+    <el-popover ref="layersTreePopover"
+                placement="bottom"
+                trigger="manual"
+                v-model="visible"
+                popper-class="layer-popup">
       <Layers ref="layersTree" />
 
-      <el-button
-        slot="reference"
-        class="btn-layers"
-        @click="visible = !visible"
-      >
-        <span style="display: flex"
-          ><i class="esri-icon-layers" style="margin-right: 5px"></i
-          ><span>图层</span><i class="el-icon-arrow-down el-icon--right"></i
-        ></span>
+      <el-button slot="reference"
+                 class="btn-layers"
+                 @click="visible = !visible">
+        <span style="display: flex"><i class="esri-icon-layers"
+             style="margin-right: 5px"></i><span>图层</span><i class="el-icon-arrow-down el-icon--right"></i></span>
       </el-button>
     </el-popover>
   </div>
@@ -42,13 +37,14 @@ export default {
     Layers,
     BasemapToggle,
   },
-  data() {
+  data () {
     return {
       visible: false,
     };
   },
-  mounted() {
+  mounted () {
     window.s3d.layersTree = this.$refs.layersTree;
+    window.s3d.layersTreePopover = this.$refs.layersTreePopover;
   },
   methods: {},
 };

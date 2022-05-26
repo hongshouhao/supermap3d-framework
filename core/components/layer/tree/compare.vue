@@ -9,24 +9,23 @@
  * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
 -->
 <template>
-  <el-scrollbar style="height: 100%" class="tree-wrapper">
-    <el-tree
-      show-checkbox
-      node-key="id"
-      ref="tree"
-      :expand-on-click-node="false"
-      :filter-node-method="filterNode"
-      :render-after-expand="false"
-      :default-expanded-keys="defaultExpandedKeys"
-      :default-checked-keys="defaultCheckedKeys"
-      :data="layerData"
-      :render-content="renderExtButton"
-      @check-change="
+  <el-scrollbar style="height: 100%"
+                class="tree-wrapper">
+    <el-tree show-checkbox
+             node-key="id"
+             ref="tree"
+             :expand-on-click-node="false"
+             :filter-node-method="filterNode"
+             :render-after-expand="false"
+             :default-expanded-keys="defaultExpandedKeys"
+             :default-checked-keys="defaultCheckedKeys"
+             :data="layerData"
+             :render-content="renderExtButton"
+             @check-change="
         (data, checked) => {
           setLayerVisible(data, checked, 1);
         }
-      "
-    >
+      ">
     </el-tree>
   </el-scrollbar>
 </template>
@@ -40,7 +39,7 @@ export default {
       type: String,
     },
   },
-  data() {
+  data () {
     return {
       multiViewport: true,
     };
@@ -48,11 +47,11 @@ export default {
   mixins: [LayerMixin],
   methods: {},
   computed: {
-    layerData() {
+    layerData () {
       return window.s3d.config.layers;
     },
   },
-  mounted() {
+  mounted () {
     let ids = this.$parent.$refs.tree.getCheckedKeys();
     this.$refs.tree.setCheckedKeys(ids);
   },

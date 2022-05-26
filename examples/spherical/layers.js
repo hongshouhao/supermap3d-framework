@@ -202,12 +202,39 @@ export const layers = [
     },
   },
   {
-    id: '影像4',
-    name: '影像4',
+    id: '3DTILES',
+    name: '3DTILES',
     layer: {
       type: '3DTILES',
       visible: false,
-      url: 'http://127.0.0.1:5500/tileset.json',
+      url: 'http://127.0.0.1:5500/PIPE/tileset.json',
+    },
+  },
+  {
+    id: '管线JS',
+    name: '管线JS',
+    layer: {
+      type: 'S3M',
+      visible: false,
+      url: 'http://localhost:8090/iserver/services/3D-GuanXianCeShiFuWu/rest/realspace/datas/JS_LINE_4490@%E5%BE%90%E5%B7%9E%E7%BB%8F%E5%BC%80%E5%8C%BA%E7%AE%A1%E7%BA%BF%E6%99%AE%E6%9F%A52021%E6%95%B0%E6%8D%AE%E5%BA%93-JS/config',
+    },
+  },
+  {
+    id: '管线DSL',
+    name: '管线DSL',
+    layer: {
+      type: 'S3M',
+      visible: false,
+      url: 'http://localhost:8090/iserver/services/3D-DS/rest/realspace/datas/DS_LINE_4490@%E5%BE%90%E5%B7%9E%E7%BB%8F%E5%BC%80%E5%8C%BA%E7%AE%A1%E7%BA%BF%E6%99%AE%E6%9F%A52021%E6%95%B0%E6%8D%AE%E5%BA%93-DS/config',
+    },
+  },
+  {
+    id: '管线DSP',
+    name: '管线DSP',
+    layer: {
+      type: 'S3M',
+      visible: false,
+      url: 'http://localhost:8090/iserver/services/3D-DS/rest/realspace/datas/DS_POINT_4490@%E5%BE%90%E5%B7%9E%E7%BB%8F%E5%BC%80%E5%8C%BA%E7%AE%A1%E7%BA%BF%E6%99%AE%E6%9F%A52021%E6%95%B0%E6%8D%AE%E5%BA%93-DS/config',
     },
   },
 ];
