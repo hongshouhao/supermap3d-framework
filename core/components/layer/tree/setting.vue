@@ -214,16 +214,24 @@ export default {
     },
     topLayer() {
       if (this.lyElModel && this.lyElModel.cesiumLayer) {
-        this.lyElModel.cesiumLayer = window.s3d.layerManager.topLayer(
+        let newLayer = window.s3d.layerManager.topLayer(
           this.lyElModel.cesiumLayer.name
         );
+
+        if (newLayer) {
+          this.lyElModel.cesiumLayer = newLayer;
+        }
       }
     },
     bottomLayer() {
       if (this.lyElModel && this.lyElModel.cesiumLayer) {
-        this.lyElModel.cesiumLayer = window.s3d.layerManager.bottomLayer(
+        let newLayer = window.s3d.layerManager.bottomLayer(
           this.lyElModel.cesiumLayer.name
         );
+
+        if (newLayer) {
+          this.lyElModel.cesiumLayer = newLayer;
+        }
       }
     },
   },
