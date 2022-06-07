@@ -101,7 +101,8 @@ export default class S3d {
 
     // viewer.scene.fxaa = false
     // viewer.scene.postProcessStages.fxaa.enabled = false
-    this.viewer.scene.debugShowFramesPerSecond = false;
+    this.viewer.scene.debugShowFramesPerSecond =
+      this.config.enableDebugShowFramesPerSecond || false;
     this.viewer.scene.globe.depthTestAgainstTerrain = true;
     this.viewer.scene.logarithmicDepthBuffer = false;
 
