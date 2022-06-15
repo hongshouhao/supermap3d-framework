@@ -17,7 +17,8 @@ export default class Test {
   }
 
   doTest() {
-    window.s3d.topLeftBar.toggleViewTo('2D');
+    this.testMatrix();
+    // window.s3d.topLeftBar.toggleViewTo('2D');
     // this.labelPolygonsTest()
     // this.flyToPointsTest()
     // this.labelPointsTest()
@@ -410,5 +411,59 @@ export default class Test {
     window.s3d.viewer.entities.values[0]
       .toGeoJson()
       .then((geojson) => console.log(geojson));
+  }
+  testMatrix() {
+    let origin = new Cesium.Cartesian3(
+      -2421826.48258621,
+      4681211.1981396,
+      3591942.9886652
+    );
+
+    let start = new Cesium.Cartesian3(
+      -2421818.80776567,
+      4681216.37928572,
+      3591941.6780122
+    );
+    let end = new Cesium.Cartesian3(
+      -2421834.15740112,
+      4681206.01698374,
+      3591944.29931035
+    );
+
+    // let up = s3d.viewer.scene.globe.ellipsoid.geodeticSurfaceNormal(origin);
+    // console.log('up ' + up);
+
+    let trans1 = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+    console.log('trans1', trans1);
+    let start1 = Cesium.Matrix4.multiplyByPoint(
+      trans1,
+      start,
+      new Cesium.Cartesian3()
+    );
+    let end1 = Cesium.Matrix4.multiplyByPoint(
+      trans1,
+      end,
+      new Cesium.Cartesian3()
+    );
+    console.log('end1', end1);
+
+    let trans2 = Cesium.Matrix4.inverse(trans1, new Cesium.Matrix4());
+    console.log('trans2', trans2);
+    let start2 = Cesium.Matrix4.multiplyByPoint(
+      trans2,
+      start,
+      new Cesium.Cartesian3()
+    );
+    console.log('start2', start2);
+    let end2 = Cesium.Matrix4.multiplyByPoint(
+      trans2,
+      end,
+      new Cesium.Cartesian3()
+    );
+    console.log('end2', end2);
+
+    console.log('distance', Cesium.Cartesian3.distance(start, end));
+    console.log('distance1', Cesium.Cartesian3.distance(start1, end1));
+    console.log('distance2', Cesium.Cartesian3.distance(start2, end2));
   }
 }

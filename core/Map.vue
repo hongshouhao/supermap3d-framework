@@ -10,7 +10,6 @@
         <TopRightBar />
       </div>
     </slot>
-    <slot></slot>
     <MapViewer @viewer-created="onViewerCreated" />
   </div>
 </template>

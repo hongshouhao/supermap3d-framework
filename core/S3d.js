@@ -20,10 +20,8 @@ import LayerFactory from './utils/LayerFactory';
 import { lonLatToCartesian, cartesianToLonlat } from './utils/CesiumMath';
 import { isS3mFeature } from './utils/IfUtility';
 import { setCursorStyle, resetCursorStyle } from './utils/CursorUtility';
-// import { setLayerVisible } from './utils/LayerUtility'
 
 import SketchTool from './tools/Sketch/SketchTool';
-// import LayersRenderer from './data/LayerRenderer'
 // import './materials'
 
 export default class S3d {
@@ -40,23 +38,21 @@ export default class S3d {
     this.tempEntities = [];
 
     this._setLabel();
-    if (!config.usePlaneCoordinateSystem) {
-      if (config.useEllipsoid) {
-        // 默认球体为圆球，修改为真实椭球体
-        Cesium.Ellipsoid.WGS84 = new Cesium.Ellipsoid(
-          6378137.0,
-          6378137.0,
-          6356752.3142451793
-        );
-      }
+    if (config.useEllipsoid) {
+      // 默认球体为圆球，修改为真实椭球体
+      Cesium.Ellipsoid.WGS84 = new Cesium.Ellipsoid(
+        6378137.0,
+        6378137.0,
+        6356752.3142451793
+      );
     }
-
     // this._loadCustomMaterials()
   }
 
   setViewer(viewer) {
     this.viewer = viewer;
     this.scene = viewer.scene;
+
     this.dataAccess = new DataAccess(viewer);
     this.popupData = new PopupData(viewer);
     this.viewUtility = new ViewUtility(viewer);
@@ -159,6 +155,7 @@ export default class S3d {
       this.viewer.camera.flyTo(this.config.defaultCamera);
     }
 
+    this.viewer.camera.flyTo(this.config.defaultCamera);
     return this;
   }
   setCursor(className) {

@@ -14,8 +14,8 @@ export default {
   mounted () {
     addMessageListener();
     // window.s3d.enableBloom()
-    window.s3d.topLeftBar.highLimitTool.setTargetLayers(['建筑']);
-    window.s3d.topLeftBar.submergedTool.setTargetLayers(['建筑']);
+    // window.s3d.topLeftBar.highLimitTool.setTargetLayers(['建筑']);
+    // window.s3d.topLeftBar.submergedTool.setTargetLayers(['建筑']);
     // .includingGlobe()
     // //园区
     // .setCoverageArea([

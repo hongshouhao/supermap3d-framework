@@ -13,11 +13,11 @@ export const config = {
   //   url:
   //     'http://localhost:8090/iserver/services/3D-globalmap/rest/realspace/datas/BlackMarble_2012_750m_geo%40globalmap',
   // },
-  emptyMap: {
-    url: '/empty.jpg',
-    maxVisibleAltitude: 756827,
-  },
-  undergroundMode: false,
+  // emptyMap: {
+  //   url: '/empty.jpg',
+  //   maxVisibleAltitude: 756827,
+  // },
+  undergroundMode: true,
   minimumZoomDistance: -1000,
   colorCorrection: {
     brightness: 1,
@@ -93,13 +93,13 @@ export const config = {
         //       'http://58.210.9.133/geoserver/rest/services/ZK_DLTB2020/MapServer',
         //   },
         // },
-        {
-          type: 'supermap',
-          // mode: 'day',
-          params: {
-            url: URL_CONFIG.SUPERMAP_IMG_MEC,
-          },
-        },
+        // {
+        //   type: 'supermap',
+        //   // mode: 'day',
+        //   params: {
+        //     url: URL_CONFIG.SUPERMAP_IMG_MEC,
+        //   },
+        // },
       ],
     },
   },
