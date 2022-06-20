@@ -38,11 +38,9 @@ export default {
         type: 'DEM',
         // 默认是否开启图层
         visible: false,
-        url:
-          'http://localhost/iserver/services/3D-DEM/rest/realspace/datas/DEM',
+        url: 'http://localhost/iserver/services/3D-DEM/rest/realspace/datas/DEM',
         // 默认DEM有裙边，地下模式事影响效果，所以使用DEM为0的数据替换默认DEM数据，可空
-        url0:
-          'http://localhost/iserver/services/3D-DEM0/rest/realspace/datas/DEM0',
+        url0: 'http://localhost/iserver/services/3D-DEM0/rest/realspace/datas/DEM0',
       },
     },
     {
@@ -75,8 +73,7 @@ export default {
             maxVisibleAltitude: 0,
             // 模型选中颜色，可空
             selectColorType: Cesium.SelectColorType.REPLACE,
-            url:
-              'http://localhost/iserver/services/3D-S3M/rest/realspace/datas/test/config',
+            url: 'http://localhost/iserver/services/3D-S3M/rest/realspace/datas/test/config',
             // 图层定位相机默认设置，同上config
             defaultCamera: {
               duration: 2,
@@ -89,21 +86,10 @@ export default {
             // 压平某个区域
             flattenRegions: [
               [
-                120.60176437339629,
-                31.184432532743152,
-                0,
-                120.60203936867242,
-                31.181754094638176,
-                0,
-                120.60324403847666,
-                31.181772259112677,
-                0,
-                120.60323994862907,
-                31.184236800529675,
-                0,
-                120.60176437339629,
-                31.184432532743152,
-                0,
+                120.60176437339629, 31.184432532743152, 0, 120.60203936867242,
+                31.181754094638176, 0, 120.60324403847666, 31.181772259112677,
+                0, 120.60323994862907, 31.184236800529675, 0,
+                120.60176437339629, 31.184432532743152, 0,
               ],
             ],
             // 图层颜色校正
@@ -125,13 +111,13 @@ export default {
             // i查询弹出框
             popupTemplate: {
               // 返回标题
-              getHeader: function(data) {
+              getHeader: function (data) {
                 return data.object.layer + 'test';
               },
               // 返回页面内容
               // 使用自定义UI：返回DOM即可
               // 使用默认UI：返回[{key,value}]
-              getContent: function(data) {
+              getContent: function (data) {
                 let div = document.createElement('div');
                 div.innerHTML = data.object.layer;
                 return div;
@@ -148,8 +134,7 @@ export default {
             // 二维矢量瓦片图层
             type: 'MVT',
             visible: false,
-            url:
-              'http://localhost/iserver/services/map-mvt-矢量/restjsr/v1/vectortile/maps/矢量',
+            url: 'http://localhost/iserver/services/map-mvt-矢量/restjsr/v1/vectortile/maps/矢量',
           },
         },
       ],
@@ -161,8 +146,7 @@ export default {
         type: 'S3M',
         visible: false,
         enableFillAndWireFrame: true,
-        url:
-          'http://localhost/iserver/services/3D-管线/rest/realspace/datas/管线/config',
+        url: 'http://localhost/iserver/services/3D-管线/rest/realspace/datas/管线/config',
         // 仅针对未做单体化的图层有作用，配置同栅格
         iQuery: {},
         datasetName: '污水:污水_1',
@@ -182,8 +166,7 @@ export default {
           type: 'S3MLAYER',
           // S3M图层参数
           layer: {
-            url:
-              'http://localhost/iserver/services/3D-test/rest/realspace/datas/WS_LINE_4_1@污水1/config',
+            url: 'http://localhost/iserver/services/3D-test/rest/realspace/datas/WS_LINE_4_1@污水1/config',
             // 流向、流速配置
             textureUVSpeed: new Cesium.Cartesian2(-0.5, 0),
           },
@@ -205,8 +188,7 @@ export default {
         type: 'SMIMG',
         visible: false,
         // 图层地址
-        url:
-          'http://localhost/iserver/services/3D-测试/rest/realspace/datas/测试',
+        url: 'http://localhost/iserver/services/3D-测试/rest/realspace/datas/测试',
         // i查询配置
         iQuery: {
           // 数值越大查询优先级越高
@@ -233,7 +215,7 @@ export default {
           dataUrl: 'http://localhost:9864/cad-connect-test',
           // 如果上述dataUrl数据服务返回数据结构与SDK不符，可使用transform函数处理，最终返回目标结构数据,
           // 入参 data：dataUrl返回数据
-          transform: function(data) {
+          transform: function (data) {
             return {
               object: {
                 // 要素id，此处id不作强制要求，SDK内部不使用此处id
@@ -252,7 +234,7 @@ export default {
           // 入参position：{longitude, latitude, height}
           // 注：如果配置getData函数，则优先使用getData函数，否则使用dataUrl请求数据，
           //    如果配置了transform函数，则会调用transform函数处理dataUrl返回的数据
-          getData: function(position) {
+          getData: function (position) {
             return {
               object: {
                 id: 1,
@@ -338,8 +320,7 @@ export default {
           params: {
             url: 'https://dev.virtualearth.net',
             mapStyle: 'Aerial',
-            key:
-              'AoYWP4oApRkB0gyraUkMkJ-FNAqTOzNBfwgQYZflN0vDRLnD8KrwEm8lmLdwFYFh',
+            key: 'AoYWP4oApRkB0gyraUkMkJ-FNAqTOzNBfwgQYZflN0vDRLnD8KrwEm8lmLdwFYFh',
           },
         },
       ],
@@ -352,8 +333,7 @@ export default {
           // 高德
           type: 'gaode',
           params: {
-            url:
-              'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+            url: 'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
           },
         },
       ],

@@ -2,7 +2,7 @@
  * @Author: zhangbo
  * @Date: 2022-04-07 12:48:38
  * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-09 13:15:04
+ * @LastEditTime: 2022-06-01 14:23:44
  * @FilePath: \supermap3d-framework\core\components\layer\tree\mixins\layer-tree.js
  * @Description:
  *
@@ -182,7 +182,7 @@ export default {
                 </span>
               </span>
               <span class="layer-tool">
-                <i
+                {/* <i
                   class="esri-icon icon-top"
                   on-click={() => {
                     lyElModel.cesiumLayer = window.s3d.layerManager.topLayer(
@@ -197,7 +197,7 @@ export default {
                       lyElModel.layer.name
                     );
                   }}
-                />
+                /> */}
                 <el-popover
                   placement="bottom"
                   popper-class="layer-setting-popup"

@@ -91,13 +91,14 @@ export default class S3d {
       imgLy.isBaseMap = true;
     }
 
-    this.viewer.scene.colorCorrection.show = true;
+    // this.viewer.scene.colorCorrection.show = true;
     this.viewer.scene.globe.enableLighting = true;
     // this.viewer.scene.hdrEnabled = true;
 
     // viewer.scene.fxaa = false
     // viewer.scene.postProcessStages.fxaa.enabled = false
-    this.viewer.scene.debugShowFramesPerSecond = false;
+    this.viewer.scene.debugShowFramesPerSecond =
+      this.config.enableDebugShowFramesPerSecond || false;
     this.viewer.scene.globe.depthTestAgainstTerrain = true;
     this.viewer.scene.logarithmicDepthBuffer = false;
 

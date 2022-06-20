@@ -158,7 +158,7 @@ export default {
               }
             } else {
               let calls = pikObjs.map((x) => {
-                if (x.id instanceof Cesium.Entity) {
+                if (x.id instanceof Cesium.Entity && !x.id.ignorePopup) {
                   return _this.popupData.dataFromEntity(x.id);
                 } else if (x.primitive.config?.iQuery) {
                   let lname = x.primitive.config.name;
