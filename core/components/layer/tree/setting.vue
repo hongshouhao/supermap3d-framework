@@ -129,7 +129,8 @@ export default {
   },
   computed: {
     showRenderer () {
-      return this.layerInfo?.renderer?.type === 'S3MLAYER';
+      debugger;
+      return this.lyElModel.layer?.renderer?.type === 'S3MLAYER';
     },
   },
   props: ['lyElModel'],
@@ -156,7 +157,7 @@ export default {
     window.s3d.eventBus.addEventListener(
       'layer-invisible-internal',
       (caller, lyName) => {
-        if (_this.layerInfo && lyName === _this.layerInfo.name) {
+        if (_this.lyElModel.layer && lyName === _this.lyElModel.layer.name) {
           _this.enableRenderer = false;
         }
       }
