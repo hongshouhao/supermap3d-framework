@@ -301,7 +301,7 @@ export default {
 
         // 方案1
         if (window.s3d.config.customPopupRender) {
-          window.s3d.config.customPopupRender(obj.object.shape);
+          window.s3d.config.customPopupRender(obj.object.shape, ly);
         } else {
           let opts = ly.config.iQuery.symbol;
           window.s3d.dataUtility
