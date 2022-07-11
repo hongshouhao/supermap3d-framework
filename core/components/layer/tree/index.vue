@@ -212,13 +212,13 @@ export default {
     resetLayerData () {
       let ids = this.$refs.tree.getCheckedKeys();
       let cids = this.$refs.compareTree.$refs.tree.getCheckedKeys();
-      this.$refs.tree.setCheckedKeys([])
+      this.$refs.tree.setCheckedKeys([]);
 
-      let layers = window.s3d.layerManager.getAllLayers(f=>true);
-      layers.forEach(f=>{
-        f.setVisibleInViewport(0,false);
-        f.setVisibleInViewport(1,false);
-      })
+      let layers = window.s3d.layerManager.getAllLayers(f => true);
+      layers.forEach(f => {
+        f.setVisibleInViewport(0, false);
+        f.setVisibleInViewport(1, false);
+      });
 
       // for (let ly of cids) {
       //   if (ids.indexOf(ly) < 0) {
@@ -226,7 +226,7 @@ export default {
       //   }
       // }
       setTimeout(() => {
-             this.$refs.tree.setCheckedKeys(ids);
+        this.$refs.tree.setCheckedKeys(ids);
       }, 100);
     },
   },

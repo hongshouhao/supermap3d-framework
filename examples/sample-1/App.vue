@@ -10,7 +10,7 @@
 -->
 <template>
   <smmap @viewer-created="onViewerCreated">
-   
+
   </smmap>
 </template>
 <script>

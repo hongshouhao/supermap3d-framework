@@ -1,12 +1,15 @@
 <template>
   <div class="cesium-core-container">
-    <div class="top-left-bar-container">
+    <slot name="tool-bar">
+      <div class="top-left-bar-container">
         <TopLeftBar />
       </div>
-     <div class="top-right-bar-container">
+    </slot>
+    <slot name="layer-bar">
+      <div class="top-right-bar-container">
         <TopRightBar />
       </div>
-    <slot></slot>
+    </slot>
     <MapViewer @viewer-created="onViewerCreated" />
   </div>
 </template>
