@@ -128,6 +128,9 @@ export default class DataAccess {
       let res = options.getData(position);
       if (isPromise(res)) {
         return res.then((result) => {
+          if (!result) {
+            return null;
+          }
           result.sourceType = 'IQUERY';
           return result;
         });
