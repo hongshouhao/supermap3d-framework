@@ -54,7 +54,6 @@
 import $ from 'jquery';
 import Enumerable from 'linq';
 import PropertyGrid from '../popup/PropertyGrid.vue';
-import PopupData from '../popup/PopupData.js';
 import { isImageryLayer } from '../../utils/ImageryUtility';
 
 export default {
@@ -283,12 +282,14 @@ export default {
         (ly.type === '3DTILES' && ly.config.selectable === false) ||
         (ly.type === 'S3M' && ly.config.selectable === false)
       ) {
-        if (obj.object.shape.type.toLowerCase() == 'featurecollection') {
-          for (let fitem of obj.object.shape.features) {
-            fitem.properties = obj.object.attributes;
+        if (obj.object.shape) {
+          if (obj.object.shape.type.toLowerCase() == 'featurecollection') {
+            for (let fitem of obj.object.shape.features) {
+              fitem.properties = obj.object.attributes;
+            }
+          } else if (obj.object.shape.type.toLowerCase() == 'feature') {
+            obj.object.shape.properties = obj.object.attributes;
           }
-        } else if (obj.object.shape.type.toLowerCase() == 'feature') {
-          obj.object.shape.properties = obj.object.attributes;
         }
 
         // 方案1

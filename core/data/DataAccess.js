@@ -39,9 +39,9 @@ export default class DataAccess {
     });
   }
 
-  dataFromPrimitive(primitive) {
-    let lyName = primitive.primitive.name;
-    let oid = primitive.id;
+  dataFromPrimitive(modelObj) {
+    let lyName = modelObj.primitive.name;
+    let oid = modelObj.id;
 
     let data = {
       sourceType: 'PRIMITIVE',
@@ -75,6 +75,24 @@ export default class DataAccess {
     }
 
     this._deleteProperty(data.object.attributes, fields);
+    return data;
+  }
+
+  dataFrom3DTiles(modelObj) {
+    let lyName = modelObj.tileset.name;
+    let attrs = {};
+    let propNames = modelObj.getPropertyNames();
+    for (let key of propNames) {
+      attrs[key] = modelObj.getProperty(key);
+    }
+
+    let data = {
+      sourceType: 'PRIMITIVE',
+      object: {
+        layer: lyName,
+        attributes: attrs,
+      },
+    };
     return data;
   }
 

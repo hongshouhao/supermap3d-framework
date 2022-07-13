@@ -208,7 +208,6 @@ export const layers = [
       type: '3DTILES',
       visible: false,
       url: 'http://127.0.0.1:5500/tileset.json',
-      debugShowContentBoundingVolume: true,
       allowPicking: true,
     },
   },
@@ -219,7 +218,6 @@ export const layers = [
       type: '3DTILES',
       visible: false,
       url: 'http://127.0.0.1:5500/TEST/PIPE/tileset.json',
-      debugShowContentBoundingVolume: true,
       allowPicking: true,
     },
   },
@@ -229,36 +227,16 @@ export const layers = [
     layer: {
       type: '3DTILES',
       visible: false,
-      url: 'http://127.0.0.1:5500/ZQWEB/WELL/tileset.json',
-      debugShowContentBoundingVolume: true,
-    },
-  },
-  {
-    id: 'ZQ-PIPE213123',
-    name: 'ZQ-PIPEffg345534',
-    layer: {
-      type: 'S3M',
-      visible: false,
-      url: 'http://localhost:8090/iserver/services/3D-zqtestasdasffffffffff/rest/realspace/datas/ZQ_LINE_1@%E5%BE%90%E5%B7%9E%E7%BB%8F%E5%BC%80%E5%8C%BA%E7%AE%A1%E7%BA%BF%E6%99%AE%E6%9F%A52021%E6%95%B0%E6%8D%AE%E5%BA%93-ZQ/config',
+      url: 'http://127.0.0.1:5501/ZQ/WELL/tileset.json',
     },
   },
   {
     id: 'ZQ-PIPE',
     name: 'ZQ-PIPE',
     layer: {
-      type: 'S3M',
-      visible: false,
-      url: 'http://localhost:8090/iserver/services/3D-zqtestasdasffffffffff/rest/realspace/datas/zqtest/config',
-    },
-  },
-  {
-    id: 'ZQ-PIPEasd',
-    name: 'ZQ-PIPEasd',
-    layer: {
       type: '3DTILES',
       visible: false,
-      url: 'http://127.0.0.1:5500/ZQ2/PIPE/tileset.json',
-      debugShowContentBoundingVolume: true,
+      url: 'http://127.0.0.1:5501/ZQ/PIPE/tileset.json',
     },
   },
   {
@@ -268,7 +246,6 @@ export const layers = [
       type: '3DTILES',
       visible: false,
       url: 'http://127.0.0.1:5500/ZQ/WELL/tileset.json',
-      debugShowContentBoundingVolume: true,
     },
   },
   {
@@ -278,7 +255,6 @@ export const layers = [
       type: '3DTILES',
       visible: false,
       url: 'http://127.0.0.1:5500/ZQ/PIPE/tileset.json',
-      debugShowContentBoundingVolume: true,
     },
   },
   {

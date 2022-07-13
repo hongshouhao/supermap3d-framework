@@ -45,7 +45,6 @@ export const popupTemplateWithDefaultUI = {
       key: '高度',
       value: data.position.height,
     });
-
     for (let p in data.object.attributes) {
       arr.push({
         key: p,

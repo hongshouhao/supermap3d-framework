@@ -13,7 +13,8 @@ import DebugUtility from './utils/DebugUtility';
 import DataUtility from './utils/DataUtility';
 import BasemapUtility from './utils/BasemapUtility';
 
-import PopupData from './components/popup/PopupData';
+import SelectedChangedEvent from '../core/data/SelectedChangedEvent';
+import DataAccessWrapper from '../core/data/DataAccessWrapper';
 import DataAccess from './data/DataAccess';
 import LayerManager from './data/LayerManager';
 import LayerFactory from './utils/LayerFactory';
@@ -52,9 +53,10 @@ export default class S3d {
   setViewer(viewer) {
     this.viewer = viewer;
     this.scene = viewer.scene;
-
+ 
+    this.selectedChangedEvent = new SelectedChangedEvent(viewer);
     this.dataAccess = new DataAccess(viewer);
-    this.popupData = new PopupData(viewer);
+    this.popupData = new DataAccessWrapper(viewer);
     this.viewUtility = new ViewUtility(viewer);
     this.cameraUtility = new CameraUtility(viewer);
     this.debugUtility = new DebugUtility(viewer);
@@ -549,8 +551,9 @@ export default class S3d {
       let pobj = this.scene.pick(mousePosition, 3);
       if (
         pobj &&
-        pobj.primitive &&
-        (typeof pobj.id === 'string' || pobj.id instanceof Cesium.Entity)
+        pobj.primitive
+        // &&
+        // (typeof pobj.id === 'string' || pobj.id instanceof Cesium.Entity)
       ) {
         pickedObjects.push(pobj);
       }

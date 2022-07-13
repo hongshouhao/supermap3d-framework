@@ -17,7 +17,13 @@ export default class Test {
   }
 
   doTest() {
-    this.testMatrix();
+    
+    window.s3d.selectedChangedEvent.startListening();
+    window.s3d.eventBus.addEventListener('selected-features-changed', (caller, args) => {
+      console.log(caller);
+      console.log(args);
+    });
+    // this.testMatrix();
     // window.s3d.topLeftBar.toggleViewTo('2D');
     // this.labelPolygonsTest()
     // this.flyToPointsTest()
