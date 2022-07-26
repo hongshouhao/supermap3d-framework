@@ -1,24 +1,14 @@
-<!--
- * @Author: zhangbo
- * @Date: 2022-04-06 09:40:44
- * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-09 12:54:58
- * @FilePath: \supermap3d-framework\core\components\toolbar\index.vue
- * @Description: 
- * 
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
--->
 <template>
   <div class="n-widget-bar-wrapper">
-    <div class="n-widget-bar" :class="computedClass" :style="computedCss">
+    <div class="n-widget-bar"
+         :class="computedClass"
+         :style="computedCss">
       <div class="tool-group">
         <slot>
-          <tool-item
-            v-for="(item, index) in tools"
-            :key="index"
-            :code="item.code"
-            :icon="item.icon"
-          >
+          <tool-item v-for="(item, index) in tools"
+                     :key="index"
+                     :code="item.code"
+                     :icon="item.icon">
           </tool-item>
         </slot>
       </div>
@@ -31,11 +21,11 @@ import ToolItem from './tool-item.vue';
 import ToolManager from './manager/index';
 
 export default {
-  name:'n-tool-bar',
+  name: 'n-tool-bar',
   props: {
     tools: {
       type: Array,
-      default() {
+      default () {
         return [
           {
             code: 'measure-angle',
@@ -66,13 +56,13 @@ export default {
     },
     position: {
       type: String | Array,
-      default() {
+      default () {
         return 'top-left';
       },
     },
     positionType: {
       type: Array,
-      default() {
+      default () {
         return ['top', 'left'];
       },
     },
@@ -90,27 +80,27 @@ export default {
   inject: {
     viewer: {
       from: 'viewer',
-      default() {
+      default () {
         return null;
       },
     },
   },
-  provide() {
+  provide () {
     return {
       toolbar: this,
     };
   },
   components: { ToolItem },
-  data() {
+  data () {
     return {};
   },
-  created() {
+  created () {
     this.toolManager = new ToolManager(this.$viewer || window.s3d.viewer, {
       invoker: this,
     });
   },
   computed: {
-    computedClass() {
+    computedClass () {
       let css = {
         horizonal: this.horizonal,
         static: this.static,
@@ -121,7 +111,7 @@ export default {
       }
       return css;
     },
-    computedCss() {
+    computedCss () {
       const containPx = (value) => {
         if (typeof this.position == 'string') {
           return value.indexOf('px') > -1;

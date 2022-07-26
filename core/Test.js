@@ -17,12 +17,12 @@ export default class Test {
   }
 
   doTest() {
-    
-    window.s3d.selectedChangedEvent.startListening();
-    window.s3d.eventBus.addEventListener('selected-features-changed', (caller, args) => {
-      console.log(caller);
-      console.log(args);
-    });
+    // window.s3d.selectedChangedEvent.startListening();
+    // window.s3d.eventBus.addEventListener('selected-features-changed', (caller, args) => {
+    //   console.log(caller);
+    //   console.log(args);
+    // });
+
     // this.testMatrix();
     // window.s3d.topLeftBar.toggleViewTo('2D');
     // this.labelPolygonsTest()
@@ -38,7 +38,7 @@ export default class Test {
     // this.loadGeoJSON()
     // this.insertToolButton()
     // this.entityToGeoJson()
-    // this.sketchTest()
+    this.sketchTest();
     // window.s3d.viewUtility.rotateZ(1)
     // window.s3d
     //   .query({ layer: '交通信号', sql: 'SMID =1' })
@@ -399,10 +399,13 @@ export default class Test {
   sketchTest() {
     if (this.sketchTestStep === 0) {
       this.sketchTestStep++;
-      this.sketchTool.start('polyline');
+      // this.sketchTool.start('polyline');
+      this.sketchTool.start('rectangle');
+      // this.sketchTool.setVertexLimitCount(2);
     } else if (this.sketchTestStep === 1) {
       this.sketchTestStep++;
       this.sketchTool.start('polygon');
+      // this.sketchTool.setVertexLimitCount(3);
     } else {
       this.sketchTool.getGeometries().then((result) => {
         console.log(result);

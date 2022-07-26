@@ -14,10 +14,6 @@ export default class PolygonDrawingTool {
       },
       options
     );
-    // this.lineColor = "#12D035";
-    // this.opacity = 0.5;
-    // this.multiable = true;
-    // this.clampToGround = true;
 
     this.entityAdded = function (geo) {
       console.log('entityAdded', geo);
@@ -32,6 +28,14 @@ export default class PolygonDrawingTool {
     this._entityVertexes = [];
     this._currentEntityOutline = null;
     this._currentEntityFill = null;
+    this._vertexLimitCount = 100;
+  }
+
+  setVertexLimitCount(count) {
+    if (count < 3) {
+      return;
+    }
+    this._vertexLimitCount = count;
   }
 
   start() {
@@ -39,50 +43,34 @@ export default class PolygonDrawingTool {
     window.s3d.setCursor('cursor-crosshair');
 
     let _this = this;
+    _this._drawHandler.setInputAction(function (e) {
+      let point = window.s3d.viewUtility.screenPositionToCartesian(e.position);
+      point.z = point.z + _this._offsetZ;
+      if (!_this._currentEntityOutline) {
+        _this._createEntity(point);
+      } else {
+        let curEntVers = _this._getCurrentEntityVertexes();
+        curEntVers.splice(curEntVers.length - 1, 0, point);
+       
+        if (_this._vertexLimitCount + 2 === curEntVers.length) {
+          _this.finishCurrentDrawing();
+        }
+      }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
-    return new Promise((resolve, reject) => {
-      _this._drawHandler.setInputAction(function (e) {
+    _this._drawHandler.setInputAction(function (e) {
+      if (_this._currentEntityOutline) {
         let point = window.s3d.viewUtility.screenPositionToCartesian(
-          e.position
+          e.endPosition
         );
         point.z = point.z + _this._offsetZ;
-        if (!_this._currentEntityOutline) {
-          _this._createEntity(point);
-        } else {
-          let curEntVers = _this._getCurrentEntityVertexes();
-          curEntVers.splice(curEntVers.length - 1, 0, point);
-        }
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        _this._updateEntity(point);
+      }
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-      _this._drawHandler.setInputAction(function (e) {
-        if (_this._currentEntityOutline) {
-          let point = window.s3d.viewUtility.screenPositionToCartesian(
-            e.endPosition
-          );
-          point.z = point.z + _this._offsetZ;
-          _this._updateEntity(point);
-        }
-      }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-
-      _this._drawHandler.setInputAction(function () {
-        let curEntVers = _this._getCurrentEntityVertexes();
-        curEntVers.splice(curEntVers.length - 2, 1);
-        _this._currentEntityOutline = null;
-        _this._currentEntityFill = null;
-
-        if (_this.entityAdded) {
-          _this.entities[_this.entities.length - 1]
-            .toGeoJson()
-            .then((result) => {
-              _this.entityAdded(result);
-            });
-        }
-
-        if (!_this.options.multiable) {
-          _this.finishDrawing();
-        }
-      }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-    });
+    _this._drawHandler.setInputAction(function () {
+      _this.finishCurrentDrawing();
+    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
   }
 
   clear() {
@@ -111,6 +99,27 @@ export default class PolygonDrawingTool {
     );
   }
 
+  finishCurrentDrawing() {
+    if (this._currentEntityOutline) {
+      let curEntVers = this._getCurrentEntityVertexes();
+      curEntVers.splice(curEntVers.length - 2, 1);
+      this._currentEntityOutline = null;
+      this._currentEntityFill = null;
+
+      if (this.entityAdded) {
+        this.entities[this.entities.length - 1].toGeoJson().then((result) => {
+          this.entityAdded(result);
+        });
+      }
+
+      if (!this.options.multiable) {
+        this.finishDrawing();
+      }
+    } else {
+      this.finishDrawing();
+    }
+  }
+
   finishDrawing() {
     this.stop();
     if (this.drawingFinished) {
@@ -131,10 +140,14 @@ export default class PolygonDrawingTool {
   _createEntity(point) {
     let curEntVers = [point, point.clone(), point.clone()];
     this._entityVertexes.push(curEntVers);
+
     this._currentEntityOutline = this.viewer.entities.add({
       name: 'sketch_polygon_outline',
       polyline: {
-        positions: curEntVers,
+        positions: new Cesium.CallbackProperty(
+          () => curEntVers,
+          false
+        ),
         material: Cesium.Color.fromAlpha(
           Cesium.Color.fromCssColorString(this.options.lineColor),
           this.options.lineOpacity
@@ -152,7 +165,10 @@ export default class PolygonDrawingTool {
       name: 'sketch_polygon_fill',
       polygon: {
         // heightReference: Cesium.HeightReference.NONE,
-        hierarchy: curEntVers.slice(0, -1),
+        hierarchy: new Cesium.CallbackProperty(
+          () => new Cesium.PolygonHierarchy(curEntVers.slice(0, -1)),
+          false
+        ),
         material: Cesium.Color.fromAlpha(
           Cesium.Color.fromCssColorString(this.options.fillColor),
           this.options.fillOpacity
@@ -169,18 +185,8 @@ export default class PolygonDrawingTool {
     if (!this._currentEntityOutline) {
       return;
     }
-
     let curEntVers = this._getCurrentEntityVertexes();
     curEntVers[curEntVers.length - 2] = point;
-    this._currentEntityOutline.polyline.positions = new Cesium.CallbackProperty(
-      () => curEntVers,
-      false
-    );
-
-    this._currentEntityFill.polygon.hierarchy = new Cesium.CallbackProperty(
-      () => new Cesium.PolygonHierarchy(curEntVers.slice(0, -1)),
-      false
-    );
   }
 
   _getCurrentEntityVertexes() {

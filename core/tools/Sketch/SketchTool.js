@@ -1,11 +1,18 @@
 import PolylineDrawingTool from './PolylineDrawingTool';
 import PolygonDrawingTool from './PolygonDrawingTool';
+import RectangleDrawingTool from './RectangleDrawingTool';
 export default class SketchTool {
   constructor(viewer) {
     this.viewer = viewer;
     this._geoType = 'polygon';
     this._lineDrawingTool = new PolylineDrawingTool(viewer);
     this._polygonDrawingTool = new PolygonDrawingTool(viewer);
+    this._rectangleDrawingTool = new RectangleDrawingTool(viewer);
+  }
+
+  setVertexLimitCount(count) {
+    this._lineDrawingTool.setVertexLimitCount(count);
+    this._polygonDrawingTool.setVertexLimitCount(count);
   }
 
   setColor(value) {
@@ -20,7 +27,7 @@ export default class SketchTool {
 
   setMultiable(value) {
     this._lineDrawingTool.multiable = value;
-    this._polygonDrawingTool.multiable = value;
+    this._polygonDrawingTool.options.multiable = value;
   }
 
   addEvent(type, callback) {
@@ -49,6 +56,9 @@ export default class SketchTool {
       break;
     case 'polyline':
       this._lineDrawingTool.start();
+      break;
+    case 'rectangle':
+      this._rectangleDrawingTool.start();
       break;
     default:
       this._polygonDrawingTool.start();

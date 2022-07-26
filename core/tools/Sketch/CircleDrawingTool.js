@@ -1,21 +1,9 @@
-/*
- * @Author: zhangbo
- * @LastEditors: zhangbo
- * @Date: 2022-04-09 13:00:30
- * @LastEditTime: 2022-04-13 15:06:44
- * @FilePath: \supermap3d-framework\core\tools\Sketch\CircleDrawingTool.js
- * @Description:
- *
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved.
- */
 import * as turf from '@turf/turf';
 import { lonLatToCartesian, cartesianToLonlat } from '@/utils/CesiumMath';
-import BaseDrawingTool from './BaseDrawingTool';
 
-export default class CircleDrawingTool extends BaseDrawingTool {
+export default class CircleDrawingTool{
   constructor(viewer, options) {
-    super(viewer, options);
-
+    this.viewer = viewer; 
     this.options = Object.assign(
       {},
       {
@@ -133,6 +121,14 @@ export default class CircleDrawingTool extends BaseDrawingTool {
 
     return cartPoints;
   };
+
+  getGeometries() {
+    let coll = new Cesium.EntityCollection(this.viewer.entities.owner);
+    for (let ent of this.entities) {
+      coll.add(ent);
+    }
+    return coll.toGeoJson();
+  }
 
   stop() {
     window.s3d.resetCursor();
