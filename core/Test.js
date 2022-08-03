@@ -12,7 +12,7 @@ export default class Test {
   createSketchTool() {
     this.count = 1;
     this.sketchTool = new SketchTool(window.s3d.viewer);
-    this.sketchTool.setMultiable(false);
+    this.sketchTool.setMultiable(true);
     this.sketchTestStep = 0;
   }
 
@@ -399,13 +399,32 @@ export default class Test {
   sketchTest() {
     if (this.sketchTestStep === 0) {
       this.sketchTestStep++;
-      // this.sketchTool.start('polyline');
-      this.sketchTool.start('rectangle');
-      // this.sketchTool.setVertexLimitCount(2);
+      this.sketchTool.start('rectangle').then((x) => {
+        console.log(x);
+      });
     } else if (this.sketchTestStep === 1) {
       this.sketchTestStep++;
-      this.sketchTool.start('polygon');
       // this.sketchTool.setVertexLimitCount(3);
+      this.sketchTool.start('polygon').then((x) => {
+        console.log(x);
+      });
+    } else if (this.sketchTestStep === 2) {
+      this.sketchTestStep++;
+      // this.sketchTool.setVertexLimitCount(3);
+      this.sketchTool.start('polyline').then((x) => {
+        console.log(x);
+      });
+    } else if (this.sketchTestStep === 3) {
+      this.sketchTestStep++;
+      this.sketchTool.enableFreeLine();
+      this.sketchTool.start('polyline').then((x) => {
+        console.log(x);
+      });
+    } else if (this.sketchTestStep === 4) {
+      this.sketchTestStep++;
+      this.sketchTool.start('circle').then((x) => {
+        console.log(x);
+      });
     } else {
       this.sketchTool.getGeometries().then((result) => {
         console.log(result);

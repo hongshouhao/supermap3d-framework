@@ -1,13 +1,3 @@
-<!--
- * @Author: zhangbo
- * @Date: 2022-04-07 08:51:33
- * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-08 13:59:07
- * @FilePath: \supermap3d-framework\core\components\layer\tree\recent.vue
- * @Description: 
- * 
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
--->
 <template>
   <el-scrollbar style="height: 100%"
                 class="tree-wrapper recent">
@@ -49,30 +39,14 @@ export default {
         this.$parent.$refs.tree.setChecked(data.id, checked);
       }
     },
-    updateLayer () {
+    getRecentLayers () {
       this.recentLayerData.splice(0, this.recentLayerData.length);
-
-      const findNode = function (arr, id) {
-        let node;
-        for (let index = 0; index < arr.length; index++) {
-          const element = arr[index];
-          if (element.name == id) {
-            return element;
-          } else if (element.children) {
-            let find = findNode(element.children, id);
-            if (find) {
-              return find;
-            }
-          }
-        }
-        return node;
-      };
-
+      let _this = this;
       return this.recentLayerStore.get().then((ids) => {
         ids.forEach((id) => {
-          let find = findNode(this.layerData, id);
-          if (find) {
-            this.recentLayerData.push(find);
+          let targ = window.s3d.layerManager._getLayerNode(x => x.id === id);
+          if (targ) {
+            _this.recentLayerData.push(targ);
           }
         });
       });
@@ -80,7 +54,7 @@ export default {
   },
   mounted () {
     const that = this;
-    this.updateLayer().then(() => {
+    this.getRecentLayers().then(() => {
       that.$nextTick(function () {
         let ids = that.$parent.$refs.tree.getCheckedKeys();
         that.$refs.tree.setCheckedKeys(ids);

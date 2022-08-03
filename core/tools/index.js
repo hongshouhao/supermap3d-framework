@@ -21,7 +21,7 @@ import PolylineDrawingTool from './Sketch/PolylineDrawingTool';
 import SketchTool from './Sketch/SketchTool';
 import SceneRouteTool from './Scene/SceneRouteTool';
 import CircleDrawingTool from './Sketch/CircleDrawingTool';
-import RectangleDrawingTool from './Sketch/RectangleDrawingTool';
+import RectangleDrawingTool from './Sketch/RectangleDrawingTool___';
 
 export {
   LayerTimeLineTool,

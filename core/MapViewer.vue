@@ -39,6 +39,9 @@ export default {
       viewerOptions.terrainProvider = new Cesium.CesiumTerrainProvider({
         url: config.dem,
       });
+    }
+
+    if (viewerOptions.terrainProvider) {
       viewerOptions.terrainProvider.isCreateSkirt = false;
     }
 

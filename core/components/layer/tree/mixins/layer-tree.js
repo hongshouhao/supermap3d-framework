@@ -1,13 +1,3 @@
-/*
- * @Author: zhangbo
- * @Date: 2022-04-07 12:48:38
- * @LastEditors: zhangbo
- * @LastEditTime: 2022-06-01 14:23:44
- * @FilePath: \supermap3d-framework\core\components\layer\tree\mixins\layer-tree.js
- * @Description:
- *
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved.
- */
 import { isPromise } from '@/utils/IfUtility';
 import LayerFactory from '@/utils/LayerFactory';
 import LayerSetting from '../setting.vue';
@@ -16,7 +6,6 @@ import LayerStore from '../store/layer-store';
 export default {
   data() {
     return {
-      // layerFactory: null,
       defaultExpandedKeys: [],
       defaultCheckedKeys: [],
     };
@@ -38,9 +27,8 @@ export default {
       if (data.children && data.children.length > 0) {
         return;
       }
-
       if (checked && this.recentLayerStore) {
-        this.recentLayerStore.set(data.id);
+        this.recentLayerStore.add(data.id);
       }
 
       if (data.cesiumLayer) {
@@ -198,6 +186,21 @@ export default {
                     );
                   }}
                 /> */}
+                <a
+                  class="layer-tool-item"
+                  on-click={() => {
+                    lyElModel.isFavorite = !lyElModel.isFavorite;
+                    this.onChangeFavourite(lyElModel, lyElModel.isFavorite);
+                  }}
+                >
+                  <i
+                    class={
+                      lyElModel.isFavorite
+                        ? 'icon-star-full'
+                        : 'icon-star-empty'
+                    }
+                  ></i>
+                </a>
                 <el-popover
                   placement="bottom"
                   popper-class="layer-setting-popup"
@@ -212,21 +215,7 @@ export default {
                     }
                   />
                 </el-popover>
-                <a
-                  class="layer-tool-item"
-                  on-click={() => {
-                    lyElModel.isFavourite = !lyElModel.isFavourite;
-                    this.onChangeFavourite(lyElModel, lyElModel.isFavourite);
-                  }}
-                >
-                  <i
-                    class={
-                      lyElModel.isFavourite
-                        ? 'icon-star-full'
-                        : 'icon-star-empty'
-                    }
-                  ></i>
-                </a>
+                
               </span>
             </span>
           );
@@ -393,16 +382,16 @@ export default {
         }
       }
     },
-    onChangeFavourite(lyElModel, isFavourite) {
-      if (isFavourite) {
-        this.favourLayerStore.set(lyElModel.id);
+    onChangeFavourite(lyElModel, isFavorite) {
+      if (isFavorite) {
+        this.favourLayerStore.add(lyElModel.id);
       } else {
         this.favourLayerStore.remove(lyElModel.id);
       }
 
-      window.s3d.eventBus.dispatch('layer-favourite-changed', 'layers-tree', {
+      window.s3d.eventBus.dispatch('layer-favorite-changed', 'layers-tree', {
         layer: lyElModel,
-        checked: isFavourite,
+        checked: isFavorite,
       });
     },
   },

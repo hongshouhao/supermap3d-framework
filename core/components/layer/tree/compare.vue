@@ -1,13 +1,3 @@
-<!--
- * @Author: zhangbo
- * @Date: 2022-04-07 08:51:33
- * @LastEditors: zhangbo
- * @LastEditTime: 2022-05-12 09:12:45
- * @FilePath: \supermap3d-framework\core\components\layer\tree\compare.vue
- * @Description: 
- * 
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
--->
 <template>
   <el-scrollbar style="height: 100%"
                 class="tree-wrapper">
@@ -21,18 +11,13 @@
              :default-checked-keys="defaultCheckedKeys"
              :data="layerData"
              :render-content="renderExtButton"
-             @check-change="
-        (data, checked) => {
-          setLayerVisible(data, checked, 1);
-        }
-      ">
+             @check-change="onCheckLayer">
     </el-tree>
   </el-scrollbar>
 </template>
 
 <script>
 import LayerMixin from './mixins/layer-tree';
-
 export default {
   props: {
     filterText: {
@@ -54,6 +39,11 @@ export default {
   mounted () {
     let ids = this.$parent.$refs.tree.getCheckedKeys();
     this.$refs.tree.setCheckedKeys(ids);
+  },
+  methods: {
+    onCheckLayer (data, checked) {
+      this.setLayerVisible(data, checked, 1);
+    },
   },
 };
 </script>

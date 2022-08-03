@@ -48,7 +48,6 @@ export default class LayerManager {
     return list;
   }
   setLayerVisible(layer, visible) {
-    console.log('setLayerVisible:' + visible);
     this.eventBus.dispatch('layer-visible-changed', layer, visible);
     // let ly = this.getLayer(layer)
     // this._setLayerVisible(ly, visible)

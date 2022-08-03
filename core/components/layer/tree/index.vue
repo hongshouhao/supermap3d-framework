@@ -51,7 +51,7 @@
       <fav-tree v-if="curTab == 'favour'"
                 :layerData="layersData"
                 :filter-text="filterText"
-                ref="favourite"></fav-tree>
+                ref="favorite"></fav-tree>
       <recent-tree ref="recent"
                    :layerData="layersData"
                    :filter-text="filterText"
@@ -62,7 +62,7 @@
 
 <script>
 import RecentTree from './recent.vue';
-import FavTree from './favourite.vue';
+import FavTree from './favorite.vue';
 import CompareTree from './compare.vue';
 import LayerMixin from './mixins/layer-tree';
 
@@ -115,7 +115,8 @@ export default {
         this.resetLayerData();
         window.s3d.eventBus.dispatch('tool-stopped', 'split-screen');
       } else {
-        this.$viewer.scene.multiViewportMode = Cesium.MultiViewportMode.HORIZONTAL;
+        this.$viewer.scene.multiViewportMode =
+          Cesium.MultiViewportMode.HORIZONTAL;
         this.multiViewport = true;
         this.updatePopper();
         window.s3d.eventBus.dispatch('tool-started', 'split-screen');
@@ -154,17 +155,12 @@ export default {
           if (!lyOptions.opacity) {
             lyOptions.opacity = 1;
           }
-
           this.$set(
             lyElModel,
-            'isFavourite',
+            'isFavorite',
             this.favourLayerIds.indexOf(lyElModel.id) > -1
           );
-
-          // this.$set(lyElModel, 'cesiumLayerLoaded', false);
-
           lyElModel.cesiumLayerLoaded = false;
-
           if (lyOptions.visible) {
             _this.defaultCheckedKeys.push(lyElModel.id);
             _this._createLayer(lyElModel);
@@ -181,16 +177,15 @@ export default {
         }
       }
     },
-
     onCheckLayer (data, checked) {
-      // if (this.$refs.recent) {
-      //   this.$refs.recent.$refs.tree.setChecked(data.id, checked);
-      // }
-
-      // if (this.$refs.favourite) {
-      //   this.$refs.favourite.$refs.tree.setChecked(data.id, checked);
-      // }
-
+      if (this.$refs.recent) {
+        this.$refs.recent.$refs.tree.setChecked(data.id, checked);
+      }
+      if (this.$refs.favorite) {
+        this.$refs.favorite.$refs.tree.setChecked(data.id, checked);
+      }
+      console.log(data);
+      console.log(checked);
       this.setLayerVisible(data, checked);
     },
     updatePopper () {
@@ -211,13 +206,13 @@ export default {
     },
     resetLayerData () {
       let ids = this.$refs.tree.getCheckedKeys();
-      let cids = this.$refs.compareTree.$refs.tree.getCheckedKeys();
+      // let cids = this.$refs.compareTree.$refs.tree.getCheckedKeys();
       this.$refs.tree.setCheckedKeys([]);
 
-      let layers = window.s3d.layerManager.getAllLayers(f => true);
-      layers.forEach(f => {
-        f.setVisibleInViewport(0, false);
-        f.setVisibleInViewport(1, false);
+      let layers = window.s3d.layerManager.getAllLayers((f) => true);
+      layers.forEach((ly) => {
+        ly.setVisibleInViewport(0, false);
+        ly.setVisibleInViewport(1, false);
       });
 
       // for (let ly of cids) {

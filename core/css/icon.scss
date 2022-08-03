@@ -85,3 +85,11 @@
 .my-icon{
   font-size: 16px;
 }
+
+
+.icon-star-empty:before {
+  content: "\e9d7";
+}
+.icon-star-full:before {
+  content: "\e9d9";
+}
