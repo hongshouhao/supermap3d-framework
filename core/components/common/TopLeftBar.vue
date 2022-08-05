@@ -24,6 +24,14 @@
       >
         <span aria-hidden="true" class="esri-icon esri-icon-globe"></span>
       </div>
+      <div
+        class="esri-widget--button esri-widget esri-interactive"
+        style="display: none"
+        title="复位"
+        @click="globeReset"
+      >
+        <span aria-hidden="true" class="esri-icon esri-icon-globe"></span>
+      </div>
 
       <div
         class="esri-widget--button esri-widget esri-interactive"
@@ -316,6 +324,7 @@ import Settings from './Settings.vue';
 
 import WidgetInfoPanel from './WidgetInfoPanel';
 import Test from '../../Test';
+import { reCalculateCartesian } from '../../utils/CesiumMath';
 
 export default {
   name: 'top-left-bar',
@@ -404,6 +413,23 @@ export default {
         }
       });
     },
+
+    globeReset() {
+      window.s3d.config.defaultCamera.convert =
+        this.$viewer.scene.mode != Cesium.SceneMode.COLUMBUS_VIEW;
+      if (this.sceneModeToogleTool.mode == '3D') {
+      } else if (this.sceneModeToogleTool.mode == '2D') {
+        const _this = this;
+        _this.$viewer.camera.flyTo({
+          ...window.s3d.config.defaultCamera,
+          complete: () => {
+            this.sceneModeToogleTool.mode = '3D';
+            _this.sceneModeToogleTool.toogleTo('2D');
+          },
+        });
+      }
+    },
+
     globeView() {
       window.s3d.config.defaultCamera.convert =
         this.$viewer.scene.mode != Cesium.SceneMode.COLUMBUS_VIEW;
