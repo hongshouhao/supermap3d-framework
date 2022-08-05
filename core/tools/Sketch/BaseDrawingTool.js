@@ -78,6 +78,7 @@ export default class BaseDrawingTool {
     this.entities = [];
     this._currentEntity = null;
     this._entityVertexes = [];
+    
   }
 
   getGeometries() {

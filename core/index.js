@@ -18,6 +18,7 @@ import BasemapToggle from './components/layer/basemap/index.vue';
 import TopLeftBar from './components/common/TopLeftBar.vue';
 import TopRightBar from './components/common/TopRightBar.vue';
 import WidgetInfoPanel from './components/common/WidgetInfoPanel.vue';
+import toolPanel from './components/sketch/toolPanel.vue';
 
 import * as Analysis from './analysis/index';
 import * as Tools from './tools/index';
@@ -41,6 +42,7 @@ const components = [
   TopRightBar,
   ToolBar,
   ToolItem,
+
 ];
 
 const install = function (Vue, config) {
@@ -97,4 +99,5 @@ export default {
   IfUtility,
   LayerUtility,
   addMessageListener,
+  toolPanel
 };

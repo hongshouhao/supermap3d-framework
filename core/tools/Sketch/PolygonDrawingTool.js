@@ -53,6 +53,7 @@ export default class PolygonDrawingTool extends BaseDrawingTool {
       },
       ignorePopup: true,
     });
+    this._entitiesOutline.push(this._currentEntityOutline);
 
     // let heightReference = this.clampToGround
     //   ? Cesium.HeightReference.CLAMP_TO_GROUND

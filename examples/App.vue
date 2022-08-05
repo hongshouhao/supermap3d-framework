@@ -1,17 +1,20 @@
 <template>
-  <smmap></smmap>
+  <div>
+    <smmap></smmap>
+    
+  </div>
 </template>
 <script>
 import { addMessageListener } from '../core/IframeMessage';
-
 export default {
-  data () {
+  data() {
     return {
+      
     };
   },
   components: {
   },
-  mounted () {
+  mounted() {
     addMessageListener();
     // window.s3d.enableBloom()
     // window.s3d.topLeftBar.highLimitTool.setTargetLayers(['建筑']);
