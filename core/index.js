@@ -1,13 +1,3 @@
-/*
- * @Author: zhangbo
- * @Date: 2022-04-02 13:47:14
- * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-13 13:56:35
- * @FilePath: \supermap3d-framework\core\index.js
- * @Description:
- *
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved.
- */
 import ElementUI from 'element-ui';
 import VueiClient from '@supermap/vue-iclient3d-webgl';
 
