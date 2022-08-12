@@ -4,13 +4,12 @@ export default class RectangleDrawingTool extends PolygonDrawingTool {
   constructor(viewer, options) {
     super(viewer, options);
   }
- 
+
   _initCurrentEntityVertexes(vertex) {
-    return [vertex, vertex, vertex ];
+    return [vertex, vertex, vertex];
   }
   _mouseLeftClick(currEntVers, newVertex) {
-    if(this.v0v1Picked)
-    {
+    if (this.v0v1Picked) {
       return;
     }
     this.v0v1Picked = true;
@@ -18,8 +17,7 @@ export default class RectangleDrawingTool extends PolygonDrawingTool {
     currEntVers[2] = newVertex;
   }
   _mouseMoving(currEntVers, newVertex) {
-    if(this.v0v1Picked)
-    {
+    if (this.v0v1Picked) {
       let projectionPoint = pointProjectionOnLine(
         newVertex,
         currEntVers[0],
@@ -48,8 +46,7 @@ export default class RectangleDrawingTool extends PolygonDrawingTool {
       );
       currEntVers[3] = vertex3;
       currEntVers[4] = currEntVers[0];
-    }
-    else{
+    } else {
       currEntVers[1] = newVertex;
       currEntVers[2] = newVertex;
     }

@@ -1,5 +1,5 @@
 import BaseDrawingTool from './BaseDrawingTool';
-export default class RectangleDrawingTool extends BaseDrawingTool {
+export default class RectangleDrawingToolCesium extends BaseDrawingTool {
   constructor(viewer, options) {
     super(viewer);
     this.options = Object.assign(
@@ -32,11 +32,7 @@ export default class RectangleDrawingTool extends BaseDrawingTool {
     return [vertex, vertex.clone()];
   }
   _mouseLeftClick(currEntVers, newVertex) {}
-  _mouseMoving(
-    currEntVers,
-    newVertex,
-    screenPoint
-  ) {
+  _mouseMoving(currEntVers, newVertex, screenPoint) {
     currEntVers[currEntVers.length - 1] = newVertex;
 
     let minPtPx = null;
@@ -67,10 +63,10 @@ export default class RectangleDrawingTool extends BaseDrawingTool {
 
     let currentOutlineVertexes =
       this._entityOutlineVertexes[this._entityOutlineVertexes.length - 1];
-    currentOutlineVertexes [0] = minPt;
-    currentOutlineVertexes [1] = bottomRightCorner;
-    currentOutlineVertexes [2] = maxPt;
-    currentOutlineVertexes [3] = topLeftCorner;
+    currentOutlineVertexes[0] = minPt;
+    currentOutlineVertexes[1] = bottomRightCorner;
+    currentOutlineVertexes[2] = maxPt;
+    currentOutlineVertexes[3] = topLeftCorner;
   }
   _beforeFinishingCurrentDrawing(currEntVers) {
     this._currentEntityOutline = null;
@@ -93,7 +89,7 @@ export default class RectangleDrawingTool extends BaseDrawingTool {
         width: 2.0,
         clampToGround: this.options.clampToGround,
       },
-      ignorePopup: true,
+      iQueryable: false,
     });
 
     return this.viewer.entities.add({
@@ -108,6 +104,7 @@ export default class RectangleDrawingTool extends BaseDrawingTool {
           this.options.fillOpacity
         ),
       },
+      iQueryable: false,
     });
   }
   _shouldFinishCurrentDrawing(currEntVers) {

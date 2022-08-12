@@ -14,7 +14,6 @@ export default class SelectedChangedEvent {
   }
 
   startListening() {
-    debugger;
     if (this.listened) {
       return;
     }
@@ -49,7 +48,7 @@ export default class SelectedChangedEvent {
         if (pikObjs.length > 0) {
           if (_this.autoGetPropData) {
             let calls = pikObjs.map((x) => {
-              if (x.id instanceof Cesium.Entity && !x.id.ignorePopup) {
+              if (x.id instanceof Cesium.Entity && x.id.iQueryable) {
                 return _this.dataAccess.dataFromEntity(x.id);
               } else if (x.primitive.config?.iQuery) {
                 let lname = x.primitive.config.name;

@@ -3,18 +3,15 @@ export default class BaseDrawingTool {
     this.viewer = viewer;
     this.entities = [];
     this.multiable = true;
+    this.expectedSrid = 4490;
 
     this._entityVertexes = [];
     this._currentEntity = null;
     this._drawHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
     this._offsetZ = 0.001;
 
-    this.entityAdded = function (geo) {
-      console.log('entityAdded', geo);
-    };
-    this.drawingFinished = function (geoms) {
-      console.log('drawingFinished', geoms);
-    };
+    this.entityAdded = function (geo) {};
+    this.drawingFinished = function (geoms) {};
   }
 
   start() {
@@ -22,19 +19,19 @@ export default class BaseDrawingTool {
     window.s3d.setCursor('cursor-crosshair');
     let _this = this;
     return new Promise((resolve) => {
-      _this._drawHandler.setInputAction(function (e) { 
+      _this._drawHandler.setInputAction(function (e) {
         let point = window.s3d.viewUtility.screenPositionToCartesian(
           e.position
         );
         point.z = point.z + _this._offsetZ;
         if (!_this._currentEntity) {
-          let currEntVers = _this._initCurrentEntityVertexes(point , e.position);
+          let currEntVers = _this._initCurrentEntityVertexes(point, e.position);
           _this._currentEntity = _this._createCurrentEntity(currEntVers);
           _this.entities.push(_this._currentEntity);
           _this._entityVertexes.push(currEntVers);
         } else {
           let currEntVers = _this._getCurrentEntityVertexes();
-          _this._mouseLeftClick(currEntVers, point,e.position);
+          _this._mouseLeftClick(currEntVers, point, e.position);
 
           if (_this._shouldFinishCurrentDrawing(currEntVers)) {
             _this._finishCurrentDrawing(resolve);
@@ -42,14 +39,14 @@ export default class BaseDrawingTool {
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
-      _this._drawHandler.setInputAction(function (e) { 
+      _this._drawHandler.setInputAction(function (e) {
         if (_this._currentEntity) {
           let point = window.s3d.viewUtility.screenPositionToCartesian(
             e.endPosition
           );
           point.z = point.z + _this._offsetZ;
           let currEntVers = _this._getCurrentEntityVertexes();
-          _this._mouseMoving(currEntVers, point,e.endPosition);
+          _this._mouseMoving(currEntVers, point, e.endPosition);
         }
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
@@ -85,7 +82,7 @@ export default class BaseDrawingTool {
     for (let ent of this.entities) {
       coll.add(ent);
     }
-    return coll.toGeoJson();
+    return coll.toGeoJson(this.expectedSrid);
   }
 
   _getCurrentEntityVertexes() {
@@ -109,9 +106,11 @@ export default class BaseDrawingTool {
       this._beforeFinishingCurrentDrawing(this._getCurrentEntityVertexes());
       this._currentEntity = null;
       if (this.entityAdded) {
-        this.entities[this.entities.length - 1].toGeoJson().then((result) => {
-          this.entityAdded(result);
-        });
+        this.entities[this.entities.length - 1]
+          .toGeoJson(this.expectedSrid)
+          .then((result) => {
+            this.entityAdded(result);
+          });
       }
       if (!this.multiable) {
         this._finishDrawing(callback);

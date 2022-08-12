@@ -311,3 +311,17 @@ export function convertCartesianToProj(scene, cartesian) {
   let projPosition = scene.pickPosition2D(screenPosition);
   return projPosition;
 }
+
+export function headingPitchRollToVector(destination, heading, pitch, roll) {
+  const orientation = Cesium.Transforms.headingPitchRollQuaternion(
+    destination,
+    new Cesium.HeadingPitchRoll(heading, pitch, roll)
+  );
+  const matrix = Cesium.Matrix3.fromQuaternion(orientation);
+  let direction = Cesium.Matrix3.multiplyByVector(
+    matrix,
+    Cesium.Cartesian3.UNIT_X,
+    new Cesium.Cartesian3()
+  );
+  return direction;
+}

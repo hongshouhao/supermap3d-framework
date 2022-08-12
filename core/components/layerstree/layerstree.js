@@ -1,7 +1,7 @@
 import { isPromise } from '@/utils/IfUtility';
 import LayerFactory from '@/utils/LayerFactory';
-import LayerSetting from '../setting.vue';
-import LayerStore from '../store/layer-store';
+import LayerSetting from './setting.vue';
+import LayerStore from './LayerStore';
 
 export default {
   data() {

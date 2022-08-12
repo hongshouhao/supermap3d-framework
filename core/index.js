@@ -3,11 +3,12 @@ import VueiClient from '@supermap/vue-iclient3d-webgl';
 
 import Map from './Map.vue';
 import MapViewer from './MapViewer.vue';
-import Layers from '@/components/layer/tree/index.vue';
-import BasemapToggle from './components/layer/basemap/index.vue';
+import LayersTree from './components/layerstree/index.vue';
+import Basemap from './components/basemap/index.vue';
 import TopLeftBar from './components/common/TopLeftBar.vue';
 import TopRightBar from './components/common/TopRightBar.vue';
 import WidgetInfoPanel from './components/common/WidgetInfoPanel.vue';
+import SketchToolPanel from './components/sketch/ToolPanel.vue';
 
 import * as Analysis from './analysis/index';
 import * as Tools from './tools/index';
@@ -21,16 +22,18 @@ import S3d from './S3d';
 import './utils/EntityUtility';
 import ToolBar from './components/toolbar/index.vue';
 import ToolItem from './components/toolbar/tool-item.vue';
+import './proj4';
 
 const components = [
   Map,
   MapViewer,
-  Layers,
-  BasemapToggle,
+  LayersTree,
+  Basemap,
   TopLeftBar,
   TopRightBar,
   ToolBar,
   ToolItem,
+  SketchToolPanel,
 ];
 
 const install = function (Vue, config) {
@@ -77,7 +80,8 @@ export default {
   Map,
   MapViewer,
   WidgetInfoPanel,
-  BasemapToggle,
+  Basemap,
+  LayersTree,
   TopLeftBar,
   TopRightBar,
   CesiumMath,
@@ -86,5 +90,6 @@ export default {
   LayerFactory,
   IfUtility,
   LayerUtility,
+  SketchToolPanel,
   addMessageListener,
 };

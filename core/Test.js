@@ -4,6 +4,9 @@ import SubmergedTool from './analysis/Submerged/SubmergedTool';
 import SceneRouteTool from './tools/Scene/SceneRouteTool';
 import { gridSamplingPointsInPolygon } from './utils/CesiumUtility';
 import centerOfMass from '@turf/center-of-mass';
+import TestPanel from './Test.vue';
+import Vue from 'vue';
+import $ from 'jquery';
 
 export default class Test {
   constructor() {
@@ -15,8 +18,17 @@ export default class Test {
     this.sketchTool.setMultiable(true);
     this.sketchTestStep = 0;
   }
-
+  createView() {
+    let div = document.createElement('div');
+    let vue = new Vue({
+      el: div,
+      render: (h) => h(TestPanel),
+    }); 
+ 
+    $('.cesium-viewer-cesiumWidgetContainer')[0].appendChild(vue.$el);
+  }
   doTest() {
+    this.createView();
     // window.s3d.selectedChangedEvent.startListening();
     // window.s3d.eventBus.addEventListener('selected-features-changed', (caller, args) => {
     //   console.log(caller);
@@ -38,7 +50,7 @@ export default class Test {
     // this.loadGeoJSON()
     // this.insertToolButton()
     // this.entityToGeoJson()
-    this.sketchTest();
+    // this.sketchTest();
     // window.s3d.viewUtility.rotateZ(1)
     // window.s3d
     //   .query({ layer: '交通信号', sql: 'SMID =1' })
@@ -78,7 +90,6 @@ export default class Test {
     // console.log(window.s3d.layerManager.getLayer('供电'))
     // console.log(window.s3d.layerManager.getLayer((x) => x.name === '供电'))
   }
-
   flyToPointsTest() {
     window.s3d.cameraUtility.flyToPointsLL(
       [

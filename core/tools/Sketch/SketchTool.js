@@ -16,6 +16,13 @@ export default class SketchTool {
     this._lineDrawingTool.freeLine = true;
   }
 
+  setExpectedSrid(srid){
+    this._lineDrawingTool.expectedSrid = srid;
+    this._polygonDrawingTool.expectedSrid = srid;
+    this._rectangleDrawingTool.expectedSrid = srid;
+    this._circleDrawingTool.expectedSrid = srid;
+  }
+
   setVertexLimitCount(count) {
     this._lineDrawingTool.setVertexLimitCount(count);
     this._polygonDrawingTool.setVertexLimitCount(count);

@@ -10,7 +10,7 @@ export default class PolylineDrawingTool extends BaseDrawingTool {
   }
 
   setVertexLimitCount(count) {
-    if (count < 2) {
+    if (!count || count < 2) {
       return;
     }
     this._vertexLimitCount = count;
@@ -41,6 +41,7 @@ export default class PolylineDrawingTool extends BaseDrawingTool {
         width: 2.0,
         clampToGround: this.clampToGround,
       },
+      iQueryable: false,
     });
   }
   _shouldFinishCurrentDrawing(currEntVers) {

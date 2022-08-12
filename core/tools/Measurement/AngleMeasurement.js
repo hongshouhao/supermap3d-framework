@@ -111,6 +111,7 @@ export default class AngleMeasurement {
         width: 2.0,
         clampToGround: false,
       },
+      iQueryable: false,
     });
   }
 
@@ -181,6 +182,7 @@ export default class AngleMeasurement {
           width: 2.0,
           clampToGround: false,
         },
+        iQueryable: false,
       });
     }
   }
@@ -214,6 +216,7 @@ export default class AngleMeasurement {
           showBackground: false,
           eyeOffset: new Cesium.Cartesian3(0, 0, -10),
         },
+        iQueryable: false,
       });
     }
   }

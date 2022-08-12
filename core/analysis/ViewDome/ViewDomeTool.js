@@ -49,6 +49,7 @@ export default class ViewDomeTool {
             latitude,
             height + 0.5
           ),
+          iQueryable: false,
         })
       );
 

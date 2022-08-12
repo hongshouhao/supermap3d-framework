@@ -10,39 +10,45 @@
 -->
 <template>
   <div class="top-right-bar">
-    <BasemapToggle />
-    <el-popover ref="layersTreePopover"
-                placement="bottom"
-                trigger="manual"
-                v-model="visible"
-                popper-class="layer-popup">
-      <Layers ref="layersTree" />
+    <Basemap />
+    <el-popover
+      ref="layersTreePopover"
+      placement="bottom"
+      trigger="manual"
+      v-model="visible"
+      popper-class="layer-popup"
+    >
+      <LayersTree ref="layersTree" />
 
-      <el-button slot="reference"
-                 class="btn-layers"
-                 @click="visible = !visible">
-        <span style="display: flex"><i class="esri-icon-layers"
-             style="margin-right: 5px"></i><span>图层</span><i class="el-icon-arrow-down el-icon--right"></i></span>
+      <el-button
+        slot="reference"
+        class="btn-layers"
+        @click="visible = !visible"
+      >
+        <span style="display: flex"
+          ><i class="esri-icon-layers" style="margin-right: 5px"></i
+          ><span>图层</span><i class="el-icon-arrow-down el-icon--right"></i
+        ></span>
       </el-button>
     </el-popover>
   </div>
 </template>
 
 <script>
-import Layers from '../layer/tree/index.vue';
-import BasemapToggle from '../layer/basemap/index.vue';
+import LayersTree from '../layerstree/index.vue';
+import Basemap from '../basemap/index.vue';
 export default {
   name: 'top-right-bar',
   components: {
-    Layers,
-    BasemapToggle,
+    LayersTree,
+    Basemap,
   },
-  data () {
+  data() {
     return {
       visible: false,
     };
   },
-  mounted () {
+  mounted() {
     window.s3d.layersTree = this.$refs.layersTree;
     window.s3d.layersTreePopover = this.$refs.layersTreePopover;
   },

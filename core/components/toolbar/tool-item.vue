@@ -1,39 +1,28 @@
-<!--
- * @Author: zhangbo
- * @Date: 2022-04-06 09:40:52
- * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-11 11:01:02
- * @FilePath: \supermap3d-framework\core\components\toolbar\tool-item.vue
- * @Description: 
- * 
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
--->
-
 <template>
-  <el-popover
-    width="200"
-    trigger="click"
-    :placement="popPlacement"
-    class="tool"
-    popper-class="tool-item-sub-container"
-    v-if="hasChildren"
-  >
+  <el-popover width="200"
+              trigger="click"
+              :placement="popPlacement"
+              class="tool"
+              popper-class="tool-item-sub-container"
+              v-if="hasChildren">
     <slot></slot>
-    <div :class="toolCss" @click="onToolClick" slot="reference">
+    <div :class="toolCss"
+         @click="onToolClick"
+         slot="reference">
       <i :class="icon"></i>
     </div>
   </el-popover>
 
-  <div class="tool" :class="toolCss" @click="onToolClick" v-else>
+  <div class="tool"
+       :class="toolCss"
+       @click="onToolClick"
+       v-else>
     <i :class="icon"></i>
 
-    <widget-panel
-      ref="tool-extra-component"
-      :title="extraComponentLabel"
-      class="widget-extra-component"
-      v-model="showExtraSetting"
-      :autoClose="true"
-    >
+    <widget-panel ref="tool-extra-component"
+                  :title="extraComponentLabel"
+                  class="widget-extra-component"
+                  v-model="showExtraSetting">
       <component :is="extraComponent"></component>
     </widget-panel>
   </div>
@@ -49,17 +38,17 @@ export default {
     },
     icon: {
       type: String,
-      default() {
+      default () {
         return 'icon-hammer';
       },
     },
   },
-  provide() {
+  provide () {
     return {
       toolitem: this,
     };
   },
-  mounted() {
+  mounted () {
     if (this.$refs['tool-extra-component']) {
       this.$viewer.cesiumWidget.container.appendChild(
         this.$refs['tool-extra-component'].$el
@@ -69,18 +58,18 @@ export default {
   inject: {
     toolbar: {
       from: 'toolbar',
-      default() {
+      default () {
         return null;
       },
     },
     toolitem: {
       from: 'toolitem',
-      default() {
+      default () {
         return null;
       },
     },
   },
-  data() {
+  data () {
     return {
       hasSubItem: false,
       showPopover: false,
@@ -91,7 +80,7 @@ export default {
       extraComponent: '',
     };
   },
-  created() {
+  created () {
     if (this.toolitem) {
       this.toolitem.hasSubItem = true;
     }
@@ -99,7 +88,7 @@ export default {
     this.toolManager = this.toolbar.toolManager;
   },
   methods: {
-    onToolClick() {
+    onToolClick () {
       if (!this.$slots.default) {
         this.toolDescriptor = this.toolManager.execute(this.code, this);
 
@@ -116,19 +105,19 @@ export default {
     },
   },
   computed: {
-    toolCss() {
+    toolCss () {
       if (this.instance) {
         return { active: !!this.toolDescriptor };
       }
       return {};
     },
-    hasChildren() {
+    hasChildren () {
       if (this.$slots.default) {
         return this.$slots.default.length > 0;
       }
       return false;
     },
-    popPlacement() {
+    popPlacement () {
       return this.toolbar.horizonal ? 'bottom' : 'right';
     },
   },

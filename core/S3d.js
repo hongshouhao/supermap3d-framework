@@ -490,7 +490,7 @@ export default class S3d {
           orientation = {
             heading: 0,
             roll: 0,
-            pitch: -1.57,
+            pitch: -1 * Cesium.Math.PI_OVER_TWO,
           };
         }
 

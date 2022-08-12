@@ -1,6 +1,6 @@
 {
   "name": "@sipsd/supermap3d-framework",
-  "version": "0.1.95351",
+  "version": "0.1.95362",
   "private": false,
   "main": "./lib/supermap3d-framework.umd.min.js",
   "files": [
@@ -40,6 +40,7 @@
     "jquery": "^3.6.0",
     "linq": "^3.2.4",
     "mapbox-gl": "^2.5.1",
+    "proj4": "^2.8.0",
     "shapefile": "^0.6.6",
     "vue": "^2.6.11",
     "vue-round-slider": "^1.0.1"

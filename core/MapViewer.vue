@@ -9,15 +9,12 @@
 <script>
 import Popup from './components/popup/Popup.vue';
 import { enableCursorStyle } from './utils/CursorUtility';
-import EmitToMixin from './components/common/emit-to';
 
 export default {
   name: 'map-viewer',
   components: {
     Popup,
   },
-  mixins: [EmitToMixin],
-
   data () {
     return {};
   },
@@ -50,9 +47,6 @@ export default {
     let viewer = new Cesium.Viewer(this.sceneContainer, viewerOptions);
     this.__proto__.__proto__.$viewer = viewer;
     window.s3d.setViewer(viewer);
-
-    this.$emit('viewer-created', viewer);
-    this.$emitTo('smmap', 'viewer-created', viewer);
   },
   mounted () {
     this.$refs.cesiumContainer.appendChild(this.sceneContainer.children[0]);

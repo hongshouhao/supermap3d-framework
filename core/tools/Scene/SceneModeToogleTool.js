@@ -47,7 +47,7 @@ export default class SceneModeToogleTool {
         orientation: {
           heading: 0,
           roll: 0,
-          pitch: -1.57,
+          pitch: -1 * Cesium.Math.PI_OVER_TWO,
         },
         duration: 1.5,
         complete: () => {

@@ -175,6 +175,7 @@ export default class SliceTool {
           0.2
         ),
       },
+      iQueryable: false,
     });
 
     this.clippingRectangleOutline = this.viewer.entities.add({
@@ -185,6 +186,7 @@ export default class SliceTool {
         width: 1.0,
         clampToGround: false,
       },
+      iQueryable: false,
     });
   }
 

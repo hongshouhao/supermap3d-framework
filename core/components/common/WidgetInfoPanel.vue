@@ -1,24 +1,14 @@
-<!--
- * @Author: zhangbo
- * @Date: 2022-04-02 13:47:14
- * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-06 16:41:19
- * @FilePath: \supermap3d-framework\core\components\common\WidgetInfoPanel.vue
- * @Description: 
- * 
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved. 
--->
 <template>
   <div ref="panel" class="widget-info-panel" v-show="visible">
     <div class="widget-info-title">
-      {{ title }} 
+      {{ title }}
       <i
         class="esri-icon-close widget-info-panel-close"
         @click="closeInfoPanel"
       ></i>
     </div>
     <div class="widget-content">
-      <slot> </slot>
+      <slot></slot>
     </div>
   </div>
 </template>
@@ -26,11 +16,16 @@
 <script>
 export default {
   components: {},
-  model: {
-    prop: 'visible',
-    event: 'change',
+  props: {
+    visible: {
+      type: Boolean,
+      default: false,
+    },
+    title: {
+      type: String,
+      default: '',
+    },
   },
-  props: ['title', 'autoClose', 'visible'],
   data() {
     return {};
   },
@@ -55,10 +50,8 @@ export default {
     },
 
     closeInfoPanel() {
-      if (this.autoClose) {
-        this.$emit('change', false);
-      }
       this.$emit('closed');
+      this.$emit('update:visible', false);
     },
   },
 };

@@ -125,6 +125,7 @@ export default class PointMeasurement {
         showBackground: true,
         eyeOffset: new Cesium.Cartesian3(0, 0, -10),
       },
+      iQueryable: false,
     });
     this.currentEntity = entity;
     this.pointEntities.push(entity);

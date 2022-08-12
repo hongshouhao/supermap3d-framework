@@ -1,13 +1,3 @@
-/*
- * @Author: zhangbo
- * @Date: 2022-04-06 09:55:57
- * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-11 09:56:58
- * @FilePath: \supermap3d-framework\core\components\toolbar\manager\index.js
- * @Description: 工具管理器，统一管理工具
- *
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved.
- */
 import Vue from 'vue';
 import AngleMeasurement from '../../../tools/Measurement/AngleMeasurement';
 // import MeasureTool from "../../../tools/Measurement/MeasureTool";

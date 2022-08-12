@@ -10,7 +10,7 @@
         <TopRightBar />
       </div>
     </slot>
-    <MapViewer @viewer-created="onViewerCreated" />
+    <MapViewer />
   </div>
 </template>
 <script>
@@ -27,15 +27,11 @@ export default {
   },
   data () {
     return {
-      // viewer: null,
     };
   },
   beforeMount () { },
   mounted () { },
   methods: {
-    onViewerCreated (viewer) {
-      // this.viewer = viewer;
-    },
   },
 };
 </script>

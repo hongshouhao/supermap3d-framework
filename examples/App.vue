@@ -1,9 +1,9 @@
 <template>
-  <smmap></smmap>
+  <smmap>
+  </smmap>
 </template>
 <script>
 import { addMessageListener } from '../core/IframeMessage';
-
 export default {
   data () {
     return {

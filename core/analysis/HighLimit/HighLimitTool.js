@@ -183,6 +183,7 @@ export default class HighLimitTool {
           0.2
         ),
       },
+      iQueryable: false,
     });
 
     this.clippingRectangleOutlinePositions = getRectangleCoordinates(
@@ -200,6 +201,7 @@ export default class HighLimitTool {
         width: 1.0,
         clampToGround: false,
       },
+      iQueryable: false,
     });
   }
 
@@ -215,6 +217,7 @@ export default class HighLimitTool {
           0.2
         ),
       },
+      iQueryable: false,
     });
 
     let rect = this.clippingRectangle.rectangle.coordinates.getValue();
@@ -243,6 +246,7 @@ export default class HighLimitTool {
         width: 1.0,
         clampToGround: false,
       },
+      iQueryable: false,
     });
   }
 

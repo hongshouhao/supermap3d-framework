@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import LayerMixin from './mixins/layer-tree';
+import LayerMixin from './layerstree';
 export default {
   props: {
     filterText: {

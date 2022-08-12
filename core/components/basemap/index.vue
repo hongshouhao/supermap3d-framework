@@ -23,8 +23,6 @@
   </ul>
 </template>
 <script>
-// import { createImageryProvider } from '../utils/ImageryUtility'
-
 export default {
   name: 'basemap-toogle',
   data () {
@@ -95,7 +93,7 @@ $padding: 6px;
         width: 1px;
         height: 16px;
         background: #dbdee2;
-        content: "";
+        content: '';
         position: absolute;
         left: 66px;
         top: 8px;
@@ -117,7 +115,7 @@ $padding: 6px;
         width: 1px;
         height: 16px;
         background: #dbdee2;
-        content: "";
+        content: '';
         position: absolute;
         left: 66px;
         top: 8px;
@@ -131,7 +129,7 @@ $padding: 6px;
         width: 1px;
         height: 16px;
         background: #dbdee2;
-        content: "";
+        content: '';
         position: absolute;
         left: 126px;
         top: 8px;

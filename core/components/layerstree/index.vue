@@ -45,32 +45,32 @@
                  @check-change="onCheckLayer">
         </el-tree>
       </el-scrollbar>
-      <compare-tree ref="compareTree"
-                    v-if="multiViewport"
-                    :filter-text="filterText"></compare-tree>
-      <fav-tree v-if="curTab == 'favour'"
-                :layerData="layersData"
-                :filter-text="filterText"
-                ref="favorite"></fav-tree>
-      <recent-tree ref="recent"
-                   :layerData="layersData"
-                   :filter-text="filterText"
-                   v-if="curTab == 'recent'"></recent-tree>
+      <CompareTree ref="compareTree"
+                   v-if="multiViewport"
+                   :filter-text="filterText"></CompareTree>
+      <FavoriteTree v-if="curTab == 'favour'"
+                    :layerData="layersData"
+                    :filter-text="filterText"
+                    ref="favorite"></FavoriteTree>
+      <RecentTree ref="recent"
+                  :layerData="layersData"
+                  :filter-text="filterText"
+                  v-if="curTab == 'recent'"></RecentTree>
     </div>
   </div>
 </template>
 
 <script>
 import RecentTree from './recent.vue';
-import FavTree from './favorite.vue';
+import FavoriteTree from './favorite.vue';
 import CompareTree from './compare.vue';
-import LayerMixin from './mixins/layer-tree';
+import LayerMixin from './layerstree';
 
 export default {
   name: 'layers-tree',
   components: {
     RecentTree,
-    FavTree,
+    FavoriteTree,
     CompareTree,
   },
   mixins: [LayerMixin],

@@ -1,13 +1,3 @@
-/*
- * @Author: zhangbo
- * @Date: 2022-04-02 13:47:15
- * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-14 08:53:07
- * @FilePath: \supermap3d-framework\examples\popupTemplate.js
- * @Description:
- *
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved.
- */
 export const popupTemplateWithCustomUI = {
   getHeader: function (data) {
     return data.object.layer + 'test';

@@ -20,7 +20,7 @@ export default class PolygonDrawingTool extends BaseDrawingTool {
   }
 
   setVertexLimitCount(count) {
-    if (count < 3) {
+    if (!count || count < 3) {
       return;
     }
     this._vertexLimitCount = count;
@@ -51,9 +51,10 @@ export default class PolygonDrawingTool extends BaseDrawingTool {
         width: 2.0,
         clampToGround: this.options.clampToGround,
       },
-      ignorePopup: true,
+      iQueryable: false,
     });
 
+    this._entitiesOutline.push(this._currentEntityOutline);
     // let heightReference = this.clampToGround
     //   ? Cesium.HeightReference.CLAMP_TO_GROUND
     //   : Cesium.HeightReference.NONE
@@ -70,7 +71,7 @@ export default class PolygonDrawingTool extends BaseDrawingTool {
           this.options.fillOpacity
         ),
       },
-      ignorePopup: true,
+      iQueryable: false,
     });
   }
   _shouldFinishCurrentDrawing(currEntVers) {

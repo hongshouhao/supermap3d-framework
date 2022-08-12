@@ -85,29 +85,25 @@ export default class DebugUtility {
   }
 
   drawCameraDirection() {
-    // let ptOnEarth = rayEarthIntersection(
-    //   this.viewer.camera.position,
-    //   this.viewer.camera.direction
-    // )
+    this.drawRay(this.viewer.camera.position, this.viewer.camera.direction);
+  }
 
-    let directionRay = Cesium.Cartesian3.multiplyByScalar(
-      this.viewer.camera.direction,
-      100000,
+  drawRay(start, direction, distance = 100) {
+    let ray = Cesium.Cartesian3.multiplyByScalar(
+      direction,
+      distance,
       new Cesium.Cartesian3()
     );
-    Cesium.Cartesian3.add(
-      this.viewer.camera.position,
-      directionRay,
-      directionRay
-    );
-
+    let endPoint = Cesium.Cartesian3.add(start, ray, new Cesium.Cartesian3());
+    this.labelPoint(start);
+    this.labelPoint(endPoint);
     this.viewer.entities.add({
-      name: 'camera_direction',
+      name: 'debug_ray',
       polyline: {
-        positions: [directionRay, this.viewer.camera.position.clone()],
-        material: Cesium.Color.fromCssColorString('#fe8001'),
-        width: 1.0,
-        clampToGround: false,
+        positions: [start, endPoint],
+        arcType: Cesium.ArcType.NONE,
+        material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.RED),
+        width: 4.0,
       },
     });
   }
