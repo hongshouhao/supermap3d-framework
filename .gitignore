@@ -3,6 +3,7 @@ node_modules
 public/Cesium
 /dist
 /lib
+package-lock.json
 
 
 # local env files

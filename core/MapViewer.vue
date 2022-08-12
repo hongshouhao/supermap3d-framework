@@ -56,6 +56,7 @@ export default {
     window.s3d.popup = this.$refs.popup;
 
     window.s3d.eventBus.dispatch('framework-initialized');
+    this.$emit('viewer-created');
   },
 };
 </script>

@@ -8,7 +8,7 @@ export default class DataAccess {
     this.viewer = viewer;
   }
 
-  dataFromEntity(entity, getPosition) {
+  dataFromEntity (entity, getPosition) {
     let _this = this;
     return entity.toGeoJson().then((geojson) => {
       convertGeoJsonFromLL2Proj(_this.viewer.scene, geojson);
@@ -39,7 +39,7 @@ export default class DataAccess {
     });
   }
 
-  dataFromPrimitive(modelObj) {
+  dataFromPrimitive (modelObj) {
     let lyName = modelObj.primitive.name;
     let oid = modelObj.id;
 
@@ -53,7 +53,7 @@ export default class DataAccess {
     return data;
   }
 
-  dataFromSMFeature(feature, fields) {
+  dataFromSMFeature (feature, fields) {
     let data = {
       sourceType: 'S3MFEATURE',
       source: feature,
@@ -78,7 +78,7 @@ export default class DataAccess {
     return data;
   }
 
-  dataFrom3DTiles(modelObj) {
+  dataFrom3DTiles (modelObj) {
     let lyName = modelObj.tileset.name;
     let attrs = {};
     let propNames = modelObj.getPropertyNames();
@@ -96,7 +96,7 @@ export default class DataAccess {
     return data;
   }
 
-  dataFromMVTFeature(feature, fields) {
+  dataFromMVTFeature (feature, fields) {
     let data = {
       sourceType: 'MVTFEATURE',
       source: feature,
@@ -110,7 +110,7 @@ export default class DataAccess {
     return data;
   }
 
-  dataFromDataset(options, fields) {
+  dataFromDataset (options, fields) {
     return this.queryOverDataset(
       options.dataUrl,
       options.datasetName,
@@ -123,16 +123,18 @@ export default class DataAccess {
     });
   }
 
-  dataFromiQuery(options, position) {
+  dataFromiQuery (options, position) {
     if (typeof options.getData === 'function') {
       let res = options.getData(position);
       if (isPromise(res)) {
         return res.then((result) => {
-          if (!result) {
+          if (result) {
+            result.sourceType = 'IQUERY';
+            return result;
+          }
+          else {
             return null;
           }
-          result.sourceType = 'IQUERY';
-          return result;
         });
       } else {
         res.sourceType = 'IQUERY';
@@ -161,7 +163,7 @@ export default class DataAccess {
     }
   }
 
-  queryOverDataset(dataUrl, datasetName, sql, ids) {
+  queryOverDataset (dataUrl, datasetName, sql, ids) {
     let queryParameter = null;
     if (sql && sql.length > 0) {
       queryParameter = {
@@ -183,7 +185,7 @@ export default class DataAccess {
     return axios.post(dataUrl, queryParameter);
   }
 
-  spatialQueryOverDataset(dataUrl, datasetName, geometry, spatialRelation) {
+  spatialQueryOverDataset (dataUrl, datasetName, geometry, spatialRelation) {
     let queryParameter = {
       datasetNames: [datasetName],
       getFeatureMode: 'SPATIAL',
@@ -193,11 +195,11 @@ export default class DataAccess {
     return axios.post(dataUrl, queryParameter);
   }
 
-  queryOver(dataUrl, parameters) {
+  queryOver (dataUrl, parameters) {
     return axios.post(dataUrl, parameters);
   }
 
-  _deleteProperty(obj, fields) {
+  _deleteProperty (obj, fields) {
     if (fields && fields instanceof Array && fields.length > 0) {
       for (let f of fields) {
         if (f in obj) {

@@ -53,6 +53,7 @@ export default class PolygonDrawingTool extends BaseDrawingTool {
       },
       iQueryable: false,
     });
+    this._entitiesOutline.push(this._currentEntityOutline);
 
     this._entitiesOutline.push(this._currentEntityOutline);
     // let heightReference = this.clampToGround
