@@ -61,7 +61,6 @@ export function movePoint(origin, offsetX, offsetY, offsetZ) {
   let matrix = Cesium.Matrix4.multiply(trans, m, trans); // 将当前位置矩阵乘以平移矩阵得到平移之后的位置矩阵
   let point = new Cesium.Cartesian3(0, 0, 0);
   Cesium.Matrix4.getTranslation(matrix, point); // 从位置矩阵中取出坐标信息
-
   return point;
 }
 
@@ -210,27 +209,35 @@ export function rayEarthIntersection(position, direction) {
   return point;
 }
 
-export function vectorToQuaternion(origin, target) {
+export function getRotationMatrix4(origin, target) {
   let direction = Cesium.Cartesian3.subtract(
     target,
     origin,
     new Cesium.Cartesian3()
   );
-  Cesium.Cartesian3.normalize(direction, direction);
-  let rotationMatrix = Cesium.Transforms.rotationMatrixFromPositionVelocity(
+  let normal = Cesium.Cartesian3.normalize(direction, new Cesium.Cartesian3());
+  let rotationMatrix3 = Cesium.Transforms.rotationMatrixFromPositionVelocity(
     origin,
-    direction
+    normal
   );
-  // let rot90 = Cesium.Matrix3.fromRotationY(Cesium.Math.toRadians(90))
-  // Cesium.Matrix3.multiply(rotationMatrix, rot90, rotationMatrix)
-  let quaternion = Cesium.Quaternion.fromRotationMatrix(rotationMatrix);
-  return quaternion;
+  let modelMatrix4 = Cesium.Matrix4.fromRotationTranslation(
+    rotationMatrix3,
+    origin
+  );
+  return modelMatrix4;
 }
 
-export function vectorToHeadingPitchRoll(origin, target) {
-  return Cesium.HeadingPitchRoll.fromQuaternion(
-    vectorToQuaternion(origin, target)
-  );
+export function quaternionFromVectors(vSource, vTarget) {
+  let v1n = Cesium.Cartesian3.normalize(vSource, new Cesium.Cartesian3());
+  let v2n = Cesium.Cartesian3.normalize(vTarget, new Cesium.Cartesian3());
+  let cross = Cesium.Cartesian3.cross(v1n, v2n, new Cesium.Cartesian3());
+  let dot = Cesium.Cartesian3.dot(v1n, v2n);
+  let w = 1 + dot;
+  let q = new Cesium.Quaternion(cross.x, cross.y, cross.z, w);
+  if (!Cesium.Quaternion.equals(q, Cesium.Quaternion.ZERO)) {
+    Cesium.Quaternion.normalize(q, q);
+  }
+  return q;
 }
 
 // 平面坐标系转经纬度, 用于显示

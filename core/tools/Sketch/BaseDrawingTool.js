@@ -10,11 +10,11 @@ export default class BaseDrawingTool {
     this._drawHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
     this._offsetZ = 0.001;
 
-    this.entityAdded = function (geo) {};
-    this.drawingFinished = function (geoms) {};
+    this.entityAdded = function (geo) { };
+    this.drawingFinished = function (geoms) { };
   }
 
-  start() {
+  start () {
     this.stop();
     window.s3d.setCursor('cursor-crosshair');
     let _this = this;
@@ -56,7 +56,7 @@ export default class BaseDrawingTool {
     });
   }
 
-  stop() {
+  stop () {
     window.s3d.resetCursor();
     this._drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     this._drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -66,7 +66,7 @@ export default class BaseDrawingTool {
     this._currentEntity = null;
   }
 
-  clear() {
+  clear () {
     this.stop();
     for (let ent of this.entities) {
       this.viewer.entities.remove(ent);
@@ -75,10 +75,10 @@ export default class BaseDrawingTool {
     this.entities = [];
     this._currentEntity = null;
     this._entityVertexes = [];
-    
+
   }
 
-  getGeometries() {
+  getGeometries () {
     let coll = new Cesium.EntityCollection(this.viewer.entities.owner);
     for (let ent of this.entities) {
       coll.add(ent);
@@ -86,11 +86,11 @@ export default class BaseDrawingTool {
     return coll.toGeoJson(this.expectedSrid);
   }
 
-  _getCurrentEntityVertexes() {
+  _getCurrentEntityVertexes () {
     return this._entityVertexes[this._entityVertexes.length - 1];
   }
 
-  _finishDrawing(callback) {
+  _finishDrawing (callback) {
     this.stop();
     this.getGeometries().then((result) => {
       if (this.drawingFinished) {
@@ -102,7 +102,7 @@ export default class BaseDrawingTool {
     });
   }
 
-  _finishCurrentDrawing(callback) {
+  _finishCurrentDrawing (callback) {
     if (this._currentEntity) {
       this._beforeFinishingCurrentDrawing(this._getCurrentEntityVertexes());
       this._currentEntity = null;
@@ -122,20 +122,20 @@ export default class BaseDrawingTool {
   }
 
   // 以下函数需要子类重写
-  _initCurrentEntityVertexes(vertex) {
+  _initCurrentEntityVertexes (vertex) {
     return [vertex];
   }
-  _mouseLeftClick(currEntVers, newVertex) {
+  _mouseLeftClick (currEntVers, newVertex) {
     currEntVers.push(newVertex);
   }
-  _mouseMoving(currEntVers, newVertex) {
+  _mouseMoving (currEntVers, newVertex) {
     currEntVers.push(newVertex);
   }
-  _beforeFinishingCurrentDrawing(currEntVers) {}
-  _createCurrentEntity(currEntVers) {
+  _beforeFinishingCurrentDrawing (currEntVers) { }
+  _createCurrentEntity (currEntVers) {
     return null;
   }
-  _shouldFinishCurrentDrawing(currEntVers) {
+  _shouldFinishCurrentDrawing (currEntVers) {
     return true;
   }
 }

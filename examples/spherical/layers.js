@@ -273,12 +273,25 @@ export const layers = [
     },
   },
   {
-    id: '管线DSL',
-    name: '管线DSL',
+    id: '三维-地面',
+    name: '三维-地面',
     layer: {
       type: 'S3M',
       visible: false,
-      url: 'http://localhost:8090/iserver/services/3D-DS/rest/realspace/datas/DS_LINE_4490@%E5%BE%90%E5%B7%9E%E7%BB%8F%E5%BC%80%E5%8C%BA%E7%AE%A1%E7%BA%BF%E6%99%AE%E6%9F%A52021%E6%95%B0%E6%8D%AE%E5%BA%93-DS/config',
+      cullEnabled: false,
+      url: 'http://192.168.122.55/iserver55/services/3D-local3DCache-DM1th0812/rest/realspace/datas/DM_1@th/config',
+      proxy: {
+        z: 200,
+      },
+    },
+  },
+  {
+    id: '二维图层-控规',
+    name: '二维图层-控规',
+    layer: {
+      type: 'SMIMG',
+      visible: false,
+      url: 'http://egov.dpark.com.cn/iserver55/services/map-agscachev2-THXCKGTHXC/rest/maps/THXC_KG_THXC',
     },
   },
   {

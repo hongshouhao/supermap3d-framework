@@ -3,11 +3,12 @@ import HighLimitTool from './analysis/HighLimit/HighLimitTool';
 import SubmergedTool from './analysis/Submerged/SubmergedTool';
 import SceneRouteTool from './tools/Scene/SceneRouteTool';
 import { gridSamplingPointsInPolygon } from './utils/CesiumUtility';
+import { reproject } from './utils/Reproject';
 import centerOfMass from '@turf/center-of-mass';
 import TestPanel from './Test.vue';
 import Vue from 'vue';
 import $ from 'jquery';
-
+import { proxy } from './utils/LocalProxy';
 export default class Test {
   constructor() {
     this.createSketchTool();
@@ -23,18 +24,27 @@ export default class Test {
     let vue = new Vue({
       el: div,
       render: (h) => h(TestPanel),
-    }); 
- 
+    });
+
     $('.cesium-viewer-cesiumWidgetContainer')[0].appendChild(vue.$el);
   }
   doTest() {
-    this.createView();
+    proxy(
+      'http://192.168.122.55/iserver55/services/3D-local3DCache-DM1th0812/rest/realspace/datas/DM_1@th/config',
+      function (config) {
+        config.position.z = 100;
+        console.log(config);
+      }
+    ).then((x) => {
+      console.log(x);
+    });
+    // this.testReproject();
+    // this.createView();
     // window.s3d.selectedChangedEvent.startListening();
     // window.s3d.eventBus.addEventListener('selected-features-changed', (caller, args) => {
     //   console.log(caller);
     //   console.log(args);
     // });
-
     // this.testMatrix();
     // window.s3d.topLeftBar.toggleViewTo('2D');
     // this.labelPolygonsTest()
@@ -89,6 +99,19 @@ export default class Test {
     // console.log(window.s3d.layerManager.getAllLayers((x) => x.type === 'S3M' && x.visible))
     // console.log(window.s3d.layerManager.getLayer('供电'))
     // console.log(window.s3d.layerManager.getLayer((x) => x.name === '供电'))
+  }
+  testReproject() {
+    let pt = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          40557647.206291355, 3451505.3023955463, 1.3869319521331655,
+        ],
+      },
+    };
+
+    console.log(reproject(pt, 'EPSG_4528', 'EPSG_4490'));
   }
   flyToPointsTest() {
     window.s3d.cameraUtility.flyToPointsLL(

@@ -1,4 +1,15 @@
 import proj4 from 'proj4';
+
+const projDefs = {
+  EPSG_3857:
+    '+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs +type=crs',
+  EPSG_4490: '+proj=longlat +ellps=GRS80 +no_defs +type=crs',
+  EPSG_4528:
+    '+proj=tmerc +lat_0=0 +lon_0=120 +k=1 +x_0=40500000 +y_0=0 +ellps=GRS80 +units=m +no_defs +type=crs',
+  EPSG_4549:
+    '+proj=tmerc +lat_0=0 +lon_0=120 +k=1 +x_0=500000 +y_0=0 +ellps=GRS80 +units=m +no_defs +type=crs',
+};
+
 // // Checks if `list` looks like a `[x, y]`.
 function isXY(list) {
   return (
@@ -51,7 +62,8 @@ function traverseGeoJson(geometryCb, nodeCb, geojson) {
 }
 
 function detectCrs(geojson, projs) {
-  var crsInfo = geojson.crs, crs;
+  var crsInfo = geojson.crs,
+    crs;
 
   if (crsInfo === undefined) {
     throw new Error('Unable to detect CRS, GeoJSON has no "crs" property.');
@@ -99,7 +111,7 @@ function calcBbox(geojson) {
 }
 
 export function reproject(geojson, from, to, projs) {
-  projs = projs || {};
+  projs = projs || projDefs;
   if (!from) {
     from = detectCrs(geojson, projs);
   } else {

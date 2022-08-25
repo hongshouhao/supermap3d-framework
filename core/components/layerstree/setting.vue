@@ -1,17 +1,18 @@
 <template>
-  <div class="layer-settings"
-       v-if="cesiumLayerLoaded">
+  <div class="layer-settings" v-if="cesiumLayerLoaded">
     <el-row> </el-row>
     <el-row>
       <el-col :span="8">
         <span class="layer-settings-item-label">透明度</span>
       </el-col>
       <el-col :span="16">
-        <el-slider :min="0"
-                   :max="1"
-                   :step="0.01"
-                   v-model="opacity"
-                   @input="setOpacity">
+        <el-slider
+          :min="0"
+          :max="1"
+          :step="0.01"
+          v-model="opacity"
+          @input="setOpacity"
+        >
         </el-slider>
       </el-col>
     </el-row>
@@ -20,11 +21,13 @@
         <span class="layer-settings-item-label">亮度</span>
       </el-col>
       <el-col :span="16">
-        <el-slider :min="0"
-                   :max="2"
-                   :step="0.01"
-                   v-model="brightness"
-                   @input="setLayerProperty($event, 'brightness')">
+        <el-slider
+          :min="0"
+          :max="2"
+          :step="0.01"
+          v-model="brightness"
+          @input="setLayerProperty($event, 'brightness')"
+        >
         </el-slider>
       </el-col>
     </el-row>
@@ -33,11 +36,13 @@
         <span class="layer-settings-item-label">色调</span>
       </el-col>
       <el-col :span="16">
-        <el-slider :min="-1"
-                   :max="1"
-                   :step="0.01"
-                   v-model="hue"
-                   @input="setLayerProperty($event, 'hue')">
+        <el-slider
+          :min="-1"
+          :max="1"
+          :step="0.01"
+          v-model="hue"
+          @input="setLayerProperty($event, 'hue')"
+        >
         </el-slider>
       </el-col>
     </el-row>
@@ -46,11 +51,13 @@
         <span class="layer-settings-item-label">饱和度</span>
       </el-col>
       <el-col :span="16">
-        <el-slider :min="0"
-                   :max="2"
-                   :step="0.01"
-                   v-model="saturation"
-                   @input="setLayerProperty($event, 'saturation')">
+        <el-slider
+          :min="0"
+          :max="2"
+          :step="0.01"
+          v-model="saturation"
+          @input="setLayerProperty($event, 'saturation')"
+        >
         </el-slider>
       </el-col>
     </el-row>
@@ -59,11 +66,13 @@
         <span class="layer-settings-item-label">对比度</span>
       </el-col>
       <el-col :span="16">
-        <el-slider :min="0"
-                   :max="2"
-                   :step="0.01"
-                   v-model="contrast"
-                   @input="setLayerProperty($event, 'contrast')">
+        <el-slider
+          :min="0"
+          :max="2"
+          :step="0.01"
+          v-model="contrast"
+          @input="setLayerProperty($event, 'contrast')"
+        >
         </el-slider>
       </el-col>
     </el-row>
@@ -72,11 +81,13 @@
         <span class="layer-settings-item-label">灰度</span>
       </el-col>
       <el-col :span="16">
-        <el-slider :min="0"
-                   :max="1"
-                   :step="0.01"
-                   v-model="gamma"
-                   @input="setLayerProperty($event, 'gamma')">
+        <el-slider
+          :min="0"
+          :max="1"
+          :step="0.01"
+          v-model="gamma"
+          @input="setLayerProperty($event, 'gamma')"
+        >
         </el-slider>
       </el-col>
     </el-row>
@@ -85,11 +96,12 @@
         <span class="layer-settings-item-label">层级</span>
       </el-col>
       <el-col :span="16">
-        <a class="mini-btn"
-           @click="topLayer"><i class="el-icon-top"></i>上移</a>
-        <a class="mini-btn"
-           @click="bottomLayer">
-          <i class="el-icon-bottom"></i>下移</a>
+        <a class="mini-btn" @click="topLayer"
+          ><i class="el-icon-top"></i>上移</a
+        >
+        <a class="mini-btn" @click="bottomLayer">
+          <i class="el-icon-bottom"></i>下移</a
+        >
       </el-col>
     </el-row>
     <!-- <el-row>
@@ -110,10 +122,12 @@
           <span class="layer-settings-item-label">管线流向</span>
         </el-col>
         <el-col :span="14">
-          <el-switch v-model="enableRenderer"
-                     active-text="开"
-                     inactive-text="关"
-                     @change="toogleRenderer">
+          <el-switch
+            v-model="enableRenderer"
+            active-text="开"
+            inactive-text="关"
+            @change="toogleRenderer"
+          >
           </el-switch>
         </el-col>
       </div>
@@ -125,7 +139,7 @@
 import { getLayerOpacity, setLayerOpacity } from '@/utils/LayerUtility';
 
 export default {
-  data () {
+  data() {
     return {
       enableRenderer: false,
       cesiumLayerLoaded: false,
@@ -139,14 +153,14 @@ export default {
     };
   },
   computed: {
-    showRenderer () {
+    showRenderer() {
       return this.lyElModel.layer?.renderer?.type === 'S3MLAYER';
     },
   },
   props: ['lyElModel'],
   watch: {
     'lyElModel.cesiumLayerLoaded': {
-      handler (val) {
+      handler(val) {
         if (val) {
           this.cesiumLayerLoaded = true;
           this.cesiumLayer = this.lyElModel.cesiumLayer;
@@ -162,7 +176,7 @@ export default {
       immediate: true,
     },
   },
-  mounted () {
+  mounted() {
     let _this = this;
     window.s3d.eventBus.addEventListener(
       'layer-invisible-internal',
@@ -174,20 +188,20 @@ export default {
     );
   },
   methods: {
-    setOpacity (opacity) {
+    setOpacity(opacity) {
       if (this.cesiumLayer) {
         setLayerOpacity(this.cesiumLayer, opacity);
       }
     },
-    setLayerProperty (value, key) {
+    setLayerProperty(value, key) {
       if (this.cesiumLayer) {
         this.cesiumLayer[key] = value;
       }
     },
-    toogleLight (val) {
+    toogleLight(val) {
       this.lyElModel.cesiumLayer.hasLight = !val;
     },
-    toogleRenderer (enable) {
+    toogleRenderer(enable) {
       if (enable) {
         window.s3d.layerManager.layerRenderer.startRender(
           this.lyElModel.cesiumLayer.name
@@ -198,7 +212,7 @@ export default {
         );
       }
     },
-    topLayer () {
+    topLayer() {
       if (this.lyElModel && this.lyElModel.cesiumLayer) {
         let newLayer = window.s3d.layerManager.topLayer(
           this.lyElModel.cesiumLayer.name
@@ -209,7 +223,7 @@ export default {
         }
       }
     },
-    bottomLayer () {
+    bottomLayer() {
       if (this.lyElModel && this.lyElModel.cesiumLayer) {
         let newLayer = window.s3d.layerManager.bottomLayer(
           this.lyElModel.cesiumLayer.name

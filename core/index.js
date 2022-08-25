@@ -15,6 +15,8 @@ import * as Tools from './tools/index';
 import * as CesiumMath from './utils/CesiumMath';
 import * as IfUtility from './utils/IfUtility';
 import * as LayerUtility from './utils/LayerUtility';
+import * as Reproject from './utils/Reproject';
+import SelectedChangedEvent from './data/SelectedChangedEvent';
 
 import LayerFactory from './utils/LayerFactory';
 import { addMessageListener } from './IframeMessage';
@@ -90,6 +92,8 @@ export default {
   LayerFactory,
   IfUtility,
   LayerUtility,
+  Reproject,
   SketchToolPanel,
+  SelectedChangedEvent,
   addMessageListener,
 };

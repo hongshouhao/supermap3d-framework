@@ -9,30 +9,30 @@ export default class PolylineDrawingTool extends BaseDrawingTool {
     this._vertexLimitCount = 100;
   }
 
-  setVertexLimitCount(count) {
+  setVertexLimitCount (count) {
     if (!count || count < 2) {
       return;
     }
     this._vertexLimitCount = count;
   }
 
-  _initCurrentEntityVertexes(vertex) {
+  _initCurrentEntityVertexes (vertex) {
     return [vertex, vertex.clone()];
   }
-  _mouseLeftClick(currEntVers, newVertex) {
+  _mouseLeftClick (currEntVers, newVertex) {
     currEntVers.splice(currEntVers.length - 1, 0, newVertex);
   }
-  _mouseMoving(currEntVers, newVertex) {
+  _mouseMoving (currEntVers, newVertex) {
     if (this.freeLine) {
       currEntVers.push(newVertex);
     } else {
       currEntVers[currEntVers.length - 1] = newVertex;
     }
   }
-  _beforeFinishingCurrentDrawing(currEntVers) {
+  _beforeFinishingCurrentDrawing (currEntVers) {
     currEntVers.splice(currEntVers.length - 1, 1);
   }
-  _createCurrentEntity(currEntVers) {
+  _createCurrentEntity (currEntVers) {
     return this.viewer.entities.add({
       name: 'sketch_line',
       polyline: {
@@ -44,7 +44,7 @@ export default class PolylineDrawingTool extends BaseDrawingTool {
       iQueryable: false,
     });
   }
-  _shouldFinishCurrentDrawing(currEntVers) {
+  _shouldFinishCurrentDrawing (currEntVers) {
     if (this.freeLine) {
       return false;
     }

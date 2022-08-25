@@ -26,7 +26,7 @@ export default class HighLimitTool {
     this.resetCursor = () => window.s3d.resetCursor();
   }
 
-  start() {
+  start () {
     let _this = this;
     _this.resetState();
     _this.loadLayers().then(() => {
@@ -59,12 +59,12 @@ export default class HighLimitTool {
   }
 
   // corners: [x1,y1,x2,y2,x3,y3,x4,y4]
-  setRectangle(corners) {
+  setRectangle (corners) {
     this._corners = corners;
     return this;
   }
 
-  setHeight(height) {
+  setHeight (height) {
     this.clipping_height = height;
     if (this.clippingRectangle) {
       this.clippingRectangle.rectangle.height = height;
@@ -88,12 +88,12 @@ export default class HighLimitTool {
     return this;
   }
 
-  setTargetLayers(layerNames) {
+  setTargetLayers (layerNames) {
     this.layers = layerNames;
     return this;
   }
 
-  loadLayers() {
+  loadLayers () {
     var promises = [];
     for (let lname of this.layers) {
       let newLayerName = lname + '-HighLimit';
@@ -129,7 +129,7 @@ export default class HighLimitTool {
     return Promise.all(promises);
   }
 
-  clear() {
+  clear () {
     for (let lname of this.layers) {
       let ly1 = this.scene.layers.find(lname);
       if (ly1) {
@@ -146,7 +146,7 @@ export default class HighLimitTool {
     this.resetState();
   }
 
-  resetState() {
+  resetState () {
     this.viewer.entities.remove(this.clippingRectangle);
     this.viewer.entities.remove(this.clippingRectangleOutline);
     this.clippingRectangle = null;
@@ -164,7 +164,7 @@ export default class HighLimitTool {
     this.state = '';
   }
 
-  createRectangleByMouse(mousePosition) {
+  createRectangleByMouse (mousePosition) {
     let center = this.transformMousePosition(mousePosition);
     this.clippingRectangle = this.viewer.entities.add({
       name: 'clipping_rectangle',
@@ -205,7 +205,7 @@ export default class HighLimitTool {
     });
   }
 
-  createRectangle() {
+  createRectangle () {
     let vertexes = Cesium.Cartesian3.fromDegreesArray(this._corners);
     this.clippingRectangle = this.viewer.entities.add({
       name: 'clipping_rectangle',
@@ -250,7 +250,7 @@ export default class HighLimitTool {
     });
   }
 
-  moveRectangle(startPosition, endPosition) {
+  moveRectangle (startPosition, endPosition) {
     let _this = this;
     let ray1 = _this.viewer.camera.getPickRay(startPosition);
     let pointOnPlane1 = getPointOnPlane2(
@@ -297,7 +297,7 @@ export default class HighLimitTool {
       }, false);
   }
 
-  moveDefaultectangle(mousePosition) {
+  moveDefaultectangle (mousePosition) {
     let _this = this;
     let center = _this.transformMousePosition(mousePosition);
     this.clippingRectangle.rectangle.coordinates = new Cesium.CallbackProperty(
@@ -327,7 +327,7 @@ export default class HighLimitTool {
       }, false);
   }
 
-  onEditEvent() {
+  onEditEvent () {
     let _this = this;
     _this.editHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOWN);
     _this.editHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_UP);
@@ -379,7 +379,7 @@ export default class HighLimitTool {
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
   }
 
-  saveScaleStartPoint(mousePosition) {
+  saveScaleStartPoint (mousePosition) {
     let ray = this.viewer.camera.getPickRay(mousePosition);
     let pointOnPlane = getPointOnPlane2(
       ray.origin,
@@ -404,7 +404,7 @@ export default class HighLimitTool {
     this.scalePickedLine = ordered[0];
   }
 
-  scaleRectangle(mousePosition) {
+  scaleRectangle (mousePosition) {
     let _this = this;
     let moveVector = _this.calculateScaleVector(mousePosition);
     let pt1 = Cesium.Cartesian3.add(
@@ -449,7 +449,7 @@ export default class HighLimitTool {
       }, false);
   }
 
-  updateClipBox() {
+  updateClipBox () {
     let rect = this.clippingRectangle.rectangle.coordinates.getValue();
     let center = Cesium.Rectangle.center(rect);
     let position = Cesium.Cartesian3.fromDegrees(
@@ -466,7 +466,6 @@ export default class HighLimitTool {
       this.clippingRectangleOutlinePositions[2]
     );
 
-    console.log(position);
     for (let lname of this.layers) {
       let ly1 = this.scene.layers.find(lname);
       if (ly1) {
@@ -498,7 +497,7 @@ export default class HighLimitTool {
     }
   }
 
-  ifMouseOnOutline(mousePosition) {
+  ifMouseOnOutline (mousePosition) {
     let pick = this.viewer.scene.pick(mousePosition, 15, 15);
     return (
       Cesium.defined(pick) &&
@@ -507,14 +506,14 @@ export default class HighLimitTool {
     );
   }
 
-  ifMouseInRectangle(mousePosition) {
+  ifMouseInRectangle (mousePosition) {
     let pick = this.viewer.scene.pick(mousePosition);
     return (
       Cesium.defined(pick) && pick.id && pick.id.name === 'clipping_rectangle'
     );
   }
 
-  transformMousePosition(mousePosition) {
+  transformMousePosition (mousePosition) {
     let position = this.viewer.scene.pickPosition(mousePosition);
     let cartographic = Cesium.Cartographic.fromCartesian(position);
     let longitude = Cesium.Math.toDegrees(cartographic.longitude);
@@ -526,7 +525,7 @@ export default class HighLimitTool {
     );
   }
 
-  calculateScaleVector(mousePosition) {
+  calculateScaleVector (mousePosition) {
     let ray = this.viewer.camera.getPickRay(mousePosition);
     let pointOnPlane = getPointOnPlane2(
       ray.origin,

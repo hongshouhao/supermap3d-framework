@@ -1,11 +1,9 @@
-import {
-  pointRotateAroundPoint,
-} from '../../../core/utils/CesiumMath';
+import { pointRotateAroundPoint } from '../../../core/utils/CesiumMath';
 import PolygonDrawingTool from './PolygonDrawingTool';
 
 export default class CircleDrawingTool extends PolygonDrawingTool {
   constructor(viewer, options) {
-    super(viewer,options);
+    super(viewer, options);
     this.slices = 128;
   }
 
@@ -13,16 +11,15 @@ export default class CircleDrawingTool extends PolygonDrawingTool {
     this.center = vertex;
     return [vertex, vertex.clone(), vertex.clone()];
   }
-  _mouseLeftClick(currEntVers, newVertex) {
-  }
+  _mouseLeftClick(currEntVers, newVertex) {}
   _mouseMoving(currEntVers, newVertex) {
-    let vertexes = this. getVertexes(this.center, newVertex, this.slices);
+    let vertexes = this.getVertexes(this.center, newVertex, this.slices);
     currEntVers.length = 0;
-    vertexes.forEach(element => {
+    vertexes.forEach((element) => {
       currEntVers.push(element);
     });
   }
-  
+
   _shouldFinishCurrentDrawing(currEntVers) {
     return false;
   }
@@ -31,7 +28,7 @@ export default class CircleDrawingTool extends PolygonDrawingTool {
     let vertexes = [];
     let normal = Cesium.Cartesian3.normalize(center, new Cesium.Cartesian3());
     let sectorRad = (Math.PI * 2) / slices;
-    for (let i = 0; i < slices - 1; i++) {
+    for (let i = 0; i < slices; i++) {
       let rotationAngle = sectorRad * i;
       let newVertex = pointRotateAroundPoint(
         center,

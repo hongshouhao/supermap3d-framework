@@ -1,4 +1,3 @@
-// import { rayEarthIntersection } from './CesiumMath'
 export default class DebugUtility {
   constructor(viewer) {
     this.viewer = viewer;
@@ -88,7 +87,11 @@ export default class DebugUtility {
     this.drawRay(this.viewer.camera.position, this.viewer.camera.direction);
   }
 
-  drawRay(start, direction, distance = 100) {
+  drawRay(start, direction, distance) {
+    if (!distance) {
+      distance = 100;
+    }
+
     let ray = Cesium.Cartesian3.multiplyByScalar(
       direction,
       distance,
