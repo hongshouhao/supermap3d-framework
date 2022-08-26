@@ -1,5 +1,6 @@
-import { isPromise } from '@/utils/IfUtility';
-import LayerFactory from '@/utils/LayerFactory';
+import { isPromise } from '../../utils/IfUtility';
+import { isImageryLayer } from '../../utils/ImageryUtility';
+import LayerFactory from '../../utils/LayerFactory';
 import LayerSetting from './setting.vue';
 import LayerStore from './LayerStore';
 
@@ -215,7 +216,6 @@ export default {
                     }
                   />
                 </el-popover>
-                
               </span>
             </span>
           );
@@ -322,12 +322,35 @@ export default {
           lyElModel.cesiumLayer = ly;
           lyElModel.cesiumLayerLoaded = true;
           window.s3d.eventBus.dispatch('layer-added', 'layers-tree', ly);
+          if (
+            lyElModel.layer.type === 'S3M' &&
+            lyElModel.layer.coverImageryLayer
+          ) {
+            let imgLy = window.s3d.layerManager.getLayer(
+              lyElModel.layer.coverImageryLayer
+            );
+            ly.height = 100;
+            if (imgLy && isImageryLayer(imgLy.config?.type)) {
+              ly.coverImageryLayer = imgLy;
+            }
+          }
           return ly;
         });
       } else if (lyElModel.layer.type === 'DEM') {
         Object.assign(lyElModel, result);
         window.s3d.eventBus.dispatch('dem-added', 'layers-tree', result);
       } else {
+        if (isImageryLayer(lyElModel.layer.type)) {
+          debugger;
+          let s3mLayers = window.s3d.layerManager.getAllLayers(
+            (x) =>
+              x.config?.type == 'S3M' &&
+              x.config?.coverImageryLayer == lyElModel.layer.name
+          );
+          s3mLayers.forEach((ly) => {
+            ly.coverImageryLayer = result;
+          });
+        }
         lyElModel.cesiumLayer = result;
         lyElModel.cesiumLayerLoaded = true;
         window.s3d.eventBus.dispatch('layer-added', 'layers-tree', result);

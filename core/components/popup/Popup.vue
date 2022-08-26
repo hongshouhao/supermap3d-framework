@@ -552,14 +552,17 @@ export default {
   position: absolute;
   max-width: 500px;
   cursor: auto;
+
   .multi-header {
     margin-top: 4px;
+
     input {
       border: none;
       font-weight: bold;
       font-size: 16px;
     }
   }
+
   .esri-popup__main-container {
     max-width: 700px !important;
     max-height: 700px !important;

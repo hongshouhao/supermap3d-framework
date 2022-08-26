@@ -130,6 +130,6 @@ export default class DataAccessWrapper {
     let url = `${layer._baseUri.scheme}://${layer._baseUri.authority}${layer._baseUri.path}`;
     let parts = url.split('/rest/realspace/');
     url = parts[0] + '/rest/data/featureResults.json?returnContent=true';
-    return url.replace('/iserver/services/3D-', '/iserver/services/data-');
+    return url.replace('/services/3D-', '/services/data-');
   }
 }

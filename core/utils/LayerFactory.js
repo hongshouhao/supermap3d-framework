@@ -1,4 +1,6 @@
 import { isImageryLayer } from './ImageryUtility';
+import { proxy } from '../utils/LocalProxy';
+import lodash from 'lodash';
 export default class LayerFactory {
   constructor(viewer) {
     this.viewer = viewer;
@@ -21,6 +23,43 @@ export default class LayerFactory {
       return this.create3DTilesLayer(options);
     } else {
       throw `图层类型配置错误: ${options.type}`;
+    }
+
+    // return this.preprocessLayerOptions(options).then((optCopy) => {
+    //   if (isImageryLayer(optCopy.type)) {
+    //     return this.createImageLayer(optCopy);
+    //   } else if (optCopy.type === 'S3M') {
+    //     return this.createS3MLayer(optCopy).then((layer) => {
+    //       return layer;
+    //     });
+    //   } else if (optCopy.type === 'MVT') {
+    //     return this.createMVTLayer(optCopy);
+    //   } else if (optCopy.type === 'DEM') {
+    //     return this.createDEMLayer(optCopy);
+    //   } else if (optCopy.type === '3DTILES') {
+    //     return this.create3DTilesLayer(optCopy);
+    //   } else {
+    //     throw `图层类型配置错误: ${optCopy.type}`;
+    //   }
+    // }).then(ly=>{
+    //   ly.config = options;
+    //   ly.type = options.type;
+    //   ly.name = options.name;
+    //   return ly;
+    // });
+  }
+
+  preprocessLayerOptions(options) {
+    if (options.proxy) {
+      let opt = lodash.cloneDeep(options);
+      return proxy(opt.url, function (config) {
+        Object.assign(config, opt.proxy);
+      }).then((url) => {
+        opt.url = url;
+        return opt;
+      });
+    } else {
+      return Promise.resolve(options);
     }
   }
 
@@ -60,7 +99,6 @@ export default class LayerFactory {
           // cly.selectedLineColor = Cesium.Color.BLUE
           // cly.silhouetteColor = Cesium.Color.RED
           // cly.silhouetteSize = 10
-          // console.log(cly.silhouetteColor)
 
           cly.style3D.fillStyle = Cesium.FillStyle.Fill_And_WireFrame;
           cly.style3D.lineColor = Cesium.Color.BLACK;
@@ -134,10 +172,12 @@ export default class LayerFactory {
   createImageLayer(options) {
     let imgp = this._createImageryProvider(options);
     let ly = this.viewer.imageryLayers.addImageryProvider(imgp, options.index);
+
     ly.type = options.type;
     ly.config = options;
-    ly.show = options.visible;
     ly.name = options.name;
+
+    ly.show = options.visible;
     if (options.opacity) {
       ly.alpha = options.opacity;
     }
@@ -147,10 +187,12 @@ export default class LayerFactory {
     var tileset = this.viewer.scene.primitives.add(
       new Cesium.Cesium3DTileset(options)
     );
+
     tileset.type = options.type;
     tileset.config = options;
-    tileset.show = options.visible;
     tileset.name = options.name;
+
+    tileset.show = options.visible;
 
     if (options.zOffset) {
       tileset.readyPromise.then((set) => {

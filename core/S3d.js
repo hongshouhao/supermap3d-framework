@@ -53,8 +53,7 @@ export default class S3d {
   setViewer(viewer) {
     this.viewer = viewer;
     this.scene = viewer.scene;
- 
-    this.selectedChangedEvent = new SelectedChangedEvent(viewer);
+
     this.dataAccess = new DataAccess(viewer);
     this.popupData = new DataAccessWrapper(viewer);
     this.viewUtility = new ViewUtility(viewer);
@@ -102,6 +101,7 @@ export default class S3d {
     this.viewer.scene.debugShowFramesPerSecond =
       this.config.enableDebugShowFramesPerSecond || false;
     this.viewer.scene.globe.depthTestAgainstTerrain = true;
+    this.viewer.scene.globe.showSkirts = false;
     this.viewer.scene.logarithmicDepthBuffer = false;
 
     this.viewer.scene.screenSpaceCameraController.tiltEventTypes = [
@@ -170,6 +170,10 @@ export default class S3d {
     this.viewer.enableCursorStyle = true;
     resetCursorStyle();
     return this;
+  }
+
+  createSelectedChangedEvent(){
+    return new SelectedChangedEvent(this.viewer);
   }
 
   _setLayerVisibleByAltitude() {
