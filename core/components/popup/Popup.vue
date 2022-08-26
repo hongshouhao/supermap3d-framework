@@ -3,6 +3,7 @@
     v-show="popupVisible"
     ref="popup"
     class="my-popup esri-component esri-popup esri-popup--aligned-top-center esri-popup--shadow"
+    :class="{ dockered: dockered }"
   >
     <div
       class="esri-popup__main-container esri-widget esri-popup--is-collapsible"
