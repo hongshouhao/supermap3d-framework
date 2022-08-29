@@ -28,6 +28,11 @@ export default {
       navigation: false,
       baseLayerPicker: false,
       shouldAnimate: true,
+      contextOptions: {
+        msaaLevel: 8, // 越大效果越好，会消耗性能
+        requestWebgl2: true,
+      },
+      orderIndependentTranslucency: false,
     };
 
     if (config.dem) {
@@ -43,6 +48,7 @@ export default {
     Object.assign(viewerOptions, config.viewerOptions);
     this.sceneContainer = document.createElement('div');
     let viewer = new Cesium.Viewer(this.sceneContainer, viewerOptions);
+    viewer.scene.postProcessStages.fxaa.enabled = false;
     this.__proto__.__proto__.$viewer = viewer;
     window.s3d.setViewer(viewer);
   },

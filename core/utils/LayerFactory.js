@@ -124,6 +124,13 @@ export default class LayerFactory {
             });
           });
         }
+
+        if (options.pbr) {
+          cly.setPBRMaterialFromJSON(options.pbr);
+        } else {
+          cly.setPBRMaterial(Cesium.PBRMaterialType.ROUGHNESS);
+        }
+        console.log(cly);
         return cly;
       });
     } else {

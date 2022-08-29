@@ -5,11 +5,13 @@
         <span class="settings-item-label-more">底图透明度</span>
       </el-col>
       <el-col :span="16">
-        <el-slider :min="0"
-                   :max="1"
-                   :step="0.01"
-                   v-model="baseMapAlpha"
-                   @input="setBaseMapAlpha"></el-slider>
+        <el-slider
+          :min="0"
+          :max="1"
+          :step="0.01"
+          v-model="baseMapAlpha"
+          @input="setBaseMapAlpha"
+        ></el-slider>
       </el-col>
     </el-row>
 
@@ -18,11 +20,13 @@
         <span class="settings-item-label">亮度</span>
       </el-col>
       <el-col :span="16">
-        <el-slider :min="0"
-                   :max="2"
-                   :step="0.01"
-                   v-model="brightness"
-                   @input="setSceneColorCorrection($event,'brightness')">
+        <el-slider
+          :min="0"
+          :max="2"
+          :step="0.01"
+          v-model="brightness"
+          @input="setSceneColorCorrection($event, 'brightness')"
+        >
         </el-slider>
       </el-col>
     </el-row>
@@ -31,11 +35,13 @@
         <span class="settings-item-label">色调</span>
       </el-col>
       <el-col :span="16">
-        <el-slider :min="-1"
-                   :max="1"
-                   :step="0.01"
-                   v-model="hue"
-                   @input="setSceneColorCorrection($event,'hue')">
+        <el-slider
+          :min="-1"
+          :max="1"
+          :step="0.01"
+          v-model="hue"
+          @input="setSceneColorCorrection($event, 'hue')"
+        >
         </el-slider>
       </el-col>
     </el-row>
@@ -44,11 +50,13 @@
         <span class="settings-item-label">饱和度</span>
       </el-col>
       <el-col :span="16">
-        <el-slider :min="0"
-                   :max="2"
-                   :step="0.01"
-                   v-model="saturation"
-                   @input="setSceneColorCorrection($event,'saturation')">
+        <el-slider
+          :min="0"
+          :max="2"
+          :step="0.01"
+          v-model="saturation"
+          @input="setSceneColorCorrection($event, 'saturation')"
+        >
         </el-slider>
       </el-col>
     </el-row>
@@ -57,11 +65,13 @@
         <span class="settings-item-label">对比度</span>
       </el-col>
       <el-col :span="16">
-        <el-slider :min="0"
-                   :max="2"
-                   :step="0.01"
-                   v-model="contrast"
-                   @input="setSceneColorCorrection($event,'contrast')">
+        <el-slider
+          :min="0"
+          :max="2"
+          :step="0.01"
+          v-model="contrast"
+          @input="setSceneColorCorrection($event, 'contrast')"
+        >
         </el-slider>
       </el-col>
     </el-row>
@@ -82,10 +92,12 @@
         <span class="settings-item-label">雨景</span>
       </el-col>
       <el-col :span="16">
-        <el-switch v-model="enableRain"
-                   active-text="开"
-                   inactive-text="关"
-                   @change="toggleRain">
+        <el-switch
+          v-model="enableRain"
+          active-text="开"
+          inactive-text="关"
+          @change="toggleRain"
+        >
         </el-switch>
       </el-col>
     </el-row>
@@ -94,10 +106,12 @@
         <span class="settings-item-label">雪景</span>
       </el-col>
       <el-col :span="16">
-        <el-switch v-model="enableSnow"
-                   active-text="开"
-                   inactive-text="关"
-                   @change="toggleSnow">
+        <el-switch
+          v-model="enableSnow"
+          active-text="开"
+          inactive-text="关"
+          @change="toggleSnow"
+        >
         </el-switch>
       </el-col>
     </el-row>
@@ -105,7 +119,7 @@
 </template>
 <script>
 export default {
-  data () {
+  data() {
     return {
       baseMapAlpha: 1,
       enableRain: false,
@@ -117,7 +131,7 @@ export default {
       contrast: 0,
     };
   },
-  mounted () {
+  mounted() {
     let _this = this;
     this.enableLight = this.$viewer.scene.sun.show = true;
     this.brightness = this.$viewer.scene.colorCorrection.brightness;
@@ -133,7 +147,7 @@ export default {
     });
   },
   methods: {
-    setBaseMapAlpha (alpha) {
+    setBaseMapAlpha(alpha) {
       let baseMaps = window.s3d.basemapUtility.currentMaps;
       if (baseMaps) {
         for (let map of baseMaps) {
@@ -141,10 +155,10 @@ export default {
         }
       }
     },
-    setSceneColorCorrection (value, key) {
+    setSceneColorCorrection(value, key) {
       this.$viewer.scene.colorCorrection[key] = value;
     },
-    toggleRain (enable) {
+    toggleRain(enable) {
       if (enable) {
         this.$viewer.scene.postProcessStages.rain.enabled = true;
         this.$viewer.scene.postProcessStages.rain.uniforms.angle = 170;
@@ -153,7 +167,7 @@ export default {
         this.$viewer.scene.postProcessStages.rain.enabled = false;
       }
     },
-    toggleSnow (enable) {
+    toggleSnow(enable) {
       if (enable) {
         this.$viewer.scene.postProcessStages.snow.enabled = true;
         this.$viewer.scene.postProcessStages.snow.uniforms.density = 15;
@@ -163,10 +177,10 @@ export default {
         this.$viewer.scene.postProcessStages.snow.enabled = false;
       }
     },
-    toogleLight (enable) {
+    toogleLight(enable) {
       // this.$viewer.scene.sun.show = enable
       this.$viewer.scene.globe.enableLighting = enable;
-    }
+    },
   },
 };
 </script>

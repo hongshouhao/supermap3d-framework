@@ -262,14 +262,11 @@ export const layers = [
     name: '管线JS',
     layer: {
       type: 'S3M',
-      visible: false,
-      url: 'http://localhost:8090/iserver/services/3D-GuanXianCeShiFuWu/rest/realspace/datas/JS_LINE_4490@%E5%BE%90%E5%B7%9E%E7%BB%8F%E5%BC%80%E5%8C%BA%E7%AE%A1%E7%BA%BF%E6%99%AE%E6%9F%A52021%E6%95%B0%E6%8D%AE%E5%BA%93-JS/config',
-      renderer: {
-        type: 'S3MLAYER',
-        layer: {
-          url: 'http://localhost:8090/iserver/services/3D-GuanXianCeShiFuWu/rest/realspace/datas/JS_LINE_4490@%E5%BE%90%E5%B7%9E%E7%BB%8F%E5%BC%80%E5%8C%BA%E7%AE%A1%E7%BA%BF%E6%99%AE%E6%9F%A52021%E6%95%B0%E6%8D%AE%E5%BA%93-JS/config',
-        },
-      },
+      visible: true,
+      url: 'http://192.168.122.55/iserver55/services/3D-local3DCache-test/rest/realspace/datas/WS_LINE_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000-WS/config',
+      dataUrl:'http://192.168.122.55/iserver55/services/data-ChangShuGuanXian/rest/data/featureResults.json?returnContent=true',
+      datasetName:'常熟高新区20211123 - 2000-WS:WS_LINE_4490',
+      // pbr:'http://localhost:8083/pbr/piple.json'
     },
   },
   {
@@ -280,9 +277,7 @@ export const layers = [
       visible: false,
       cullEnabled: false,
       url: 'http://192.168.122.55/iserver55/services/3D-local3DCache-DM1th0812/rest/realspace/datas/DM_1@th/config',
-      proxy: {
-        z: 200,
-      },
+      coverImageryLayer:'二维图层-控规'
     },
   },
   {

@@ -74,7 +74,8 @@ export default {
       objIndex: null,
       objTitles: [],
       dataObjs: [],
-      dockered: false,
+      autoDockered: false,
+      manualDockered: false,
       popupVisible: false,
       showPropGrid: true,
     };
@@ -84,7 +85,7 @@ export default {
   },
   props: [],
   mounted() {
-    this.popupData = window.s3d.popupData;
+    this.dataAccess = window.s3d.dataAccess;
     this.initIQuery();
     this.initIQueryForMVT();
   },
@@ -112,7 +113,7 @@ export default {
             let layerName = _this.mvtData.object.layer;
             let lconf = window.s3d.layerManager.getLayerConfig(layerName);
             if (lconf.iQuery) {
-              _this.popupData
+              _this.dataAccess
                 .dataFromiQuery(layerName, coordinate)
                 .then((data) => {
                   _this.renderPopup(position, data);
@@ -147,7 +148,7 @@ export default {
               });
               if (unslctableLayers.length > 0) {
                 let calls = unslctableLayers.map((l) => {
-                  return _this.popupData.dataFromiQuery(l.name, coordinate);
+                  return _this.dataAccess.dataFromiQuery(l.name, coordinate);
                 });
 
                 Promise.all(calls).then((result) => {
@@ -166,12 +167,12 @@ export default {
             } else {
               let calls = pikObjs.map((x) => {
                 if (x.id instanceof Cesium.Entity && x.id.iQueryable) {
-                  return _this.popupData.dataFromEntity(x.id);
+                  return _this.dataAccess.dataFromEntity(x.id);
                 } else if (x.primitive.config?.iQuery) {
                   let lname = x.primitive.config.name;
-                  return _this.popupData.dataFromiQuery(lname, coordinate);
+                  return _this.dataAccess.dataFromiQuery(lname, coordinate);
                 } else {
-                  return _this.popupData.dataFromPrimitive(x);
+                  return _this.dataAccess.dataFromPrimitive(x);
                 }
               });
               Promise.all(calls)
@@ -213,7 +214,7 @@ export default {
           let fItem = features.find(
             (x) => x.feature.id === entity.pickResult.featureID
           );
-          _this.popupData
+          _this.dataAccess
             .dataFromMVTFeature(layerName, fItem.feature)
             .then((data) => {
               _this.mvtData = data;
@@ -248,9 +249,7 @@ export default {
     _showPopup(cartesian) {
       this.popupPosition = cartesian;
       this.popupVisible = true;
-      if (!this.dockered) {
-        this._enableStickRender();
-      }
+      this._enableStickRender();
     },
     _reRenderPopup() {
       let obj = this.dataObjs[this.objIndex];
@@ -377,7 +376,8 @@ export default {
     },
     _enableStickRender() {
       if (this.removePostRenderHandler) {
-        return;
+        this.removePostRenderHandler();
+        this.removePostRenderHandler = null;
       }
       let _this = this;
       this.removePostRenderHandler =
@@ -389,33 +389,32 @@ export default {
           let popupDom = _this.$refs.popup;
           let left = screenPosition.x - popupDom.offsetWidth / 2;
           let top = screenPosition.y - popupDom.offsetHeight - 30;
-
           if (
             left < 0 ||
             top > _this.$viewer.scene.canvas.height - popupDom.offsetHeight ||
             left > _this.$viewer.scene.canvas.width - popupDom.offsetWidth
           ) {
             _this.enableDock();
-            // _this._setPopupStyle(true)
           } else if (top < 0) {
             top = screenPosition.y + 10;
 
             if (top - 30 < 0) {
               _this.enableDock();
-              // _this._setPopupStyle(true)
             } else {
-              // _this._setPopupStyle(false)
-              _this.disableDock();
-              _this.$refs.popupPointer.style.top = '0';
-              popupDom.style.left = left + 'px';
-              popupDom.style.top = top + 'px';
+              if (_this.manualDockered === false) {
+                _this.disableDock();
+                _this.$refs.popupPointer.style.top = '0';
+                popupDom.style.left = left + 'px';
+                popupDom.style.top = top + 'px';
+              }
             }
           } else {
-            // _this._setPopupStyle(false)
-            _this.disableDock();
-            popupDom.style.left = left + 'px';
-            popupDom.style.top = top + 'px';
-            _this.$refs.popupPointer.style.top = '100%';
+            if (_this.manualDockered === false) {
+              _this.disableDock();
+              popupDom.style.left = left + 'px';
+              popupDom.style.top = top + 'px';
+              _this.$refs.popupPointer.style.top = '100%';
+            }
           }
         });
     },
@@ -523,23 +522,24 @@ export default {
       }
     },
     enableDock() {
-      this._setPopupStyle(true);
-      if (this.removePostRenderHandler) {
-        this.removePostRenderHandler();
-        this.removePostRenderHandler = null;
+      if (!this.autoDockered) {
+        this._setPopupStyle(true);
+        this.autoDockered = true;
       }
-      this.dockered = true;
     },
     disableDock() {
-      this._setPopupStyle(false);
-      this._enableStickRender();
-      this.dockered = false;
+      if (this.autoDockered) {
+        this._setPopupStyle(false);
+        this.autoDockered = false;
+      }
     },
     dock() {
-      if (this.dockered) {
+      if (this.manualDockered) {
         this.disableDock();
+        this.manualDockered = false;
       } else {
         this.enableDock();
+        this.manualDockered = true;
       }
     },
   },
@@ -551,7 +551,7 @@ export default {
   position: absolute;
   max-width: 500px;
   cursor: auto;
-
+  z-index: 3000;
   .multi-header {
     margin-top: 4px;
 

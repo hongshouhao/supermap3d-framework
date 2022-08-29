@@ -97,6 +97,7 @@ export default class SelectedChangedEvent {
     if (this.mvtEventListener) {
       this.mvtEventListener();
     }
+    this.listened = false;
   }
 
   _addListenerForMVT() {

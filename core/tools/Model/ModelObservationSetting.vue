@@ -1,45 +1,32 @@
 <template>
   <div class="model-ob-setting">
     <div class="compass-container">
-      <round-slider v-model="heading"
-                    :change="headingChange"
-                    :update="headingUpdate"
-                    pathColor="#6699FF"
-                    animation="false"
-                    min="0"
-                    max="360"
-                    start-angle="270"
-                    end-angle="+360"
-                    line-cap="round"
-                    radius="50"
-                    handle-size="+10"
-                    handle-shape="dot"
-                    show-tooltip="false"
-                    width="7" />
+      <round-slider
+        v-model="heading"
+        :change="headingChange"
+        :update="headingUpdate"
+        pathColor="#6699FF"
+        animation="false"
+        min="0"
+        max="360"
+        start-angle="270"
+        end-angle="+360"
+        line-cap="round"
+        radius="50"
+        handle-size="+10"
+        handle-shape="dot"
+        show-tooltip="false"
+        width="7"
+      />
     </div>
-    <div ref="buttonContainer"
-         class="
-                    button-sight-container">
-      <div class="button-sight button-left-sight"
-           @click="lookAtLeft">
-        左
-      </div>
-      <div class="button-sight button-right-sight"
-           @click="lookAtRight">
-        右
-      </div>
-      <div class="button-sight button-front-sight"
-           @click="lookAtFront">
-        前
-      </div>
-      <div class="button-sight button-behind-sight"
-           @click="lookAtBehind">
+    <div ref="buttonContainer" class="button-sight-container">
+      <div class="button-sight button-left-sight" @click="lookAtLeft">左</div>
+      <div class="button-sight button-right-sight" @click="lookAtRight">右</div>
+      <div class="button-sight button-front-sight" @click="lookAtFront">前</div>
+      <div class="button-sight button-behind-sight" @click="lookAtBehind">
         后
       </div>
-      <div class="button-sight button-top-sight"
-           @click="lookAtTop">
-        上
-      </div>
+      <div class="button-sight button-top-sight" @click="lookAtTop">上</div>
     </div>
   </div>
 </template>
@@ -52,14 +39,14 @@ export default {
   components: {
     RoundSlider,
   },
-  data () {
+  data() {
     return {
       heading: 0,
       headingChangedBySlider: false,
       scale: 1,
     };
   },
-  mounted () {
+  mounted() {
     let _this = this;
     _this.tool = new ModelObservationTool(_this.$viewer);
     _this.$viewer.camera.changed.addEventListener(function () {
@@ -74,35 +61,40 @@ export default {
     $('.compass-container .rs-handle').mousedown(function () {
       _this.caculateScale();
     });
+
+    _this.init();
+  },
+  beforeDestroy() {
+    this.reset();
   },
   methods: {
-    init () {
+    init() {
       this.tool.start(() => {
         this.tool.lookAtFront();
       });
     },
-    reset () {
+    reset() {
       this.tool.clear();
     },
-    lookAt (angle) {
+    lookAt(angle) {
       this.tool.lookAt(angle, this.scale);
     },
-    lookAtFront () {
+    lookAtFront() {
       this.tool.lookAtFront();
     },
-    lookAtBehind () {
+    lookAtBehind() {
       this.tool.lookAtBehind();
     },
-    lookAtLeft () {
+    lookAtLeft() {
       this.tool.lookAtLeft();
     },
-    lookAtRight () {
+    lookAtRight() {
       this.tool.lookAtRight();
     },
-    lookAtTop () {
+    lookAtTop() {
       this.tool.lookAtTop();
     },
-    headingUpdate (e) {
+    headingUpdate(e) {
       if (!this.tool) {
         return;
       }
@@ -112,10 +104,10 @@ export default {
       this.lookAt(Cesium.Math.toRadians(rotation));
       this.$refs.buttonContainer.style = `transform: rotateZ(${rotation}deg);`;
     },
-    headingChange () {
+    headingChange() {
       this.headingChangedBySlider = false;
     },
-    caculateScale () {
+    caculateScale() {
       if (!this.tool?.feature) {
         return;
       }

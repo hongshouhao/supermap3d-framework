@@ -124,7 +124,8 @@ export default class BasemapUtility {
     }
 
     if (type === 'none') {
-      this.viewer.scene.globe.show = false;
+      this.viewer.scene.globe.globeAlpha = 0;
+      // this.viewer.scene.globe.show = false;
       this.viewer.scene.skyBox.show = false;
       this.viewer.scene.skyAtmosphere.show = false;
 
@@ -134,7 +135,8 @@ export default class BasemapUtility {
         currentMaps: null,
       });
     } else {
-      this.viewer.scene.globe.show = true;
+      this.viewer.scene.globe.globeAlpha = 1;
+      // this.viewer.scene.globe.show = true;
       this.viewer.scene.skyBox.show = true;
       this.viewer.scene.skyAtmosphere.show = true;
       let alpha = this.getCurrentMapAlpha(type);

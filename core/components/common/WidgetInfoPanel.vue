@@ -1,5 +1,5 @@
 <template>
-  <div ref="panel" class="widget-info-panel" v-show="visible">
+  <div ref="panel" class="widget-info-panel" v-if="visible">
     <div class="widget-info-title">
       {{ title }}
       <i

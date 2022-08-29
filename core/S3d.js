@@ -54,8 +54,8 @@ export default class S3d {
     this.viewer = viewer;
     this.scene = viewer.scene;
 
-    this.dataAccess = new DataAccess(viewer);
-    this.popupData = new DataAccessWrapper(viewer);
+    this.dataAccessImpl = new DataAccess(viewer);
+    this.dataAccess = new DataAccessWrapper(viewer);
     this.viewUtility = new ViewUtility(viewer);
     this.cameraUtility = new CameraUtility(viewer);
     this.debugUtility = new DebugUtility(viewer);
@@ -94,7 +94,7 @@ export default class S3d {
 
     // this.viewer.scene.colorCorrection.show = true;
     this.viewer.scene.globe.enableLighting = true;
-    // this.viewer.scene.hdrEnabled = true;
+    // this.viewer.scene.hdrEnabled = false;
 
     // viewer.scene.fxaa = false
     // viewer.scene.postProcessStages.fxaa.enabled = false
@@ -405,7 +405,7 @@ export default class S3d {
     let _this = this;
     if (this.layerManager.getLayerConfig(layerName).iQuery) {
       dataFromiQuery = function (lonlat) {
-        return _this.popupData.dataFromiQuery(layerName, lonlat);
+        return _this.dataAccess.dataFromiQuery(layerName, lonlat);
       };
     }
 
@@ -413,7 +413,7 @@ export default class S3d {
       let result = await dataFromiQuery(data.position);
       this.popup.renderPopup(cartesian, result);
     } else if (data.object.id || data.object.sql) {
-      let list = await this.popupData.dataFromDataset({
+      let list = await this.dataAccess.dataFromDataset({
         layer: layerName,
         sql: data.object.sql,
         ids: [data.object.id],
@@ -537,7 +537,7 @@ export default class S3d {
     if (params.layer && params.features) {
       return fly(params.features);
     } else if (params.layer && (params.ids || params.sql)) {
-      return this.popupData.dataFromDataset(params).then((response) => {
+      return this.dataAccess.dataFromDataset(params).then((response) => {
         let features = response.map((x) => x.source);
         return fly(features);
       });

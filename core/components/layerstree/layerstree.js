@@ -329,7 +329,6 @@ export default {
             let imgLy = window.s3d.layerManager.getLayer(
               lyElModel.layer.coverImageryLayer
             );
-            ly.height = 100;
             if (imgLy && isImageryLayer(imgLy.config?.type)) {
               ly.coverImageryLayer = imgLy;
             }
@@ -341,7 +340,6 @@ export default {
         window.s3d.eventBus.dispatch('dem-added', 'layers-tree', result);
       } else {
         if (isImageryLayer(lyElModel.layer.type)) {
-          debugger;
           let s3mLayers = window.s3d.layerManager.getAllLayers(
             (x) =>
               x.config?.type == 'S3M' &&

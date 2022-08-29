@@ -1,13 +1,3 @@
-/*
- * @Author: zhangbo
- * @Date: 2022-04-02 13:47:15
- * @LastEditors: zhangbo
- * @LastEditTime: 2022-04-14 08:53:18
- * @FilePath: \supermap3d-framework\vue.config.js
- * @Description:
- *
- * Copyright (c) 2022 by zhangbo/sipsd, All Rights Reserved.
- */
 const path = require('path');
 function resolve(dir) {
   return path.join(__dirname, dir);

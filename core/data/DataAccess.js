@@ -110,9 +110,9 @@ export default class DataAccess {
     return data;
   }
 
-  dataFromDataset (options, fields) {
+  dataFromDataset (dataUrl, options, fields) {
     return this.queryOverDataset(
-      options.dataUrl,
+      dataUrl,
       options.datasetName,
       options.sql,
       options.ids

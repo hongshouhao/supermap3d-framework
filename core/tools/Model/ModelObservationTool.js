@@ -21,7 +21,7 @@ export default class ModelObservationTool {
               ids: [pickobject.id],
             })
             .then((response) => {
-              _this.feature = response.data.features[0];
+              _this.feature = response[0].source;
               if (callback) {
                 callback(_this.feature);
               }

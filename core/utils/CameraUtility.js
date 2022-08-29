@@ -73,7 +73,7 @@ export default class CameraUtility {
     }
 
     let box = boxCornersFromFeature(feature);
-    return this._flyToPoints(box, {
+    return this.flyToPoints(box, {
       offset: offset,
       scale: options?.scale,
       duration: options?.duration,
