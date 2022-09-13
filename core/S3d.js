@@ -172,7 +172,7 @@ export default class S3d {
     return this;
   }
 
-  createSelectedChangedEvent(){
+  createSelectedChangedEvent() {
     return new SelectedChangedEvent(this.viewer);
   }
 
@@ -510,8 +510,11 @@ export default class S3d {
           duration: duration,
         });
       } else if (layer.type === 'S3M') {
-        this._flyToBounds(layer.layerBounds, options);
-        // this.viewer.flyTo(layer, options)
+        if (options?.destination) {
+          this.viewer.camera.flyTo(options);
+        } else {
+          this._flyToBounds(layer.layerBounds, options);
+        }
       } else {
         this.viewer.flyTo(layer, options);
       }

@@ -2,12 +2,17 @@
 import MapBoxMVTImageryProvider from '../providers/MapBoxMVTImageryProvider';
 import { exampleStyle } from '../providers/example-style';
 
-export const createImageryProvider = function(options) {
+export const createImageryProvider = function (options) {
   switch (options.type) {
   case 'bing':
     return new Cesium.BingMapsImageryProvider(options.params);
   case 'tianditu':
-    return new Cesium.TiandituImageryProvider(options.params);
+    let tianditu = new Cesium.TiandituImageryProvider(options.params);
+    if (options.params.useHttps) {
+      options.params.url = tianditu.url.replace('http://', 'https://');
+      tianditu = new Cesium.TiandituImageryProvider(options.params);
+    }
+    return tianditu;
   case 'custom':
     return new Cesium.TileMapServiceImageryProvider(options.params);
   case 'arcgis':
@@ -30,7 +35,7 @@ export const createImageryProvider = function(options) {
   }
 };
 
-export const isImageryLayer = function(type) {
+export const isImageryLayer = function (type) {
   switch (type) {
   case 'ARCGISIMG':
   case 'ARCGISEXIMG':

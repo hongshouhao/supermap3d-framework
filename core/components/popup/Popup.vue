@@ -3,6 +3,7 @@
     v-show="popupVisible"
     ref="popup"
     class="my-popup esri-component esri-popup esri-popup--aligned-top-center esri-popup--shadow"
+    :class="{ dockered: dockered }"
   >
     <div
       class="esri-popup__main-container esri-widget esri-popup--is-collapsible"
@@ -78,6 +79,7 @@ export default {
       manualDockered: false,
       popupVisible: false,
       showPropGrid: true,
+      dockered: false,
     };
   },
   components: {
@@ -526,12 +528,14 @@ export default {
         this._setPopupStyle(true);
         this.autoDockered = true;
       }
+      this.dockered = true;
     },
     disableDock() {
       if (this.autoDockered) {
         this._setPopupStyle(false);
         this.autoDockered = false;
       }
+      this.dockered = false;
     },
     dock() {
       if (this.manualDockered) {

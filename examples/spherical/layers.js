@@ -260,14 +260,116 @@ export const layers = [
   {
     id: '管线JS',
     name: '管线JS',
-    layer: {
-      type: 'S3M',
-      visible: true,
-      url: 'http://192.168.122.55/iserver55/services/3D-local3DCache-test/rest/realspace/datas/WS_LINE_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000-WS/config',
-      dataUrl:'http://192.168.122.55/iserver55/services/data-ChangShuGuanXian/rest/data/featureResults.json?returnContent=true',
-      datasetName:'常熟高新区20211123 - 2000-WS:WS_LINE_4490',
-      // pbr:'http://localhost:8083/pbr/piple.json'
-    },
+    virtual: true,
+    label: '管线JS',
+    children:[
+      {
+        id: '管线JSGJ',
+        name: '管线JSGJ',
+        layer: {
+          type: 'S3M',
+          visible: true,
+          url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/JS_POINT_GJ_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-JS/config',
+        // pbr:'http://localhost:8080/pbr/piple.json'
+        },
+      },
+      {
+        id: '管线JSLINE',
+        name: '管线JSLINE',
+        layer: {
+          type: 'S3M',
+          visible: true,
+          url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/JS_LINE_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-JS/config',
+        // pbr:'http://localhost:8080/pbr/piple.json'
+        },
+      },
+      {
+        id: '管线JSPOINT',
+        name: '管线JSPOINT',
+        layer: {
+          type: 'S3M',
+          visible: true,
+          url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/JS_POINT_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-JS/config',
+        // pbr:'http://localhost:8080/pbr/piple.json'
+        },
+      },
+    ]
+  },
+  {
+    id: '管线GD',
+    name: '管线GD',
+    virtual: true,
+    label: '管线GD',
+    children:[
+      {
+        id: '管线GDGJ',
+        name: '管线GDGJ',
+        layer: {
+          type: 'S3M',
+          visible: true,
+          url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/GD_POINT_GJ_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-GD/config',
+        // pbr:'http://localhost:8080/pbr/piple.json'
+        },
+      },
+      {
+        id: '管线GDLINE',
+        name: '管线GDLINE',
+        layer: {
+          type: 'S3M',
+          visible: true,
+          url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/GD_LINE_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-GD/config',
+        // pbr:'http://localhost:8080/pbr/piple.json'
+        },
+      },
+      {
+        id: '管线GDPOINT',
+        name: '管线GDPOINT',
+        layer: {
+          type: 'S3M',
+          visible: true,
+          url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/GD_POINT_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-GD/config',
+        // pbr:'http://localhost:8080/pbr/piple.json'
+        },
+      },
+    ]
+  },
+  {
+    id: '管线RQ',
+    name: '管线RQ',
+    virtual: true,
+    label: '管线RQ',
+    children:[
+      {
+        id: '管线RQGJ',
+        name: '管线RQGJ',
+        layer: {
+          type: 'S3M',
+          visible: true,
+          url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/RQ_POINT_GJ_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-RQ/config',
+        // pbr:'http://localhost:8080/pbr/piple.json'
+        },
+      },
+      {
+        id: '管线RQLINE',
+        name: '管线RQLINE',
+        layer: {
+          type: 'S3M',
+          visible: true,
+          url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/RQ_LINE_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-RQ/config',
+        // pbr:'http://localhost:8080/pbr/piple.json'
+        },
+      },
+      {
+        id: '管线RQPOINT',
+        name: '管线RQPOINT',
+        layer: {
+          type: 'S3M',
+          visible: true,
+          url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/RQ_POINT_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-RQ/config',
+        // pbr:'http://localhost:8080/pbr/piple.json'
+        },
+      },
+    ]
   },
   {
     id: '三维-地面',
@@ -276,7 +378,7 @@ export const layers = [
       type: 'S3M',
       visible: false,
       cullEnabled: false,
-      url: 'http://192.168.122.55/iserver55/services/3D-local3DCache-DM1th0812/rest/realspace/datas/DM_1@th/config',
+      url: 'http://58.210.9.131:8280/iserver55/services/3D-local3DCache-JZHBXZ1YIQI/rest/realspace/datas/JZHB_XZ_1@YIQI/config',
       coverImageryLayer:'二维图层-控规'
     },
   },

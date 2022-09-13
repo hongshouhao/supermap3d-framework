@@ -74,35 +74,6 @@ export default {
             // 模型选中颜色，可空
             selectColorType: Cesium.SelectColorType.REPLACE,
             url: 'http://localhost/iserver/services/3D-S3M/rest/realspace/datas/test/config',
-            // 图层定位相机默认设置，同上config
-            defaultCamera: {
-              duration: 2,
-              offset: {
-                heading: 6.087014263548862,
-                pitch: -0.5091484573438768,
-                range: 100,
-              },
-            },
-            // 压平某个区域
-            flattenRegions: [
-              [
-                120.60176437339629, 31.184432532743152, 0, 120.60203936867242,
-                31.181754094638176, 0, 120.60324403847666, 31.181772259112677,
-                0, 120.60323994862907, 31.184236800529675, 0,
-                120.60176437339629, 31.184432532743152, 0,
-              ],
-            ],
-            // 图层颜色校正
-            colorCorrection: {
-              // 亮度
-              brightness: 1.5,
-              // 色调
-              hue: 0.05,
-              // 饱和度
-              saturation: 1.1,
-              // 对比度
-              contrast: 1.05,
-            },
             // 数据查询时需要此参数
             datasetName: '模型1:BackUp_TarDataset_1',
             // 当数据服务，可空，非默认地址时需要使用此配置
@@ -125,6 +96,53 @@ export default {
             },
             // 字段筛选，当使用默认UI时，可使用此配置过滤不想展示的数据
             outFields: ['*'],
+            // 渲染方式，目前只有管线流向
+            renderer: {
+              // 渲染类型，使用S3M图层作为另一个图层的渲染
+              type: 'S3MLAYER',
+              // S3M图层参数
+              layer: {
+                url: 'http://localhost/iserver/services/3D-test/rest/realspace/datas/WS_LINE_4_1@污水1/config',
+                // 流向、流速配置
+                textureUVSpeed: new Cesium.Cartesian2(-0.5, 0),
+              },
+            },
+            // 压平某个区域
+            flattenRegions: [
+              [
+                120.60176437339629, 31.184432532743152, 0, 120.60203936867242,
+                31.181754094638176, 0, 120.60324403847666, 31.181772259112677,
+                0, 120.60323994862907, 31.184236800529675, 0,
+                120.60176437339629, 31.184432532743152, 0,
+              ],
+            ],
+            // 图层定位相机默认设置，同上config
+            defaultCamera: {
+              // 相机位置
+              destination: {
+                x: -2778295.607780161,
+                y: 4697279.964957479,
+                z: 3301873.5146833723,
+              },
+              // 相机姿势
+              orientation: {
+                heading: 0.027587479922354774,
+                pitch: -0.5169824822585825,
+                roll: 6.283185307179586,
+              },
+              duration: 2,
+            },
+            // 图层颜色校正
+            colorCorrection: {
+              // 亮度
+              brightness: 1.5,
+              // 色调
+              hue: 0.05,
+              // 饱和度
+              saturation: 1.1,
+              // 对比度
+              contrast: 1.05,
+            },
           },
         },
         {
@@ -138,41 +156,7 @@ export default {
           },
         },
       ],
-    },
-    {
-      id: '32',
-      name: '测试管线图层',
-      layer: {
-        type: 'S3M',
-        visible: false,
-        enableFillAndWireFrame: true,
-        url: 'http://localhost/iserver/services/3D-管线/rest/realspace/datas/管线/config',
-        // 仅针对未做单体化的图层有作用，配置同栅格
-        iQuery: {},
-        datasetName: '污水:污水_1',
-        outFields: ['*'],
-        // 定位时默认的相机参数
-        defaultCamera: {
-          duration: 2,
-          offset: {
-            heading: 6.087014263548862,
-            pitch: -0.5091484573438768,
-            range: 100,
-          },
-        },
-        // 渲染方式，目前只有管线流向
-        renderer: {
-          // 渲染类型，使用S3M图层作为另一个图层的渲染
-          type: 'S3MLAYER',
-          // S3M图层参数
-          layer: {
-            url: 'http://localhost/iserver/services/3D-test/rest/realspace/datas/WS_LINE_4_1@污水1/config',
-            // 流向、流速配置
-            textureUVSpeed: new Cesium.Cartesian2(-0.5, 0),
-          },
-        },
-      },
-    },
+    }, 
     {
       id: '36',
       name: '测试栅格图层',
@@ -199,17 +183,6 @@ export default {
             fill: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
             strokeWidth: 2,
           },
-          // 图形渲染样式
-          // symbol: {
-          //   //填充色
-          //   material: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.3),
-          //   //轮廓线
-          //   outline: true,
-          //   //轮廓线颜色
-          //   outlineColor: Cesium.Color.RED,
-          //   //轮廓线宽度
-          //   outlineWidth: 2.0,
-          // },
           // 数据查询服务，服务必须使用GET，且最终lon、lat、height会作为url参数传递给服务端
           // 默认需要返回固定结构，见文档下面
           dataUrl: 'http://localhost:9864/cad-connect-test',

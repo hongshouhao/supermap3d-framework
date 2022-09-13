@@ -77,6 +77,15 @@ export const config = {
     },
     normal: {
       maps: [
+        {
+          'type': 'tianditu',
+          'params': {
+            'useHttps':true,
+            'highResolution': true,
+            'mapStyle': 'vec_w',
+            'token': '6e6c4794820bd4fd1b196af3f328d82d'
+          }
+        },
         // {
         //   type: 'bing',
         //   params: {
