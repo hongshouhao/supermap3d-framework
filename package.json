@@ -1,6 +1,6 @@
 {
   "name": "@sipsd/supermap3d-framework",
-  "version": "0.1.95378",
+  "version": "0.1.95379",
   "private": false,
   "main": "./lib/supermap3d-framework.umd.min.js",
   "files": [

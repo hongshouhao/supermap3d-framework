@@ -32,7 +32,7 @@ export default {
         msaaLevel: 8, // 越大效果越好，会消耗性能
         requestWebgl2: true,
       },
-      orderIndependentTranslucency: false,
+      // orderIndependentTranslucency: false,
     };
 
     if (config.dem) {

@@ -154,11 +154,8 @@ export default class S3d {
       this.config.defaultCamera.complete = () => {
         this.eventBus.dispatch('default-camera-settled');
       };
-
       this.viewer.camera.flyTo(this.config.defaultCamera);
     }
-
-    this.viewer.camera.flyTo(this.config.defaultCamera);
     return this;
   }
   setCursor(className) {
