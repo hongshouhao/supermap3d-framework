@@ -262,7 +262,7 @@ export const layers = [
     name: '管线JS',
     virtual: true,
     label: '管线JS',
-    children:[
+    children: [
       {
         id: '管线JSGJ',
         name: '管线JSGJ',
@@ -270,7 +270,7 @@ export const layers = [
           type: 'S3M',
           visible: true,
           url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/JS_POINT_GJ_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-JS/config',
-        // pbr:'http://localhost:8080/pbr/piple.json'
+          // pbr:'http://localhost:8080/pbr/piple.json'
         },
       },
       {
@@ -280,7 +280,7 @@ export const layers = [
           type: 'S3M',
           visible: true,
           url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/JS_LINE_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-JS/config',
-        // pbr:'http://localhost:8080/pbr/piple.json'
+          // pbr:'http://localhost:8080/pbr/piple.json'
         },
       },
       {
@@ -290,17 +290,17 @@ export const layers = [
           type: 'S3M',
           visible: true,
           url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/JS_POINT_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-JS/config',
-        // pbr:'http://localhost:8080/pbr/piple.json'
+          // pbr:'http://localhost:8080/pbr/piple.json'
         },
       },
-    ]
+    ],
   },
   {
     id: '管线GD',
     name: '管线GD',
     virtual: true,
     label: '管线GD',
-    children:[
+    children: [
       {
         id: '管线GDGJ',
         name: '管线GDGJ',
@@ -308,7 +308,7 @@ export const layers = [
           type: 'S3M',
           visible: true,
           url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/GD_POINT_GJ_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-GD/config',
-        // pbr:'http://localhost:8080/pbr/piple.json'
+          // pbr:'http://localhost:8080/pbr/piple.json'
         },
       },
       {
@@ -318,7 +318,7 @@ export const layers = [
           type: 'S3M',
           visible: true,
           url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/GD_LINE_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-GD/config',
-        // pbr:'http://localhost:8080/pbr/piple.json'
+          // pbr:'http://localhost:8080/pbr/piple.json'
         },
       },
       {
@@ -328,17 +328,17 @@ export const layers = [
           type: 'S3M',
           visible: true,
           url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/GD_POINT_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-GD/config',
-        // pbr:'http://localhost:8080/pbr/piple.json'
+          // pbr:'http://localhost:8080/pbr/piple.json'
         },
       },
-    ]
+    ],
   },
   {
     id: '管线RQ',
     name: '管线RQ',
     virtual: true,
     label: '管线RQ',
-    children:[
+    children: [
       {
         id: '管线RQGJ',
         name: '管线RQGJ',
@@ -346,7 +346,7 @@ export const layers = [
           type: 'S3M',
           visible: true,
           url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/RQ_POINT_GJ_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-RQ/config',
-        // pbr:'http://localhost:8080/pbr/piple.json'
+          // pbr:'http://localhost:8080/pbr/piple.json'
         },
       },
       {
@@ -356,7 +356,7 @@ export const layers = [
           type: 'S3M',
           visible: true,
           url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/RQ_LINE_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-RQ/config',
-        // pbr:'http://localhost:8080/pbr/piple.json'
+          // pbr:'http://localhost:8080/pbr/piple.json'
         },
       },
       {
@@ -366,10 +366,10 @@ export const layers = [
           type: 'S3M',
           visible: true,
           url: 'http://localhost:8090/iserver/services/3D-ChangShuGaoXinQu/rest/realspace/datas/RQ_POINT_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000_4-RQ/config',
-        // pbr:'http://localhost:8080/pbr/piple.json'
+          // pbr:'http://localhost:8080/pbr/piple.json'
         },
       },
-    ]
+    ],
   },
   {
     id: '三维-地面',
@@ -377,9 +377,8 @@ export const layers = [
     layer: {
       type: 'S3M',
       visible: false,
-      cullEnabled: false,
-      url: 'http://58.210.9.131:8280/iserver55/services/3D-local3DCache-JZHBXZ1YIQI/rest/realspace/datas/JZHB_XZ_1@YIQI/config',
-      coverImageryLayer:'二维图层-控规'
+      url: 'https://egov.dpark.com.cn/iserver55/services/3D-ChangShuGuanXian/rest/realspace/datas/GD_LINE_4490@%E5%B8%B8%E7%86%9F%E9%AB%98%E6%96%B0%E5%8C%BA20211123%20-%202000-GD/config',
+      datasetName: '常熟高新区20211123 - 2000-GD:GD_LINE_4490',
     },
   },
   {

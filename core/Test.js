@@ -29,15 +29,15 @@ export default class Test {
     $('.cesium-viewer-cesiumWidgetContainer')[0].appendChild(vue.$el);
   }
   doTest() {
-    proxy(
-      'http://192.168.122.55/iserver55/services/3D-local3DCache-DM1th0812/rest/realspace/datas/DM_1@th/config',
-      function (config) {
-        config.position.z = 100;
-        console.log(config);
-      }
-    ).then((x) => {
-      console.log(x);
-    });
+    // proxy(
+    //   'http://192.168.122.55/iserver55/services/3D-local3DCache-DM1th0812/rest/realspace/datas/DM_1@th/config',
+    //   function (config) {
+    //     config.position.z = 100;
+    //     console.log(config);
+    //   }
+    // ).then((x) => {
+    //   console.log(x);
+    // });
     // this.testReproject();
     // this.createView();
     // window.s3d.selectedChangedEvent.startListening();
@@ -84,9 +84,9 @@ export default class Test {
     // } else if (this.count === 3) {
     //   window.s3d.closePopup()
     //   debugger
-    //   window.s3d.openPopup({
-    //     object: { layer: '供电', sql: 'SMID = 4265' },
-    //   })
+    // window.s3d.openPopup({
+    //   object: { layer: '三维-地面', sql: "P_ID = '2GD10115_2GD10210'" },
+    // });
     //   this.count++
     // }
     // window.s3d.flyToS3mFeatures(
@@ -95,7 +95,13 @@ export default class Test {
     // )
     // window.s3d.flyTo([130, 31, 1000])
     // window.s3d.flyTo(Cesium.Cartesian3.fromDegreesArray([130, 31])[0])
-    // window.s3d.flyTo(Cesium.Cartesian3.fromDegrees(130, 31))
+    window.s3d.flyTo(
+      new Cesium.Cartesian3(
+        -1206939.1925299785,
+        5337998.241228442,
+        3286279.2424502545
+      )
+    );
     // console.log(window.s3d.layerManager.getAllLayers((x) => x.type === 'S3M' && x.visible))
     // console.log(window.s3d.layerManager.getLayer('供电'))
     // console.log(window.s3d.layerManager.getLayer((x) => x.name === '供电'))

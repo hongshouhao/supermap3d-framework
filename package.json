@@ -1,6 +1,6 @@
 {
   "name": "@sipsd/supermap3d-framework",
-  "version": "0.1.95379",
+  "version": "0.1.95385",
   "private": false,
   "main": "./lib/supermap3d-framework.umd.min.js",
   "files": [
@@ -13,7 +13,7 @@
     "lib/supermap3d-framework.umd.min.js.map"
   ],
   "publishConfig": {
-    "registry": "http://106.15.107.191:8081/repository/npm-hosted/"
+    "registry": "https://egov.dpark.com.cn/nexus/repository/npm-hosted/"
   },
   "scripts": {
     "serve-dev-plane": "vue-cli-service serve ./examples/plane/main.js",

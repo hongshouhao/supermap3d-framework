@@ -473,7 +473,7 @@ export default class S3d {
       } else if (isS3mFeature(sample)) {
         return this.cameraUtility.flyToS3mFeatures(params, options);
       }
-    } else if (sample instanceof Cesium.Cartesian3) {
+    } else if (params instanceof Cesium.Cartesian3) {
       return this.cameraUtility.flyToPoints([params], options);
     } else if (isS3mFeature(params)) {
       return this.cameraUtility.flyToS3mFeatures([params], options);

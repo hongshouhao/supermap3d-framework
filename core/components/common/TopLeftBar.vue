@@ -42,6 +42,17 @@
       </div>
     </div>
 
+    <div v-if="hasDEM" class="esri-component esri-widget">
+      <div
+        class="esri-widget--button esri-widget"
+        title="DEM"
+        :class="{ 'active-tool': demVisible }"
+        @click="toggleDEM"
+      >
+        <span aria-hidden="true" class="esri-icon icon-tin"></span>
+      </div>
+    </div>
+
     <div class="esri-component esri-widget">
       <div
         class="esri-widget--button esri-widget"
@@ -337,6 +348,7 @@ export default {
       viewMode: '',
       currentTool: '',
       activeTool: '',
+      demVisible: true,
     };
   },
   props: [],
@@ -346,6 +358,9 @@ export default {
     },
     usePlaneCoordinateSystem() {
       return window.s3d.config.usePlaneCoordinateSystem;
+    },
+    hasDEM() {
+      return window.s3d.config.dem;
     },
   },
   beforeMount() {},
@@ -391,6 +406,10 @@ export default {
       _this.excavationTool = new ExcavationTool(_viewer);
       _this.viewshedTool.bindUI(_this.$refs.viewshedSettingPanel.$el);
       _this.init();
+    });
+
+    window.s3d.eventBus.addEventListener('mapviewer-initialized', () => {
+      this.demVisible = this.$viewer.terrainProvider.visible;
     });
 
     window.s3d.eventBus.addEventListener('tool-started', (caller) => {
@@ -456,6 +475,14 @@ export default {
     },
     zoomOut() {
       this.$viewer.camera.zoomOut(100);
+    },
+    toggleDEM() {
+      if (this.demVisible) {
+        this.$viewer.terrainProvider.visible = false;
+      } else {
+        this.$viewer.terrainProvider.visible = true;
+      }
+      this.demVisible = !this.demVisible;
     },
     startIQuery() {
       this.currentTool = 'IQueryTool';

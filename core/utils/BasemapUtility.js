@@ -27,16 +27,13 @@ export default class BasemapUtility {
 
   createBasemaps() {
     for (let mapKey in this.mapsConfig) {
-      if (mapKey === 'none') {
-        continue;
-      }
       let mapConf = this.mapsConfig[mapKey];
       if (mapConf.default) {
         this.toggleMap(mapKey);
       }
     }
   }
-  
+
   toggleMap(type) {
     if (this.currentMaps) {
       for (let map of this.currentMaps) {

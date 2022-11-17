@@ -91,7 +91,7 @@
         </el-slider>
       </el-col>
     </el-row>
-    <el-row>
+    <el-row v-if="showTopDown">
       <el-col :span="8">
         <span class="layer-settings-item-label">层级</span>
       </el-col>
@@ -136,7 +136,8 @@
 </template>
 
 <script>
-import { getLayerOpacity, setLayerOpacity } from '@/utils/LayerUtility';
+import { getLayerOpacity, setLayerOpacity } from '../../utils/LayerUtility';
+import { isImageryLayer } from '../../utils/ImageryUtility';
 
 export default {
   data() {
@@ -156,21 +157,17 @@ export default {
     showRenderer() {
       return this.lyElModel.layer?.renderer?.type === 'S3MLAYER';
     },
+    showTopDown() {
+      debugger;
+      return isImageryLayer(this.lyElModel.layer.type);
+    },
   },
   props: ['lyElModel'],
   watch: {
     'lyElModel.cesiumLayerLoaded': {
       handler(val) {
         if (val) {
-          this.cesiumLayerLoaded = true;
-          this.cesiumLayer = this.lyElModel.cesiumLayer;
-          this.opacity = getLayerOpacity(this.cesiumLayer);
-          this.brightness = this.cesiumLayer.brightness;
-          this.hue = this.cesiumLayer.hue;
-          this.saturation = this.cesiumLayer.saturation;
-          this.contrast = this.cesiumLayer.contrast;
-          this.gamma = this.cesiumLayer.gamma;
-          this.hasLight = !this.cesiumLayer.hasLight;
+          this.bindLayer();
         }
       },
       immediate: true,
@@ -220,6 +217,7 @@ export default {
 
         if (newLayer) {
           this.lyElModel.cesiumLayer = newLayer;
+          this.bindLayer();
         }
       }
     },
@@ -231,8 +229,20 @@ export default {
 
         if (newLayer) {
           this.lyElModel.cesiumLayer = newLayer;
+          this.bindLayer();
         }
       }
+    },
+    bindLayer() {
+      this.cesiumLayerLoaded = true;
+      this.cesiumLayer = this.lyElModel.cesiumLayer;
+      this.opacity = getLayerOpacity(this.cesiumLayer);
+      this.brightness = this.cesiumLayer.brightness;
+      this.hue = this.cesiumLayer.hue;
+      this.saturation = this.cesiumLayer.saturation;
+      this.contrast = this.cesiumLayer.contrast;
+      this.gamma = this.cesiumLayer.gamma;
+      this.hasLight = !this.cesiumLayer.hasLight;
     },
   },
 };

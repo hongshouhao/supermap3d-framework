@@ -41,7 +41,7 @@ module.exports = {
     // 强制在注释中 // 或 /* 使用一致的空格
     'spaced-comment': 'error',
     // 强制使用一致的单引号
-    quotes: ['error', 'single'],
+    // quotes: ['error', 'single'],
     // 要求对象字面量属性名称用引号括起来
     //"quote-props": ["error", "always"],
     // 要求在语句末尾使用分号

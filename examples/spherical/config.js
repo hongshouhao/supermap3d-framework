@@ -6,7 +6,10 @@ export const config = {
   usePlaneCoordinateSystem: false,
   // initViewMode: '2D',
 
-  // dem: URL_CONFIG.SiChuan_TERRAIN,
+  dem: {
+    url: URL_CONFIG.SiChuan_TERRAIN,
+    visible: false,
+  },
   // dem: 'http://www.supermapol.com/realspace/services/3D-OlympicGreen_Plan/rest/realspace/datas/beijingdem',
   // globalNightMap: {
   //   minVisibleAltitude: 756826.234041,
@@ -78,13 +81,13 @@ export const config = {
     normal: {
       maps: [
         {
-          'type': 'tianditu',
-          'params': {
-            'useHttps':true,
-            'highResolution': true,
-            'mapStyle': 'vec_w',
-            'token': '6e6c4794820bd4fd1b196af3f328d82d'
-          }
+          type: 'tianditu',
+          params: {
+            useHttps: true,
+            highResolution: true,
+            mapStyle: 'vec_w',
+            token: '6e6c4794820bd4fd1b196af3f328d82d',
+          },
         },
         // {
         //   type: 'bing',

@@ -108,7 +108,8 @@ export default class DataAccessWrapper {
     }
 
     return this.dataAccess
-      .dataFromDataset(dataUrl,
+      .dataFromDataset(
+        dataUrl,
         {
           datasetName: lconf.datasetName,
           sql: params.sql,

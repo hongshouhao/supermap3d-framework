@@ -22,7 +22,7 @@ export default {
     }
 
     let config = window.s3d.config;
-    let viewerOptions = {
+    let vOpts = {
       infoBox: false,
       shadows: true,
       navigation: false,
@@ -35,21 +35,41 @@ export default {
       // orderIndependentTranslucency: false,
     };
 
+    let demVisible = true;
     if (config.dem) {
-      viewerOptions.terrainProvider = new Cesium.CesiumTerrainProvider({
-        url: config.dem,
+      let demURL = null;
+      if (typeof config.dem == 'string') {
+        demURL = config.dem;
+      } else if (typeof config.dem == 'object') {
+        demURL = config.dem.url;
+        if (typeof config.dem.visible == 'boolean') {
+          demVisible = config.dem.visible;
+        }
+      }
+      vOpts.terrainProvider = new Cesium.CesiumTerrainProvider({
+        url: demURL,
+        invisibility: true,
       });
     }
 
-    if (viewerOptions.terrainProvider) {
-      viewerOptions.terrainProvider.isCreateSkirt = false;
+    if (vOpts.terrainProvider) {
+      vOpts.terrainProvider.isCreateSkirt = false;
     }
 
-    Object.assign(viewerOptions, config.viewerOptions);
+    Object.assign(vOpts, config.vOpts);
     this.sceneContainer = document.createElement('div');
-    let viewer = new Cesium.Viewer(this.sceneContainer, viewerOptions);
-    viewer.scene.postProcessStages.fxaa.enabled = false;
+    let viewer = new Cesium.Viewer(this.sceneContainer, vOpts);
     this.__proto__.__proto__.$viewer = viewer;
+
+    let ehelper = new Cesium.EventHelper();
+    ehelper.add(viewer.scene.globe.tileLoadProgressEvent, function (e) {
+      if (e == 0) {
+        ehelper.removeAll();
+        viewer.terrainProvider.visible = demVisible;
+        window.s3d.eventBus.dispatch('mapviewer-initialized');
+      }
+    });
+
     window.s3d.setViewer(viewer);
   },
   mounted() {
