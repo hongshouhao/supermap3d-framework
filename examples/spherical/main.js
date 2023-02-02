@@ -2,8 +2,8 @@ import Vue from 'vue';
 import App from '../App.vue';
 import supermap3d from '../../core/index';
 import '../../core/css/index.scss';
-
 import { config } from './config';
+import jquery from 'jquery';
 
 Vue.use(supermap3d, config);
 Vue.config.productionTip = false;

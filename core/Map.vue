@@ -17,7 +17,6 @@
 import MapViewer from './MapViewer.vue';
 import TopLeftBar from './components/common/TopLeftBar.vue';
 import TopRightBar from './components/common/TopRightBar.vue';
-
 export default {
   name: 'smmap',
   components: {
@@ -25,14 +24,13 @@ export default {
     TopLeftBar,
     TopRightBar,
   },
-  data () {
-    return {
-    };
+  data() {
+    return {};
   },
-  beforeMount () { },
-  mounted () { },
+  beforeMount() {},
+  mounted() {},
   methods: {
-    onViewerCreated () {
+    onViewerCreated() {
       this.$emit('viewer-created');
     },
   },
